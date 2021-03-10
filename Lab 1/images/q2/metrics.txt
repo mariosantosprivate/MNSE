@@ -1,0 +1,46 @@
+WITHOUT FILTER:
+
+#Sub sampling factor of 4#
+
+Error between original and interpolated signal = 0.0186861
+
+PSNR = 14.3214
+
+MSE = 0.0186861/10^(14.3214/20) = 36e-04
+
+
+
+#Sub sampling factor of 2#	
+
+Error between original and interpolated signal = 0.0056295
+
+PSNR = 19.5319
+
+MSE = 0.0056295/10^(19.5319/20) = 5.9412e-04
+
+
+
+WITH FILTER:
+
+#Sub sampling factor of 4#
+
+Error between original and interpolated signal = 0.00488846
+
+PSNR = 20.1449
+
+MSE = 0.00488846/10^(20.1449) = 3.5016e-23
+
+
+#Sub sampling factor of 2#
+
+Error between original and interpolated signal = 0.00204601
+
+PSNR = 23.9276
+
+MSE = 0.00204601/10^(23.9276) = 2.4172e-27
+
+   
+
+
+
+

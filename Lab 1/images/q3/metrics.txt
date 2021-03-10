@@ -1,0 +1,21 @@
+QUANTISATION 256:
+
+Error between original and interpolated signal = 0.00179333
+PSNR = -6.07282
+
+MSE = 0.00179333/10^(-6.07282/20) = 0.0036
+
+QUANTISATION 16:
+
+Error between original and interpolated signal = 0.00310336
+PSNR = -20.4898
+
+MSE = 0.00310336/10^(-20.4898/20) = 0.0328
+
+
+
+   
+
+
+
+
