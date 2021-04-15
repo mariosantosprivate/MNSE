@@ -3,7 +3,7 @@ import SignUp from './SignUp';
 import { Container } from 'react-bootstrap'
 import AuthProvider from '../contexts/AuthContext';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
-import UserProfile from './UserProfile'
+import Dashboard from './Dashboard'
 import LogIn from './LogIn'
 import PrivateRoute from './PrivateRoute'
 import ForgotPassword from './ForgotPassword'
@@ -12,15 +12,15 @@ import UpdateProfile from './UpdateProfile'
 function App() {
     return (
 
-                <Container 
+                <Container fluid
                     className = 'd-flex align-items-center justify-content-center'
-                    style = {{ minHeight: "100vh"}}
+                    style = {{ minHeight: "100vh", minWidth: "100vw"}}
                 >
-                    <div className = 'w-100' style ={{ maxWidth: '400px' }}>
+                    <div style = {{ minHeight: "100vh", minWidth: "100vw"}}>
                         <Router>
                             <AuthProvider>
                                 <Switch>
-                                    <PrivateRoute exact path='/' component={UserProfile}/>
+                                    <PrivateRoute exact path='/' component={Dashboard}/>
                                     <PrivateRoute path='/update-profile' component={UpdateProfile}/>
                                     <Route path = '/signup' component={SignUp}/>
                                     <Route path = '/login' component={LogIn}/>
