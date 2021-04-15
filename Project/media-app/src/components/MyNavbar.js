@@ -28,7 +28,7 @@ export default function MyNavbar() {
                 <Nav className="mr-auto my-navbar">
                     <Nav.Link href="/">Home</Nav.Link>
                     <Nav.Link href="/update-profile">Profile</Nav.Link>
-                    <Nav.Link href="/library" disabled>Video Library (COMING SOON)</Nav.Link>
+                    <Nav.Link href="/library" disabled>Videos</Nav.Link>
                     
                     <Nav.Link href="/" onClick={handleLogout}>Log Out</Nav.Link>
                 </Nav>

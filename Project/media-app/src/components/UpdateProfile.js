@@ -1,9 +1,10 @@
 import React, { useRef, useState } from 'react'
-import { Form, Button, Card, Alert } from 'react-bootstrap'
+import { Form, Button, Card, Alert, Row, Col } from 'react-bootstrap'
 import { useAuth } from '../contexts/AuthContext'
 import { Link, useHistory } from 'react-router-dom'
 import { Container } from 'react-bootstrap'
 import MyNavbar from './MyNavbar'
+import '../styles/UpdateProfile.css'
 
 export default function UpdateProfile() {
 
@@ -45,7 +46,7 @@ export default function UpdateProfile() {
 
     return (
         <>
-        <MyNavbar />
+            <MyNavbar />
             <Container
                 className='justify-content-center'
                 style={{ minHeight: "100vh" }}
@@ -68,16 +69,30 @@ export default function UpdateProfile() {
                                     <Form.Label>Password Confirmation</Form.Label>
                                     <Form.Control type='password' ref={passwordConfirmRef} placeholder='Leave blank to keep the same' />
                                 </Form.Group>
-                                <Button disabled={loading} className='w-100' type='submit'>
-                                    Update
-                        </Button>
+                                <div className="update-button">
+                                    <Row className='update-buttons-container'>
+                                        <Col className='justify-content-center'>
+                                            <Button disabled={loading} type='submit'className='update-button' variant="primary">
+                                                Update
+                                            </Button>
+                                        </Col>
+                                        <Col className='justify-content-center'>
+                                            <Link to='/'>
+                                                <Button type='submit' className='update-button' variant="outline-primary">
+                                                    Cancel
+                                                </Button>
+                                            </Link>
+                                        </Col>
+                                    </Row>
+
+
+                                    
+
+                                </div>
+
                             </Form>
                         </Card.Body>
                     </Card>
-
-                    <div className='w-100 text-center mt-2'>
-                        <Link to='/'>Cancel</Link>
-                    </div>
                 </div>
             </Container>
         </>
