@@ -47,7 +47,7 @@ export default function UpdateProfile() {
         <>
         <MyNavbar />
             <Container
-                className='d-flex align-items-center justify-content-center'
+                className='justify-content-center'
                 style={{ minHeight: "100vh" }}
             >
                 <div>
