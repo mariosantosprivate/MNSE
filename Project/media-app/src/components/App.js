@@ -12,11 +12,11 @@ import UpdateProfile from './UpdateProfile'
 function App() {
     return (
 
-                <Container 
+                <Container fluid
                     className = 'd-flex align-items-center justify-content-center'
-                    style = {{ minHeight: "100vh"}}
+                    style = {{ minHeight: "100vh", minWidth: "100vw"}}
                 >
-                    <div className = 'w-100' style ={{ maxWidth: '400px' }}>
+                    <div style = {{ minHeight: "100vh", minWidth: "100vw"}}>
                         <Router>
                             <AuthProvider>
                                 <Switch>

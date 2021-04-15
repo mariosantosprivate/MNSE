@@ -1,0 +1,9 @@
+@media only screen and (min-width: 992px) {
+    .my-navbar {
+        width: 100%;
+        justify-content: center;
+        left: 0;
+        right: 0;
+        position: fixed;}
+  }
+
