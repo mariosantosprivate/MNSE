@@ -1,6 +1,6 @@
 ## Installing dependencies
 
-In the project directory, you can run:
+In the project directory (../media-app), you can run:
 
 ### `npm install`
 
