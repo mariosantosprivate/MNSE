@@ -6,7 +6,7 @@ import { storage } from '../firebase'
 import { useAuth } from '../contexts/AuthContext'
 
 export default function Dashboard() {
-    const [image, setImage] = useState(null);
+    const [file, setFile] = useState(null);
     const [url, setUrl] = useState('');
     const [progress, setProgress] = useState(0);
     const { currentUser } = useAuth();
@@ -14,12 +14,12 @@ export default function Dashboard() {
 
     const handleChange = e => {
         if (e.target.files[0]) {
-            setImage(e.target.files[0])
+            setFile(e.target.files[0])
         }
     }
 
     const handleUpload = () => {
-        const uploadTask = storage.ref(`user/${currentUser.uid}/${image.name}`).put(image);
+        const uploadTask = storage.ref(`user/${currentUser.uid}/${file.name}`).put(file);
 
         uploadTask.on(
             'state_changed',
@@ -35,7 +35,7 @@ export default function Dashboard() {
             () => {
                 storage
                     .ref(`user/${currentUser.uid}`)
-                    .child(image.name)
+                    .child(file.name)
                     .getDownloadURL()
                     .then(url => {
                         setUrl(url)
