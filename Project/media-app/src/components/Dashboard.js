@@ -4,6 +4,7 @@ import MyNavbar from './MyNavbar'
 import '../styles/Dashboard.css'
 import { storage } from '../firebase'
 import { useAuth } from '../contexts/AuthContext'
+import ReactPlayer from 'react-player'
 
 export default function Dashboard() {
     const [file, setFile] = useState(null);
@@ -59,6 +60,10 @@ export default function Dashboard() {
                             <Col>
                                 <Button className='upload-button' variant='primary' onClick={handleUpload}>Upload</Button>
                             </Col>
+                        </Row>
+                        <br></br>
+                        <Row>
+                            <ReactPlayer url={url} playing={true}/>
                         </Row>
                     </Card.Body>
                 </Card>
