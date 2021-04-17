@@ -9,11 +9,7 @@
 }
 
 .file-upload-card{
-    max-width: 50vw;
+    max-width: fit-content;
     margin-left: auto; 
     margin-right: auto;
-}
-
-input#file-upload-button{
-    background-color: blue;
 }

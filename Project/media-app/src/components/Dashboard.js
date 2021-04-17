@@ -48,25 +48,21 @@ export default function Dashboard() {
         <>
             <MyNavbar />
             <Container fluid className='main-container justify-content-center'>
-
                 <Card className='file-upload-card'>
-                    <Card.Img variant="top" src={url} />
-                <Card.Body>
-                    <ProgressBar animated now={progress} label={`${progress}%`} md="auto" />
-                    <Row>
-                        <Col className='col-8'>
-                            <input type='file' class='form-control' className='input-form' onChange={handleChange} />
-                        </Col>
-                        <Col>
-                            <Button className='upload-button' variant='primary' onClick={handleUpload}>Upload</Button>
-                        </Col>
-                    </Row>
-
-
-                </Card.Body>
+                    <Card.Body>
+                        <ProgressBar animated now={progress} label={`${progress}%`} md="auto" />
+                        <br></br>
+                        <Row>
+                            <Col className='col-8'>
+                                <input type='file' class='form-control' className='input-form' onChange={handleChange} />
+                            </Col>
+                            <Col>
+                                <Button className='upload-button' variant='primary' onClick={handleUpload}>Upload</Button>
+                            </Col>
+                        </Row>
+                    </Card.Body>
                 </Card>
-
-        </Container>
+            </Container>
         </>
     )
 }
