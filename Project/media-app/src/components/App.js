@@ -8,7 +8,7 @@ import LogIn from './LogIn'
 import PrivateRoute from './PrivateRoute'
 import ForgotPassword from './ForgotPassword'
 import UpdateProfile from './UpdateProfile'
-
+import MyVideos from './MyVideos'
 function App() {
     return (
 
@@ -22,6 +22,7 @@ function App() {
                                 <Switch>
                                     <PrivateRoute exact path='/' component={Dashboard}/>
                                     <PrivateRoute path='/update-profile' component={UpdateProfile}/>
+                                    <PrivateRoute path='/my-videos' component={MyVideos}/>
                                     <Route path = '/signup' component={SignUp}/>
                                     <Route path = '/login' component={LogIn}/>
                                     <Route path = '/forgot-password' component={ForgotPassword}/>

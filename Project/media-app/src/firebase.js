@@ -1,7 +1,8 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import 'firebase/storage';
 
-const app = firebase.initializeApp({
+const firebaseConfig = firebase.initializeApp({
     apiKey: process.env.REACT_APP_MEDIA_API_KEY,
     authDomain: process.env.REACT_APP_MEDIA_AUTH_DOMAIN,
     projectId: process.env.REACT_APP_MEDIA_PROJECT_ID,
@@ -10,5 +11,11 @@ const app = firebase.initializeApp({
     appId: process.env.REACT_APP_MEDIA_APP_ID
 })
 
-export const auth = app.auth()
-export default app
+if (firebase.apps.length === 0) {
+    firebase.initializeApp(firebaseConfig)
+}
+
+const storage = firebase.storage();
+const auth = firebase.auth();
+export {auth, storage, firebase as default};
+
