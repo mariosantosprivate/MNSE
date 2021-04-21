@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
-import { Card, Container, ProgressBar, Row, Col, Button } from 'react-bootstrap';
+import { Card, Container, ProgressBar, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
 import ReactPlayer from 'react-player';
 import { storage } from '../firebase';
 import { useAuth } from '../contexts/AuthContext';
@@ -17,13 +17,15 @@ export default function Dashboard() {
     const [url, setUrl] = useState('');
     const [progress, setProgress] = useState(0);
     const { currentUser } = useAuth();
+    const [startTrim, setStartTrim] = useState(0);
+    const [endTrim, setEndTrim] = useState(0);
 
     const loadFfmpeg = async () => {
         await ffmpeg.load();
         setFfmpegReady(true);
     }
 
-    async function trimVideo() {
+    const trimVideo = async () => {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
@@ -40,7 +42,7 @@ export default function Dashboard() {
             let endTime = `${endHours}:${endMins}:${endSecs}`
             */
             // Run trim command
-            await ffmpeg.run('-i', 'test.mp4', '-ss', '00:00:10', '-to', '00:00:38', '-c:v', 'copy', '-c:a', 'copy', 'testOut.mp4');
+            await ffmpeg.run('-i', 'test.mp4', '-ss', startTrim, '-to', endTrim, '-c:v', 'copy', '-c:a', 'copy', 'testOut.mp4');
 
             // Read result
             const data = ffmpeg.FS('readFile', 'testOut.mp4');
@@ -92,23 +94,23 @@ export default function Dashboard() {
             <MyNavbar />
             <Container fluid className='main-container justify-content-center'>
                 <Row>
-                <Card className='file-upload-card'>
-                    <Card.Body>
-                        <ProgressBar animated now={progress} label={`${progress}%`} md="auto" />
-                        <br></br>
-                        <Row>
-                            <Col className='col-8'>
-                                <input type='file' className='form-control' className='input-form' onChange={handleSelectFile} />
-                            </Col>
-                            <Col>
-                                <Button className='upload-button' variant='primary' onClick={handleUpload}>Upload</Button>
-                            </Col>
-                        </Row>
-                    </Card.Body>
-                </Card>
+                    <Card className='file-upload-card'>
+                        <Card.Body>
+                            <ProgressBar animated now={progress} label={`${progress}%`} md="auto" />
+                            <br></br>
+                            <Row>
+                                <Col className='col-8'>
+                                    <input type='file' className='form-control' className='input-form' onChange={handleSelectFile} />
+                                </Col>
+                                <Col>
+                                    <Button className='upload-button' variant='primary' onClick={handleUpload}>Upload</Button>
+                                </Col>
+                            </Row>
+                        </Card.Body>
+                    </Card>
                 </Row>
-                <Row >
-                    <Col xs={{ span: 10, offset: 1 }} sm={{ span: 6 , offset: 0}}>
+                <Row xs={{ span: 10, offset: 1 }} sm={{ span: 6, offset: 0 }}>
+                    <Col>
                         <div className='player-wrapper'>
                             <ReactPlayer
                                 className='react-player'
@@ -122,44 +124,64 @@ export default function Dashboard() {
                             />
                         </div>
                     </Col>
-                    <Col xs={{ span: 10, offset: 1 }} sm={{ span: 6 , offset: 0}}>
-                        <div className='player-wrapper'>
-                            <ReactPlayer
-                                className='react-player'
-                                url={file ?
-                                    URL.createObjectURL(file) :
-                                    './'
-                                }
-                                controls={true}
-                                width='100%'
-                                height='100%'
-                            />
-                        </div>
-                    </Col>
+                    <Col>
+                        {
+                            !editedVideo ?
+                                <div className='player-wrapper'>
+                                    <ReactPlayer
+                                        className='react-player'
+                                        url={file ?
+                                            URL.createObjectURL(file) :
+                                            './'
+                                        }
+                                        controls={true}
+                                        width='100%'
+                                        height='100%'
+                                    />
+                                </div> :
 
-                    {/**
-                    <Col md={{ span: 6}} xs={{ span: 8, offset: 2 }}>
-                    {
-                        editedVideo &&
-                        <div className='player-wrapper'>
-                            <ReactPlayer
-                                className='react-player'
-                                url={editedVideo}
-                                controls={true}
-                                width='100%'
-                                height='100%'
-                            />
-                        </div>
-                    }
-                        
-                    </Col> 
-                    */
-                    }
+                                <div className='player-wrapper'>
+                                    <ReactPlayer
+                                        className='react-player'
+                                        url={editedVideo}
+                                        controls={true}
+                                        width='100%'
+                                        height='100%'
+                                    />
+                                </div>
+                        }
+                    </Col>
                 </Row>
                 <Row>
-
-                    <Button onClick={trimVideo}>Trim</Button>
-
+                    <Col>
+                        <InputGroup>
+                            <InputGroup.Prepend>
+                                <InputGroup.Text id="trim-start-input">Start</InputGroup.Text>
+                            </InputGroup.Prepend>
+                            <FormControl
+                                placeholder="Start Trim"
+                                aria-label="Start Trim"
+                                aria-describedby="trim-start-input"
+                                onChange={e => setStartTrim(e.target.value)}
+                            />
+                        </InputGroup>
+                    </Col>
+                    <Col>
+                        <InputGroup>
+                            <InputGroup.Prepend>
+                                <InputGroup.Text id="trim-end-input">End</InputGroup.Text>
+                            </InputGroup.Prepend>
+                            <FormControl
+                                placeholder="End Trim"
+                                aria-label="End Trim"
+                                aria-describedby="trim-end-input"
+                                onChange={e => setEndTrim(e.target.value)}
+                            />
+                        </InputGroup>
+                    </Col>
+                    <Col>
+                        <Button className='trim-button' onClick={trimVideo}>Trim</Button>
+                    </Col>
                 </Row>
             </Container>
         </>
