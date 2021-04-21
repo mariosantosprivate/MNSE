@@ -13,7 +13,7 @@ export default function Dashboard() {
 
     const [ffmpegReady, setFfmpegReady] = useState(false);
     const [file, setFile] = useState(null);
-    const [editedVideo, setEditedVideo] = useState('')
+    const [editedVideo, setEditedVideo] = useState('./')
     const [url, setUrl] = useState('');
     const [progress, setProgress] = useState(0);
     const { currentUser } = useAuth();
@@ -56,6 +56,7 @@ export default function Dashboard() {
 
     const handleSelectFile = e => {
         setFile(e.target.files?.item(0));
+        setEditedVideo(URL.createObjectURL(e.target.files?.item(0)))
     }
 
     const handleUpload = () => {
@@ -125,31 +126,15 @@ export default function Dashboard() {
                         </div>
                     </Col>
                     <Col>
-                        {
-                            !editedVideo ?
-                                <div className='player-wrapper'>
-                                    <ReactPlayer
-                                        className='react-player'
-                                        url={file ?
-                                            URL.createObjectURL(file) :
-                                            './'
-                                        }
-                                        controls={true}
-                                        width='100%'
-                                        height='100%'
-                                    />
-                                </div> :
-
-                                <div className='player-wrapper'>
-                                    <ReactPlayer
-                                        className='react-player'
-                                        url={editedVideo}
-                                        controls={true}
-                                        width='100%'
-                                        height='100%'
-                                    />
-                                </div>
-                        }
+                        <div className='player-wrapper'>
+                            <ReactPlayer
+                                className='react-player'
+                                url={editedVideo}
+                                controls={true}
+                                width='100%'
+                                height='100%'
+                            />
+                        </div>
                     </Col>
                 </Row>
                 <Row>
@@ -159,10 +144,10 @@ export default function Dashboard() {
                                 <InputGroup.Text id="trim-start-input">Start</InputGroup.Text>
                             </InputGroup.Prepend>
                             <FormControl
-                                placeholder="Start Trim"
+                                placeholder="Start time in seconds..."
                                 aria-label="Start Trim"
                                 aria-describedby="trim-start-input"
-                                onChange={e => setStartTrim(e.target.value)}
+                                onBlur={e => setStartTrim(e.target.value)}
                             />
                         </InputGroup>
                     </Col>
@@ -172,10 +157,10 @@ export default function Dashboard() {
                                 <InputGroup.Text id="trim-end-input">End</InputGroup.Text>
                             </InputGroup.Prepend>
                             <FormControl
-                                placeholder="End Trim"
+                                placeholder="End time in seconds..."
                                 aria-label="End Trim"
                                 aria-describedby="trim-end-input"
-                                onChange={e => setEndTrim(e.target.value)}
+                                onBlur={e => setEndTrim(e.target.value)}
                             />
                         </InputGroup>
                     </Col>
