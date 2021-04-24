@@ -154,9 +154,7 @@ export default function Dashboard() {
                         <div className='player-wrapper'>
                             <ReactPlayer
                                 className='react-player'
-                                url={
-                                    file
-                                }
+                                url={file}
                                 controls={true}
                                 width='100%'
                                 height='100%'
@@ -182,16 +180,19 @@ export default function Dashboard() {
                             type='range' min={0} max={0.999999} step='any'
                             value={played}
                             onMouseDown={handleSeekMouseDown}
-                            onChange={handleSeekChange}
+                            onChange={handleSeekChange}                            
                             onMouseUp={handleSeekMouseUp}
+                            onTouchStart={handleSeekMouseDown}   
+                            onTouchMove={handleSeekChange}
+                            onTouchEnd={handleSeekMouseUp}
                         />
                     </Col>
                 </Row>
                 <Row style={{
-                    'justify-content': 'center',
-                    'text-align': 'center'
+                    'justifyContent': 'center',
+                    'textAlign': 'center'
                 }}>
-                    <Col xs={{ span: 3 }}>
+                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
                         <InputGroup>
                             <InputGroup.Prepend>
                                 <InputGroup.Text id="trim-start-input">Start</InputGroup.Text>
@@ -204,7 +205,7 @@ export default function Dashboard() {
                             />
                         </InputGroup>
                     </Col>
-                    <Col xs={{ span: 3 }}>
+                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
                         <InputGroup>
                             <InputGroup.Prepend>
                                 <InputGroup.Text id="trim-end-input">End</InputGroup.Text>
@@ -217,7 +218,7 @@ export default function Dashboard() {
                             />
                         </InputGroup>
                     </Col>
-                    <Col xs={{ span: 3 }}>
+                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
                         <Button className='trim-button' onClick={trimVideo}>Trim</Button>
                     </Col>
                 </Row>
