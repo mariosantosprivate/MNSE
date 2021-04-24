@@ -15,6 +15,7 @@ export default function Dashboard() {
     const [ffmpegReady, setFfmpegReady] = useState(false);
     const [file, setFile] = useState('./');
     const [editedVideo, setEditedVideo] = useState('./')
+    const [editedAudio, setEditedAudio] = useState(null)
     const [progress, setProgress] = useState(0);
     const { currentUser } = useAuth();
     const [startTrim, setStartTrim] = useState(0);
@@ -32,11 +33,11 @@ export default function Dashboard() {
         let mins = Math.floor(seconds / 60 % 60);
         let secs = Math.floor(seconds % 60);
 
-        hours < 10 ? hours=`0${hours}` : hours=`${hours}`
-        mins < 10 ? mins=`0${mins}` : mins=`${mins}`
-        secs < 10 ? secs=`0${secs}` : secs=`${secs}`
+        hours < 10 ? hours = `0${hours}` : hours = `${hours}`
+        mins < 10 ? mins = `0${mins}` : mins = `${mins}`
+        secs < 10 ? secs = `0${secs}` : secs = `${secs}`
 
-        return `${hours}:${mins}:${secs}`    
+        return `${hours}:${mins}:${secs}`
     }
 
     const loadFfmpeg = async () => {
@@ -45,27 +46,34 @@ export default function Dashboard() {
     }
 
     const handleLoadedVideo = () => {
-        
+
         setDuration(player.getDuration())
     }
 
+
+    const splitAudioVideo = async () => {
+        if (ffmpegReady) {
+            // Write file to memory so webassemble can access it
+            ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(file));
+
+            // Run command
+            await ffmpeg.run('-i', 'video.mp4', '-q:a', '0', '-map', 'a', 'audio.mp3')
+
+            // Read result
+            const data = ffmpeg.FS('readFile', 'audio.mp3');
+
+            // Create URL
+            const audioUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'audio/mp3' }));
+            setEditedAudio(new Audio(audioUrl));
+            
+        }
+    }
 
     const trimVideo = async () => {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
 
-            /*let startHours = Math.floor(start / 3600);
-            let startMins = Math.floor(start / 60 % 60);
-            let startSecs = Math.floor(start % 60);
-            let startTime = `${startHours}:${startMins}:${startSecs}`
-     
-     
-            let endHours = Math.floor(end / 3600);
-            let endMins = Math.floor(end / 60 % 60);
-            let endSecs = Math.floor(end % 60);
-            let endTime = `${endHours}:${endMins}:${endSecs}`
-            */
             // Run trim command
             await ffmpeg.run('-i', 'test.mp4', '-ss', startTrim, '-to', endTrim, '-c:v', 'copy', '-c:a', 'copy', 'testOut.mp4');
 
@@ -213,7 +221,7 @@ export default function Dashboard() {
                     textAlign: 'center'
                 }}>
                     <Col>00:00:00</Col>
-                    <Col>{convertSecondsToTime(played*duration)}</Col>
+                    <Col>{convertSecondsToTime(played * duration)}</Col>
                     <Col>{convertSecondsToTime(duration)}</Col>
                 </Row>
                 <Row style={{
@@ -249,6 +257,13 @@ export default function Dashboard() {
                     <Col xs={{ span: 4 }} sm={{ span: 3 }}>
                         <Button className='trim-button' onClick={trimVideo}>Trim</Button>
                     </Col>
+                </Row>
+                <Row>
+                    <Col xs={{ span: 6, offset: 3 }}>
+                        <Button onClick={splitAudioVideo} className='trim-button'>Split Video/Audio</Button>
+                        
+                    </Col>
+
                 </Row>
             </Container>
         </>
