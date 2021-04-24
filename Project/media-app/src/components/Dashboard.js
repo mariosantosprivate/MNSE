@@ -11,7 +11,7 @@ const ffmpeg = createFFmpeg({ log: true })
 
 export default function Dashboard() {
 
-    const [url, setUrl] = useState('');
+    //const [url, setUrl] = useState('');
     const [ffmpegReady, setFfmpegReady] = useState(false);
     const [file, setFile] = useState('./');
     const [editedVideo, setEditedVideo] = useState('./')
@@ -21,14 +21,34 @@ export default function Dashboard() {
     const [endTrim, setEndTrim] = useState(0);
     const [uploadName, setUploadName] = useState('')
     const [uploadFile, setUploadFile] = useState(null)
-    const [seeking, setSeeking] = useState(false);
+    //const [seeking, setSeeking] = useState(false);
     const [played, setPlayed] = useState(0);
     const [player, setPlayer] = useState(null)
+    const [duration, setDuration] = useState(0)
+
+
+    const convertSecondsToTime = (seconds) => {
+        let hours = Math.floor(seconds / 3600);
+        let mins = Math.floor(seconds / 60 % 60);
+        let secs = Math.floor(seconds % 60);
+
+        hours < 10 ? hours=`0${hours}` : hours=`${hours}`
+        mins < 10 ? mins=`0${mins}` : mins=`${mins}`
+        secs < 10 ? secs=`0${secs}` : secs=`${secs}`
+
+        return `${hours}:${mins}:${secs}`    
+    }
 
     const loadFfmpeg = async () => {
         await ffmpeg.load();
         setFfmpegReady(true);
     }
+
+    const handleLoadedVideo = () => {
+        
+        setDuration(player.getDuration())
+    }
+
 
     const trimVideo = async () => {
         if (ffmpegReady) {
@@ -66,6 +86,7 @@ export default function Dashboard() {
         setFile(URL.createObjectURL(e.target.files?.item(0)));
         setUploadFile(e.target.files?.item(0));
         setEditedVideo(URL.createObjectURL(e.target.files?.item(0)))
+
     }
 
     const handleUpload = () => {
@@ -81,7 +102,9 @@ export default function Dashboard() {
             },
             error => {
                 console.log(error);
-            },
+            }
+            /** 
+            ,
             () => {
                 storage
                     .ref(`user/${currentUser.uid}`)
@@ -91,19 +114,16 @@ export default function Dashboard() {
                         setUrl(url)
                     })
             }
+            */
         )
     }
 
-    const handleSeekMouseDown = e => {
-        setSeeking(true)
-    }
 
     const handleSeekChange = e => {
         setPlayed(parseFloat(e.target.value))
     }
 
     const handleSeekMouseUp = e => {
-        setSeeking(false)
         player.seekTo(parseFloat(e.target.value))
     }
 
@@ -123,7 +143,7 @@ export default function Dashboard() {
                     <Card className='file-upload-card'>
                         <Card.Body>
                             <Row className='justify-content-center'>
-                                <input type='file' className='form-control' className='input-form' onChange={handleSelectFile} />
+                                <input type='file' className='input-form' onChange={handleSelectFile} />
                             </Row>
                             <ProgressBar animated now={progress} label={`${progress}%`} md="auto" />
                             <br></br>
@@ -167,6 +187,7 @@ export default function Dashboard() {
                                 ref={ref}
                                 className='react-player'
                                 url={editedVideo}
+                                onReady={handleLoadedVideo}
                                 controls={true}
                                 width='100%'
                                 height='100%'
@@ -179,14 +200,21 @@ export default function Dashboard() {
                         <input className='seek-bar'
                             type='range' min={0} max={0.999999} step='any'
                             value={played}
-                            onMouseDown={handleSeekMouseDown}
-                            onChange={handleSeekChange}                            
+                            //onMouseDown={handleSeekMouseDown}
+                            onChange={handleSeekChange}
                             onMouseUp={handleSeekMouseUp}
-                            onTouchStart={handleSeekMouseDown}   
+                            //onTouchStart={handleSeekMouseDown}   
                             onTouchMove={handleSeekChange}
                             onTouchEnd={handleSeekMouseUp}
                         />
                     </Col>
+                </Row>
+                <Row className='justify-content-center' style={{
+                    textAlign: 'center'
+                }}>
+                    <Col>00:00:00</Col>
+                    <Col>{convertSecondsToTime(played*duration)}</Col>
+                    <Col>{convertSecondsToTime(duration)}</Col>
                 </Row>
                 <Row style={{
                     'justifyContent': 'center',
