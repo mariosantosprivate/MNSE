@@ -1,0 +1,14 @@
+.video-button{
+    min-width:100%
+}
+
+.main-container {
+    min-width: 100%;
+    justify-content: center;
+}
+
+.file-upload-card{
+    max-width: fit-content;
+    margin-left: auto; 
+    margin-right: auto;
+}
