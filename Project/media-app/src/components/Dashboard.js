@@ -6,8 +6,10 @@ import { storage } from '../firebase';
 import { useAuth } from '../contexts/AuthContext';
 import MyNavbar from './MyNavbar';
 import '../styles/Dashboard.css';
+import { useHistory, useLocation } from "react-router-dom";
 
 const ffmpeg = createFFmpeg({ log: true })
+
 
 export default function Dashboard() {
 
@@ -26,17 +28,26 @@ export default function Dashboard() {
     const [player, setPlayer] = useState(null)
     const [duration, setDuration] = useState(0)
 
+    const location = useLocation();
+
+    useEffect(() => {
+       if(location.state){
+        setFile(location.state.detail); // result: 'some_value'
+        setEditedVideo(location.state.detail)
+       }
+        
+    }, [location]);
 
     const convertSecondsToTime = (seconds) => {
         let hours = Math.floor(seconds / 3600);
         let mins = Math.floor(seconds / 60 % 60);
         let secs = Math.floor(seconds % 60);
 
-        hours < 10 ? hours=`0${hours}` : hours=`${hours}`
-        mins < 10 ? mins=`0${mins}` : mins=`${mins}`
-        secs < 10 ? secs=`0${secs}` : secs=`${secs}`
+        hours < 10 ? hours = `0${hours}` : hours = `${hours}`
+        mins < 10 ? mins = `0${mins}` : mins = `${mins}`
+        secs < 10 ? secs = `0${secs}` : secs = `${secs}`
 
-        return `${hours}:${mins}:${secs}`    
+        return `${hours}:${mins}:${secs}`
     }
 
     const loadFfmpeg = async () => {
@@ -45,7 +56,7 @@ export default function Dashboard() {
     }
 
     const handleLoadedVideo = () => {
-        
+
         setDuration(player.getDuration())
     }
 
@@ -88,6 +99,9 @@ export default function Dashboard() {
         setEditedVideo(URL.createObjectURL(e.target.files?.item(0)))
 
     }
+
+
+    //console.log(history.location.state.detail)
 
     const handleUpload = () => {
         const uploadTask = storage.ref(`user/${currentUser.uid}/${uploadName}`).put(uploadFile);
@@ -213,7 +227,7 @@ export default function Dashboard() {
                     textAlign: 'center'
                 }}>
                     <Col>00:00:00</Col>
-                    <Col>{convertSecondsToTime(played*duration)}</Col>
+                    <Col>{convertSecondsToTime(played * duration)}</Col>
                     <Col>{convertSecondsToTime(duration)}</Col>
                 </Row>
                 <Row style={{
@@ -250,8 +264,8 @@ export default function Dashboard() {
                         <Button className='trim-button' onClick={trimVideo}>Trim</Button>
                     </Col>
                 </Row>
-            </Container>
-        </>
+                    </Container>
+                </>
     ) :
         (<p>Loading FFmpeg...</p>)
 
