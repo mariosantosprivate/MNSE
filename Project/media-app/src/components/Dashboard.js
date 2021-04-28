@@ -5,14 +5,14 @@ import '../styles/Dashboard.css'
 import { storage } from '../firebase'
 import { useAuth } from '../contexts/AuthContext'
 import ReactPlayer from 'react-player'
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 
 export default function Dashboard() {
     const [file, setFile] = useState(null);
     const [url, setUrl] = useState('');
     const [progress, setProgress] = useState(0);
     const { currentUser } = useAuth();
-    let history = useHistory()
+    //let history = useHistory()
     
     const handleChange = e => {
         if (e.target.files[0]) {
@@ -20,7 +20,8 @@ export default function Dashboard() {
         }
     }
 
-    console.log(history.location.state.detail)
+
+    //console.log(history.location.state.detail)
 
     const handleUpload = () => {
         const uploadTask = storage.ref(`user/${currentUser.uid}/${file.name}`).put(file);
@@ -48,6 +49,13 @@ export default function Dashboard() {
         )
     }
 
+    const location = useLocation();
+
+    useEffect(() => {
+       if(location.state)
+        setUrl(location.state.detail); // result: 'some_value'
+    }, [location]);
+
     return (
         <>
             <MyNavbar />
@@ -67,7 +75,8 @@ export default function Dashboard() {
                         <br></br>
                         <Row>
                             <ReactPlayer url={url} playing={true}/>
-                            <ReactPlayer url={history.location.state.detail} playing={true}/>
+                            {//<ReactPlayer url={history.location.state.detail} playing={true}/>
+                            }
                         </Row>
                     </Card.Body>
                 </Card>
