@@ -6,6 +6,7 @@ import { storage } from '../firebase';
 import { useAuth } from '../contexts/AuthContext';
 import MyNavbar from './MyNavbar';
 import '../styles/Dashboard.css';
+import { useHistory, useLocation } from "react-router-dom";
 
 const ffmpeg = createFFmpeg({ log: true })
 
@@ -26,6 +27,16 @@ export default function Dashboard() {
     const [played, setPlayed] = useState(0);
     const [player, setPlayer] = useState(null)
     const [duration, setDuration] = useState(0)
+
+    const location = useLocation();
+
+    useEffect(() => {
+       if(location.state){
+        setFile(location.state.detail); // result: 'some_value'
+        setEditedVideo(location.state.detail)
+       }
+        
+    }, [location]);
 
     const convertSecondsToTime = (seconds) => {
         let hours = Math.floor(seconds / 3600);
