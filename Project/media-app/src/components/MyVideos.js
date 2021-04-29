@@ -27,6 +27,7 @@ export default function MyVideos() {
 
 
     useEffect(() => {
+        console.log('UsingEffect')
         // Find all the prefixes and items.
         listRef.listAll()
             .then((res) => {
@@ -40,7 +41,7 @@ export default function MyVideos() {
                 // Uh-oh, an error occurred!
             });
 
-    });
+    },[]);
 
 
 
@@ -51,16 +52,18 @@ export default function MyVideos() {
             <Container fluid className='main-container justify-content-center text-center mt-2'>
                 <Card className='file-video-card'>
                     <Card.Body>
-                        {list.map((itemRef, index) => (
-                            <Row>
-                                <Col>
+                        <Row>
+                            {list.map((itemRef, index) => (
+
+                                <Col xs={{ span: 3 }} key={index}>
                                     <div key={index}>
                                         <Button key={index} className='video-button' variant='primary' onClick={() => navigateTo(itemRef)}>
-                                            </Button>
+                                        </Button>
                                     </div>
                                 </Col>
-                            </Row>
-                        ))}
+
+                            ))}
+                        </Row>
                     </Card.Body>
                 </Card>
             </Container>
