@@ -4,8 +4,6 @@ import MyNavbar from './MyNavbar'
 import '../styles/MyVideos.css'
 import { storage } from '../firebase'
 import { useAuth } from '../contexts/AuthContext'
-import { useHistory } from "react-router-dom";
-import ReactPlayer from 'react-player'
 
 export default function MyVideos() {
 
@@ -13,17 +11,8 @@ export default function MyVideos() {
     const [list, setList] = useState([])
     // Create a reference under which you want to list
     var listRef = storage.ref(`user/${currentUser.uid}`)
-    const history = useHistory();
     const [url, setUrl] = useState('');
-    var num = 1
-    function navigateTo(navurl) {
-        console.log(navurl);
-        history.push({
-            pathname: '/',
-            state: { detail: navurl }
-        })
-        console.log(navurl);
-    }
+
 
 
     useEffect(() => {
@@ -34,6 +23,7 @@ export default function MyVideos() {
                 var list2 = []
                 res.items.forEach((itemRef) => {
                     itemRef.getDownloadURL().then((url) => setUrl(url))
+                    console.log(itemRef.getMetadata())
                     list2.push(url)
                 });
                 setList(list2)
@@ -41,7 +31,7 @@ export default function MyVideos() {
                 // Uh-oh, an error occurred!
             });
 
-    },[]);
+    }, []);
 
 
 
@@ -57,7 +47,11 @@ export default function MyVideos() {
 
                                 <Col xs={{ span: 3 }} key={index}>
                                     <div key={index}>
-                                        <Button key={index} className='video-button' variant='primary' onClick={() => navigateTo(itemRef)}>
+                                        <Button key={index} className='video-button' variant='primary'
+                                            href={itemRef}
+                                            download={'video.mp4'}
+                                        >
+                                            {itemRef}
                                         </Button>
                                     </div>
                                 </Col>
