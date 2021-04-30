@@ -57,6 +57,7 @@ export default function MyVideos() {
                                 <Col xs={{ span: 4 }} key={index}>
                                     <div key={index}>
                                         <Button key={index} className='video-button' variant='primary' onClick={() => navigateTo(itemRef)}>
+                                        <ReactPlayer className='video-play' url={itemRef} playing={false} width='100%' height='100%'/>
                                         </Button>
                                     </div>
                                 </Col>
