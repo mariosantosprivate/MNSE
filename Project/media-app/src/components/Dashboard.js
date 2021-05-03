@@ -93,6 +93,111 @@ export default function Dashboard() {
 
     }
 
+    const contrastVideo = async () => {
+        if (ffmpegReady) {
+            // Write file to memory so webassemble can access it
+            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
+            
+            // Run trim command
+            await ffmpeg.run('-i', 'test.mp4', '-ss', startTrim, '-to', endTrim, '-c:v', 'copy', '-c:a', 'copy', 'testOut.mp4');
+
+            // Read result
+            const data = ffmpeg.FS('readFile', 'testOut.mp4');
+
+            // Update upload file
+            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+
+            // Create URL
+            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+            setEditedVideo(editedVideoUrl)
+        }
+
+    }
+
+    const brightnessVideo = async () => {
+        if (ffmpegReady) {
+            // Write file to memory so webassemble can access it
+            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
+            
+            // Run trim command
+            await ffmpeg.run('-i', 'test.mp4', '-vf', 'eq=brightness=0.0:saturation=0', '-c:a', 'copy', 'testOut.mp4');
+
+            // Read result
+            const data = ffmpeg.FS('readFile', 'testOut.mp4');
+
+            // Update upload file
+            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+
+            // Create URL
+            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+            setEditedVideo(editedVideoUrl)
+        }
+
+    }
+
+    const saturationVideo = async () => {
+        if (ffmpegReady) {
+            // Write file to memory so webassemble can access it
+            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
+
+            // Run trim command
+            await ffmpeg.run('-i', 'test.mp4', '-ss', startTrim, '-to', endTrim, '-c:v', 'copy', '-c:a', 'copy', 'testOut.mp4');
+
+            // Read result
+            const data = ffmpeg.FS('readFile', 'testOut.mp4');
+
+            // Update upload file
+            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+
+            // Create URL
+            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+            setEditedVideo(editedVideoUrl)
+        }
+
+    }
+
+    const sharpnessVideo = async () => {
+        if (ffmpegReady) {
+            // Write file to memory so webassemble can access it
+            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
+
+            // Run trim command
+            await ffmpeg.run('-i', 'test.mp4', '-ss', startTrim, '-to', endTrim, '-c:v', 'copy', '-c:a', 'copy', 'testOut.mp4');
+
+            // Read result
+            const data = ffmpeg.FS('readFile', 'testOut.mp4');
+
+            // Update upload file
+            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+
+            // Create URL
+            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+            setEditedVideo(editedVideoUrl)
+        }
+
+    }
+
+    const colourVideo = async () => {
+        if (ffmpegReady) {
+            // Write file to memory so webassemble can access it
+            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
+
+            // Run trim command
+            await ffmpeg.run('-i', 'test.mp4', '-ss', startTrim, '-to', endTrim, '-c:v', 'copy', '-c:a', 'copy', 'testOut.mp4');
+
+            // Read result
+            const data = ffmpeg.FS('readFile', 'testOut.mp4');
+
+            // Update upload file
+            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+
+            // Create URL
+            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+            setEditedVideo(editedVideoUrl)
+        }
+
+    }
+
     const handleSelectFile = e => {
         setFile(URL.createObjectURL(e.target.files?.item(0)));
         setUploadFile(e.target.files?.item(0));
@@ -260,8 +365,28 @@ export default function Dashboard() {
                             />
                         </InputGroup>
                     </Col>
+                </Row>
+                <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center'
+                }}>
                     <Col xs={{ span: 4 }} sm={{ span: 3 }}>
                         <Button className='trim-button' onClick={trimVideo}>Trim</Button>
+                    </Col>
+                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
+                        <Button className='trim-button' onClick={contrastVideo}>Contrast</Button>
+                    </Col>
+                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
+                        <Button className='trim-button' onClick={brightnessVideo}>Brightness</Button>
+                    </Col>
+                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
+                        <Button className='trim-button' onClick={saturationVideo}>Saturation</Button>
+                    </Col>
+                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
+                        <Button className='trim-button' onClick={sharpnessVideo}>Sharpness</Button>
+                    </Col>
+                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
+                        <Button className='trim-button' onClick={colourVideo}>Colour</Button>
                     </Col>
                 </Row>
                     </Container>
