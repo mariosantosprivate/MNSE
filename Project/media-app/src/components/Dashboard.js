@@ -59,24 +59,33 @@ export default function Dashboard() {
 
         setDuration(player.getDuration())
     }
+    const brightnessVideo = async () => {
+        if (ffmpegReady) {
+            // Write file to memory so webassemble can access it
+            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
+            
+            // Run trim command
+            await ffmpeg.run('-i', 'test.mp4', '-vf', 'eq=brightness=-1.0','-c:a', 'copy', 'testOut.mp4');
 
+            // Read result
+            const data = ffmpeg.FS('readFile', 'testOut.mp4');
+
+            // Update upload file
+            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+
+            // Create URL
+            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+            setEditedVideo(editedVideoUrl)
+        }
+
+    }
 
     const trimVideo = async () => {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
 
-            /*let startHours = Math.floor(start / 3600);
-            let startMins = Math.floor(start / 60 % 60);
-            let startSecs = Math.floor(start % 60);
-            let startTime = `${startHours}:${startMins}:${startSecs}`
-     
-     
-            let endHours = Math.floor(end / 3600);
-            let endMins = Math.floor(end / 60 % 60);
-            let endSecs = Math.floor(end % 60);
-            let endTime = `${endHours}:${endMins}:${endSecs}`
-            */
+
             // Run trim command
             await ffmpeg.run('-i', 'test.mp4', '-ss', startTrim, '-to', endTrim, '-c:v', 'copy', '-c:a', 'copy', 'testOut.mp4');
 
@@ -114,26 +123,7 @@ export default function Dashboard() {
 
     }
 
-    const brightnessVideo = async () => {
-        if (ffmpegReady) {
-            // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
-            
-            // Run trim command
-            await ffmpeg.run('-i', 'test.mp4', '-vf', 'eq=brightness=0.0:saturation=0', '-c:a', 'copy', 'testOut.mp4');
 
-            // Read result
-            const data = ffmpeg.FS('readFile', 'testOut.mp4');
-
-            // Update upload file
-            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-            // Create URL
-            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-            setEditedVideo(editedVideoUrl)
-        }
-
-    }
 
     const saturationVideo = async () => {
         if (ffmpegReady) {
