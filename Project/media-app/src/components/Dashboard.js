@@ -7,6 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 import MyNavbar from './MyNavbar';
 import '../styles/Dashboard.css';
 import { useHistory, useLocation } from "react-router-dom";
+import RangeSlider from 'react-bootstrap-range-slider';
 
 const ffmpeg = createFFmpeg({ log: true })
 
@@ -27,12 +28,31 @@ export default function Dashboard() {
     const [played, setPlayed] = useState(0);
     const [player, setPlayer] = useState(null)
     const [duration, setDuration] = useState(0)
+    const [ brightness, setBrightness] = useState(0)
+    const [ contrast, setContrast] = useState(1)
+    const [ saturation, setSaturation] = useState(1)
+    const [ lumax, setLumax] = useState(5)
+    const [ lumay, setLumay] = useState(5)
+    const [ lumaAmount, setLumaAmount] = useState(1)
+    const [ chromax, setChromax] = useState(5)
+    const [ chromay, setChromay] = useState(5)
+    const [ chromaAmount, setchromaAmount] = useState(0)
+    const [ lumaRadius, setLumaRadius] = useState(1)
+    const [ lumaStrength, setLumaStrength] = useState(1)
+    const [ lumaThreshold, setLumaThreshold] = useState(0)
+    const [ chromaRadius, setChromaRadius] = useState(1)
+    const [ chromaStrength, setChromaStrength] = useState(1)
+    const [ chromaThreshold, setchromaThreshold] = useState(0)
+    const [ hue, setHue] = useState(0)
+    const [ hueSaturation, setHueSaturation] = useState(1)
+    const [ hueBrightness, setHueBrightness] = useState(0)
+    const [ gamma, setGamma] = useState(1)
 
     const location = useLocation();
 
     useEffect(() => {
        if(location.state){
-        setFile(location.state.detail); // result: 'some_value'
+        setFile(location.state.detail); // rSesult: 'some_value'
         setEditedVideo(location.state.detail)
        }
         
@@ -63,9 +83,8 @@ export default function Dashboard() {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
-            
             // Run trim command
-            await ffmpeg.run('-i', 'test.mp4', '-vf', 'eq=brightness=-1.0','-c:a', 'copy', 'testOut.mp4');
+            await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=brightness=${brightness}`,'-c:a', 'copy', 'testOut.mp4');
 
             // Read result
             const data = ffmpeg.FS('readFile', 'testOut.mp4');
@@ -108,7 +127,7 @@ export default function Dashboard() {
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
             
             // Run trim command
-            await ffmpeg.run('-i', 'test.mp4', '-ss', startTrim, '-to', endTrim, '-c:v', 'copy', '-c:a', 'copy', 'testOut.mp4');
+            await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=contrast=${contrast}`,'-c:a', 'copy', 'testOut.mp4');
 
             // Read result
             const data = ffmpeg.FS('readFile', 'testOut.mp4');
@@ -123,15 +142,34 @@ export default function Dashboard() {
 
     }
 
-
-
     const saturationVideo = async () => {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
 
             // Run trim command
-            await ffmpeg.run('-i', 'test.mp4', '-ss', startTrim, '-to', endTrim, '-c:v', 'copy', '-c:a', 'copy', 'testOut.mp4');
+            await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=saturation=${saturation}`,'-c:a', 'copy', 'testOut.mp4');
+
+            // Read result
+            const data = ffmpeg.FS('readFile', 'testOut.mp4');
+
+            // Update upload file
+            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+
+            // Create URL
+            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+            setEditedVideo(editedVideoUrl)
+        }
+
+    }
+
+    const gammaVideo = async () => {
+        if (ffmpegReady) {
+            // Write file to memory so webassemble can access it
+            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
+
+            // Run trim command
+            await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=gamma=${gamma}`,'-c:a', 'copy', 'testOut.mp4');
 
             // Read result
             const data = ffmpeg.FS('readFile', 'testOut.mp4');
@@ -152,7 +190,28 @@ export default function Dashboard() {
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
 
             // Run trim command
-            await ffmpeg.run('-i', 'test.mp4', '-ss', startTrim, '-to', endTrim, '-c:v', 'copy', '-c:a', 'copy', 'testOut.mp4');
+            await ffmpeg.run('-i', 'test.mp4', '-vf', `unsharp=${lumax}:${lumay}:${lumaAmount}:${chromax}:${chromay}:${chromaAmount}`,'-c:a', 'copy', 'testOut.mp4');
+
+            // Read result
+            const data = ffmpeg.FS('readFile', 'testOut.mp4');
+
+            // Update upload file
+            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+
+            // Create URL
+            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+            setEditedVideo(editedVideoUrl)
+        }
+
+    }
+
+    const BlurVideo = async () => {
+        if (ffmpegReady) {
+            // Write file to memory so webassemble can access it
+            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
+
+            // Run trim command
+            await ffmpeg.run('-i', 'test.mp4', '-vf', `smartblur=${lumaRadius}:${lumaStrength}:${lumaThreshold}:${chromaRadius}:${chromaStrength}:${chromaThreshold}`,'-c:a', 'copy', 'testOut.mp4');
 
             // Read result
             const data = ffmpeg.FS('readFile', 'testOut.mp4');
@@ -173,7 +232,7 @@ export default function Dashboard() {
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
 
             // Run trim command
-            await ffmpeg.run('-i', 'test.mp4', '-ss', startTrim, '-to', endTrim, '-c:v', 'copy', '-c:a', 'copy', 'testOut.mp4');
+            await ffmpeg.run('-i', 'test.mp4', '-vf', `hue=h=${hue}:s=${hueSaturation}:b=${hueBrightness}`,'-c:a', 'copy', 'testOut.mp4');
 
             // Read result
             const data = ffmpeg.FS('readFile', 'testOut.mp4');
@@ -355,25 +414,252 @@ export default function Dashboard() {
                             />
                         </InputGroup>
                     </Col>
+                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
+                        <Button className='trim-button' onClick={trimVideo}>Trim</Button>
+                    </Col>
                 </Row>
                 <Row style={{
                     'justifyContent': 'center',
                     'textAlign': 'center'
                 }}>
-                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
-                        <Button className='trim-button' onClick={trimVideo}>Trim</Button>
-                    </Col>
-                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
-                        <Button className='trim-button' onClick={contrastVideo}>Contrast</Button>
+                    <Col xs={{ span: 10, offset: 1 }} sm={{ span: 8, offset: 2 }} className='seeker-wrapper'>
+                    <RangeSlider
+                        min={-1.0}
+                        max={1.0}
+                        step={0.1}
+                        value={brightness}
+                        onChange={changeEvent => setBrightness(changeEvent.target.value)}
+                        />
                     </Col>
                     <Col xs={{ span: 4 }} sm={{ span: 3 }}>
                         <Button className='trim-button' onClick={brightnessVideo}>Brightness</Button>
                     </Col>
+                </Row>
+                <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center'
+                }}>
+                    <Col xs={{ span: 10, offset: 1 }} sm={{ span: 8, offset: 2 }} className='seeker-wrapper'>
+                    <RangeSlider
+                        min={-1000.0}
+                        max={1000.0}
+                        step={0.1}
+                        value={contrast}
+                        onChange={changeEvent => setContrast(changeEvent.target.value)}
+                        />
+                    </Col>
+                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
+                        <Button className='trim-button' onClick={contrastVideo}>Contrast</Button>
+                    </Col>
+                </Row>
+                <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center'
+                }}>
+                    <Col xs={{ span: 10, offset: 1 }} sm={{ span: 8, offset: 2 }} className='seeker-wrapper'>
+                    <RangeSlider
+                        min={0.0}
+                        max={3.0}
+                        step={0.1}
+                        value={saturation}
+                        onChange={changeEvent => setSaturation(changeEvent.target.value)}
+                        />
+                    </Col>
                     <Col xs={{ span: 4 }} sm={{ span: 3 }}>
                         <Button className='trim-button' onClick={saturationVideo}>Saturation</Button>
                     </Col>
+                </Row>
+                <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center'
+                }}>
+                    <Col xs={{ span: 10, offset: 1 }} sm={{ span: 8, offset: 2 }} className='seeker-wrapper'>
+                    <RangeSlider
+                        min={0.1}
+                        max={10.0}
+                        step={0.1}
+                        value={gamma}
+                        onChange={changeEvent => setGamma(changeEvent.target.value)}
+                        />
+                    </Col>
+                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
+                        <Button className='trim-button' onClick={gammaVideo}>Gamma</Button>
+                    </Col>
+                </Row>
+                <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center'
+                }}>
+                    {/*luma*/}
+                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    <RangeSlider
+                        min={3.0}
+                        max={23.0}
+                        step={2}
+                        value={lumax}
+                        onChange={changeEvent => setLumax(changeEvent.target.value)}
+                        />
+                    </Col>
+                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
+                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    <RangeSlider
+                        min={3.0}
+                        max={23.0}
+                        step={2}
+                        value={lumay}
+                        onChange={changeEvent => setLumay(changeEvent.target.value)}
+                        />
+                    </Col>
+                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
+                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    <RangeSlider
+                        min={-1.5}
+                        max={1.5}
+                        step={0.1}
+                        value={lumaAmount}
+                        onChange={changeEvent => setLumaAmount(changeEvent.target.value)}
+                        />
+                    </Col>
+                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
+                    {/*chroma*/}
+                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    <RangeSlider
+                        min={3.0}
+                        max={23.0}
+                        step={2}
+                        value={chromax}
+                        onChange={changeEvent => setChromax(changeEvent.target.value)}
+                        />
+                    </Col>
+                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
+                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    <RangeSlider
+                        min={3.0}
+                        max={23.0}
+                        step={2}
+                        value={chromay}
+                        onChange={changeEvent => setChromay(changeEvent.target.value)}
+                        />
+                    </Col>
+                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
+                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    <RangeSlider
+                        min={-1.5}
+                        max={1.5}
+                        step={0.1}
+                        value={chromaAmount}
+                        onChange={changeEvent => setchromaAmount(changeEvent.target.value)}
+                        />
+                    </Col>
+                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
                     <Col xs={{ span: 4 }} sm={{ span: 3 }}>
                         <Button className='trim-button' onClick={sharpnessVideo}>Sharpness</Button>
+                    </Col>
+                </Row>
+                <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center'
+                }}>
+                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
+                    {/*luma*/}
+                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    <RangeSlider
+                        min={0.1}
+                        max={5.0}
+                        step={0.1}
+                        value={lumaRadius}
+                        onChange={changeEvent => setLumaRadius(changeEvent.target.value)}
+                        />
+                    </Col>
+                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
+                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    <RangeSlider
+                        min={-1.0}
+                        max={1.0}
+                        step={0.1}
+                        value={lumaStrength}
+                        onChange={changeEvent => setLumaStrength(changeEvent.target.value)}
+                        />
+                    </Col>
+                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
+                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    <RangeSlider
+                        min={-30}
+                        max={30}
+                        step={1}
+                        value={lumaThreshold}
+                        onChange={changeEvent => setLumaThreshold(changeEvent.target.value)}
+                        />
+                    </Col>
+                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
+                    {/*chroma*/}
+                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    <RangeSlider
+                        min={0.1}
+                        max={5.0}
+                        step={0.1}
+                        value={chromaRadius}
+                        onChange={changeEvent => setChromaRadius(changeEvent.target.value)}
+                        />
+                    </Col>
+                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
+                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    <RangeSlider
+                        min={-1.0}
+                        max={1.0}
+                        step={0.1}
+                        value={chromaStrength}
+                        onChange={changeEvent => setChromaStrength(changeEvent.target.value)}
+                        />
+                    </Col>
+                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
+                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    <RangeSlider
+                        min={-30}
+                        max={30}
+                        step={1}
+                        value={chromaThreshold}
+                        onChange={changeEvent => setchromaThreshold(changeEvent.target.value)}
+                        />
+                    </Col>
+                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
+                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
+                        <Button className='trim-button' onClick={BlurVideo}>Blur</Button>
+                    </Col>
+                </Row>
+                <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center'
+                }}>
+                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
+                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    <RangeSlider
+                        min={0.0}
+                        max={360.0}
+                        step={1}
+                        value={hue}
+                        onChange={changeEvent => setHue(changeEvent.target.value)}
+                        />
+                    </Col>
+                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
+                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    <RangeSlider
+                        min={-10.0}
+                        max={10.0}
+                        step={0.1}
+                        value={hueSaturation}
+                        onChange={changeEvent => setHueSaturation(changeEvent.target.value)}
+                        />
+                    </Col>
+                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
+                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    <RangeSlider
+                        min={-10.0}
+                        max={10.0}
+                        step={0.1}
+                        value={hueBrightness}
+                        onChange={changeEvent => setHueBrightness(changeEvent.target.value)}
+                        />
                     </Col>
                     <Col xs={{ span: 4 }} sm={{ span: 3 }}>
                         <Button className='trim-button' onClick={colourVideo}>Colour</Button>
