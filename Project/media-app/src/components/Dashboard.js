@@ -494,7 +494,7 @@ export default function Dashboard() {
                     <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
                     <RangeSlider
                         min={3.0}
-                        max={23.0}
+                        max={19.0}
                         step={2}
                         value={lumax}
                         onChange={changeEvent => setLumax(changeEvent.target.value)}
@@ -504,7 +504,7 @@ export default function Dashboard() {
                     <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
                     <RangeSlider
                         min={3.0}
-                        max={23.0}
+                        max={7.0}
                         step={2}
                         value={lumay}
                         onChange={changeEvent => setLumay(changeEvent.target.value)}
