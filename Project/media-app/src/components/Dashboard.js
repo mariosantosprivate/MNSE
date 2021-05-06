@@ -8,6 +8,7 @@ import MyNavbar from './MyNavbar';
 import '../styles/Dashboard.css';
 import { useHistory, useLocation } from "react-router-dom";
 import RangeSlider from 'react-bootstrap-range-slider';
+import { Icon, Label } from 'semantic-ui-react'
 
 const ffmpeg = createFFmpeg({ log: true })
 
@@ -313,6 +314,8 @@ export default function Dashboard() {
                             <Row className='justify-content-center'>
                                 <input type='file' className='input-form' onChange={handleSelectFile} />
                             </Row>
+                            <Row>
+                            </Row>
                             <ProgressBar animated now={progress} label={`${progress}%`} md="auto" />
                             <br></br>
                             <Row>
@@ -336,7 +339,8 @@ export default function Dashboard() {
                         </Card.Body>
                     </Card>
                 </Row>
-
+                <Row>
+                </Row>
                 <Row >
                     <Col xs={{ span: 10, offset: 1 }} sm={{ span: 6, offset: 0 }}>
                         <div className='player-wrapper'>
@@ -386,7 +390,8 @@ export default function Dashboard() {
                 </Row>
                 <Row style={{
                     'justifyContent': 'center',
-                    'textAlign': 'center'
+                    'textAlign': 'center',
+                    'padding': '1%'
                 }}>
                     <Col xs={{ span: 4 }} sm={{ span: 3 }}>
                         <InputGroup>
@@ -420,9 +425,10 @@ export default function Dashboard() {
                 </Row>
                 <Row style={{
                     'justifyContent': 'center',
-                    'textAlign': 'center'
+                    'textAlign': 'center',
+                    'padding': '1%'
                 }}>
-                    <Col xs={{ span: 10, offset: 1 }} sm={{ span: 8, offset: 2 }} className='seeker-wrapper'>
+                    <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
                     <RangeSlider
                         min={-1.0}
                         max={1.0}
@@ -437,9 +443,10 @@ export default function Dashboard() {
                 </Row>
                 <Row style={{
                     'justifyContent': 'center',
-                    'textAlign': 'center'
+                    'textAlign': 'center',
+                    'padding': '1%'
                 }}>
-                    <Col xs={{ span: 10, offset: 1 }} sm={{ span: 8, offset: 2 }} className='seeker-wrapper'>
+                    <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
                     <RangeSlider
                         min={-1000.0}
                         max={1000.0}
@@ -454,9 +461,10 @@ export default function Dashboard() {
                 </Row>
                 <Row style={{
                     'justifyContent': 'center',
-                    'textAlign': 'center'
+                    'textAlign': 'center',
+                    'padding': '1%'
                 }}>
-                    <Col xs={{ span: 10, offset: 1 }} sm={{ span: 8, offset: 2 }} className='seeker-wrapper'>
+                    <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
                     <RangeSlider
                         min={0.0}
                         max={3.0}
@@ -471,9 +479,10 @@ export default function Dashboard() {
                 </Row>
                 <Row style={{
                     'justifyContent': 'center',
-                    'textAlign': 'center'
+                    'textAlign': 'center',
+                    'padding': '1%'
                 }}>
-                    <Col xs={{ span: 10, offset: 1 }} sm={{ span: 8, offset: 2 }} className='seeker-wrapper'>
+                    <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
                     <RangeSlider
                         min={0.1}
                         max={10.0}
@@ -488,10 +497,15 @@ export default function Dashboard() {
                 </Row>
                 <Row style={{
                     'justifyContent': 'center',
-                    'textAlign': 'center'
+                    'textAlign': 'center',
+                    'padding': '1%'
                 }}>
-                    {/*luma*/}
-                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    <Col xs={{ span: 4, offset: 1 }} sm={{ span: 2, offset: 2 }} className='seeker-wrapperCol'>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                    }}>
                     <RangeSlider
                         min={3.0}
                         max={19.0}
@@ -499,9 +513,21 @@ export default function Dashboard() {
                         value={lumax}
                         onChange={changeEvent => setLumax(changeEvent.target.value)}
                         />
-                    </Col>
-                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
-                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                    }}>
+                    <Label color='gray'>
+                        Luma X
+                    </Label>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                    }}>
                     <RangeSlider
                         min={3.0}
                         max={7.0}
@@ -509,9 +535,21 @@ export default function Dashboard() {
                         value={lumay}
                         onChange={changeEvent => setLumay(changeEvent.target.value)}
                         />
-                    </Col>
-                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
-                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                    }}>
+                    <Label color='gray'>
+                        Luma Y
+                    </Label>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                    }}>
                     <RangeSlider
                         min={-1.5}
                         max={1.5}
@@ -519,10 +557,21 @@ export default function Dashboard() {
                         value={lumaAmount}
                         onChange={changeEvent => setLumaAmount(changeEvent.target.value)}
                         />
-                    </Col>
-                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
-                    {/*chroma*/}
-                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                    }}>
+                    <Label color='gray'>
+                        Luma Amount
+                    </Label>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                    }}>
                     <RangeSlider
                         min={3.0}
                         max={23.0}
@@ -530,9 +579,21 @@ export default function Dashboard() {
                         value={chromax}
                         onChange={changeEvent => setChromax(changeEvent.target.value)}
                         />
-                    </Col>
-                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
-                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                    }}>
+                    <Label color='gray'>
+                        Chroma X
+                    </Label>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                    }}>
                     <RangeSlider
                         min={3.0}
                         max={23.0}
@@ -540,9 +601,21 @@ export default function Dashboard() {
                         value={chromay}
                         onChange={changeEvent => setChromay(changeEvent.target.value)}
                         />
-                    </Col>
-                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
-                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                    }}>
+                    <Label color='gray'>
+                        Chroma Y
+                    </Label>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                    }}>
                     <RangeSlider
                         min={-1.5}
                         max={1.5}
@@ -550,19 +623,30 @@ export default function Dashboard() {
                         value={chromaAmount}
                         onChange={changeEvent => setchromaAmount(changeEvent.target.value)}
                         />
-                    </Col>
-                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
-                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
-                        <Button className='trim-button' onClick={sharpnessVideo}>Sharpness</Button>
-                    </Col>
-                </Row>
-                <Row style={{
+                    </Row>
+                    <Row style={{
                     'justifyContent': 'center',
-                    'textAlign': 'center'
+                    'textAlign': 'center',
+                    'padding': '1%'
+                    }}>
+                    <Label color='gray'>
+                        Chroma Amount
+                    </Label>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '7%'
+                    }}>
+                        <Button className='trim-button' onClick={sharpnessVideo}>Sharpness</Button>
+                    </Row>
+                </Col>
+                <Col xs={{ span: 4, offset: 1 }} sm={{ span: 2, offset: 2 }} className='seeker-wrapperCol'>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
                 }}>
-                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
-                    {/*luma*/}
-                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
                     <RangeSlider
                         min={0.1}
                         max={5.0}
@@ -570,9 +654,21 @@ export default function Dashboard() {
                         value={lumaRadius}
                         onChange={changeEvent => setLumaRadius(changeEvent.target.value)}
                         />
-                    </Col>
-                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
-                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                }}>
+                    <Label color='gray'>
+                        Luma Radius
+                    </Label>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                }}>
                     <RangeSlider
                         min={-1.0}
                         max={1.0}
@@ -580,9 +676,21 @@ export default function Dashboard() {
                         value={lumaStrength}
                         onChange={changeEvent => setLumaStrength(changeEvent.target.value)}
                         />
-                    </Col>
-                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
-                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                }}>
+                    <Label color='gray'>
+                        Luma Strenght
+                    </Label>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                }}>
                     <RangeSlider
                         min={-30}
                         max={30}
@@ -590,10 +698,21 @@ export default function Dashboard() {
                         value={lumaThreshold}
                         onChange={changeEvent => setLumaThreshold(changeEvent.target.value)}
                         />
-                    </Col>
-                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
-                    {/*chroma*/}
-                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                }}>
+                    <Label color='gray'>
+                        Luma Threshold
+                    </Label>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                }}>
                     <RangeSlider
                         min={0.1}
                         max={5.0}
@@ -601,9 +720,21 @@ export default function Dashboard() {
                         value={chromaRadius}
                         onChange={changeEvent => setChromaRadius(changeEvent.target.value)}
                         />
-                    </Col>
-                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
-                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                }}>
+                    <Label color='gray'>
+                        Chroma Strenght
+                    </Label>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                }}>
                     <RangeSlider
                         min={-1.0}
                         max={1.0}
@@ -611,9 +742,21 @@ export default function Dashboard() {
                         value={chromaStrength}
                         onChange={changeEvent => setChromaStrength(changeEvent.target.value)}
                         />
-                    </Col>
-                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
-                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                }}>
+                    <Label color='gray'>
+                        Chroma Strenght
+                    </Label>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                }}>
                     <RangeSlider
                         min={-30}
                         max={30}
@@ -621,18 +764,30 @@ export default function Dashboard() {
                         value={chromaThreshold}
                         onChange={changeEvent => setchromaThreshold(changeEvent.target.value)}
                         />
-                    </Col>
-                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
-                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
-                        <Button className='trim-button' onClick={BlurVideo}>Blur</Button>
-                    </Col>
-                </Row>
-                <Row style={{
+                   </Row>
+                   <Row style={{
                     'justifyContent': 'center',
-                    'textAlign': 'center'
+                    'textAlign': 'center',
+                    'padding': '1%'
                 }}>
-                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
-                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    <Label color='gray'>
+                        Chroma Threshold
+                    </Label>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '7%'
+                }}>
+                        <Button className='trim-button' onClick={BlurVideo}>Blur</Button>    
+                    </Row>
+                </Col>
+                <Col xs={{ span: 4, offset: 1 }} sm={{ span: 2, offset: 2 }} className='seeker-wrapperCol'> 
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                }}>
                     <RangeSlider
                         min={0.0}
                         max={360.0}
@@ -640,9 +795,21 @@ export default function Dashboard() {
                         value={hue}
                         onChange={changeEvent => setHue(changeEvent.target.value)}
                         />
-                    </Col>
-                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
-                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                }}>                
+                    <Label color='gray'>
+                        Hue Colors
+                    </Label>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                }}>
                     <RangeSlider
                         min={-10.0}
                         max={10.0}
@@ -650,9 +817,21 @@ export default function Dashboard() {
                         value={hueSaturation}
                         onChange={changeEvent => setHueSaturation(changeEvent.target.value)}
                         />
-                    </Col>
-                    <Col xs={{ span: 1, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'></Col>
-                    <Col xs={{ span: 2, offset: 1 }} sm={{ span: 1, offset: 2 }} className='seeker-wrapper'>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                }}>
+                    <Label color='gray'>
+                        Color Saturation
+                    </Label>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                }}>
                     <RangeSlider
                         min={-10.0}
                         max={10.0}
@@ -660,10 +839,24 @@ export default function Dashboard() {
                         value={hueBrightness}
                         onChange={changeEvent => setHueBrightness(changeEvent.target.value)}
                         />
-                    </Col>
-                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
+                                        </Row>
+                                        <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '1%'
+                }}>
+                    <Label color='gray'>
+                        Color Brightness
+                    </Label>
+                    </Row>
+                    <Row style={{
+                    'justifyContent': 'center',
+                    'textAlign': 'center',
+                    'padding': '7%'
+                }}>
                         <Button className='trim-button' onClick={colourVideo}>Colour</Button>
-                    </Col>
+                    </Row>
+                </Col>
                 </Row>
                     </Container>
                 </>

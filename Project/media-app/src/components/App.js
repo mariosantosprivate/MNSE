@@ -9,6 +9,7 @@ import PrivateRoute from './PrivateRoute'
 import ForgotPassword from './ForgotPassword'
 import UpdateProfile from './UpdateProfile'
 import MyVideos from './MyVideos'
+import 'semantic-ui-css/semantic.min.css'
 function App() {
     return (
 

@@ -41,11 +41,6 @@ export default function MyVideos() {
         console.log(navurl);
     }
 
-
-
-
-
-
     return (
         <>
             <MyNavbar />
@@ -54,7 +49,7 @@ export default function MyVideos() {
                     <Card.Body>
                         <Row>
                             {videoUrls.map((itemRef, index) => (
-                                <Col xs={{ span: 4 }} key={index}>
+                                <Col xs={{ span: 4 }} key={index} className='video-col'>
                                     <div key={index}>
                                         <Button key={index} className='video-button' variant='primary' onClick={() => navigateTo(itemRef)}>
                                         <ReactPlayer className='video-play' url={itemRef} playing={false} width='100%' height='100%'/>
