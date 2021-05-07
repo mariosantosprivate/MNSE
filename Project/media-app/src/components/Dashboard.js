@@ -343,6 +343,18 @@ export default function Dashboard() {
                 </Row>
                 <Row className='major-row'>
                     <Col xs={{ span: 10, offset: 1 }}>
+                        <Card bg='dark' border="warning" style={{ color: '#ffc107' }}>
+                            <Card.Header>Warning</Card.Header>
+                            <Card.Body>
+                                <Card.Text>
+                                    If you were directed to this page after selecting a video from 'Videos' please right-click on the '...' in the 'Original' video player, download the video, and then upload it to allow editing.
+                            </Card.Text>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                </Row>
+                <Row className='major-row'>
+                    <Col xs={{ span: 10, offset: 1 }}>
                         <Row>
                             <Col xs={{ span: 12 }} sm={{ span: 6 }}>
                                 <Card bg='dark' text='white'>
