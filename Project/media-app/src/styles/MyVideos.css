@@ -1,5 +1,7 @@
-.video-button{
-    min-width: 100%;
+.video-col{
+    padding: 0.1% !important;
+    margin: 0.1% !important;
+    align-items: center;
 }
 
 .main-container {

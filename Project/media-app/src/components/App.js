@@ -9,12 +9,13 @@ import PrivateRoute from './PrivateRoute'
 import ForgotPassword from './ForgotPassword'
 import UpdateProfile from './UpdateProfile'
 import MyVideos from './MyVideos'
+import 'semantic-ui-css/semantic.min.css'
 function App() {
     return (
 
         <Container fluid
             className='d-flex align-items-center justify-content-center'
-            style={{ minHeight: "100vh", minWidth: "100vw", overflowX: '-moz-hidden-unscrollable' }}
+            style={{ minHeight: "100vh", minWidth: "100vw", overflowX: '-moz-hidden-unscrollable', backgroundColor:'#191c1f'}}
         >
             <div style={{ minHeight: "100vh", minWidth: "100vw" }}>
                 <Router>
