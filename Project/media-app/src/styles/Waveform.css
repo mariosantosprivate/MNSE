@@ -1,12 +1,11 @@
 .audio-play-pause {
-    border-radius: 50% !important;
+    border-radius: 25% !important;
+    
+    height: 100%;
     vertical-align: middle !important;
 }
 
-.audio-play-pause-wrapper {
-    width: 70px;
-    height: 68px;
-    float: right;
-    display: table-cell;
-    line-height: 68px
+
+.audio-controls{
+    padding-top: 3em;
 }

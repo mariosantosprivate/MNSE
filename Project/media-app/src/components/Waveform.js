@@ -71,28 +71,25 @@ export default function Waveform({ blob }) {
     return (
         <Container fluid className='justify-content-center'>
             <Row>
+                <Col className='audio-controls' xs={{ span: 2 }}>
 
-                <Col xs={{ span: 1 }}>
                     <Row className='justify-content-center'>
-                        <div classBane='audio-play-pause-wrapper'>
-                            <Button className='audio-play-pause' variant='outline-light' onClick={handlePlayPause}>{!playing ? <FontAwesomeIcon icon={faPlay} /> : <FontAwesomeIcon icon={faPause} />}</Button>
-                        </div>
+                        <Button className='audio-play-pause' variant='outline-light' onClick={handlePlayPause}>{!playing ? <FontAwesomeIcon icon={faPlay} /> : <FontAwesomeIcon icon={faPause} />}</Button>
                     </Row>
                     <Row>
-                    <input
-                        type="range"
-                        id="volume"
-                        name="volume"
-                        // waveSurfer recognize value of `0` same as `1`
-                        //  so we need to set some zero-ish value for silence
-                        min="0.01"
-                        max="1"
-                        step=".025"
-                        onChange={onVolumeChange}
-                        defaultValue={volume}
-                    />
+                        <input
+                            type="range"
+                            id="volume"
+                            name="volume"
+                            // waveSurfer recognize value of `0` same as `1`
+                            //  so we need to set some zero-ish value for silence
+                            min="0.01"
+                            max="1"
+                            step=".025"
+                            onChange={onVolumeChange}
+                            defaultValue={volume}
+                        />
                     </Row>
-
                 </Col>
                 <Col xs={{ span: 10 }}>
                     <div id="waveform" ref={waveformRef} />
@@ -100,7 +97,7 @@ export default function Waveform({ blob }) {
             </Row>
             <Row>
                 <Col>
-                    
+
                 </Col>
             </Row>
         </Container>

@@ -419,8 +419,8 @@ export default function Dashboard() {
                         <Card bg='dark' text='white'>
                             <Card.Header className='card-header'>AUDIO</Card.Header>
                             <Card.Body>
-                                <Row>
-                                    <Col xs={{ span: 8, offset: 2 }}>
+                                <Row className='justify-content-center'>
+                                    <Col className='justify-content-center'>
                                         <Waveform blob={editedAudio}></Waveform>
                                     </Col>
                                 </Row>
