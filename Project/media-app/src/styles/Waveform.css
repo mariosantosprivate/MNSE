@@ -1,0 +1,11 @@
+.audio-play-pause {
+    border-radius: 25% !important;
+    
+    height: 100%;
+    vertical-align: middle !important;
+}
+
+
+.audio-controls{
+    padding-top: 3em;
+}

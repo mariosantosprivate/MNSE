@@ -5,13 +5,12 @@ import ReactPlayer from 'react-player';
 import { storage } from '../firebase';
 import { useAuth } from '../contexts/AuthContext';
 import MyNavbar from './MyNavbar';
+import Waveform from './Waveform'
 import '../styles/Dashboard.css';
-import { useHistory, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import RangeSlider from 'react-bootstrap-range-slider';
-import { Icon, Label } from 'semantic-ui-react'
 
 const ffmpeg = createFFmpeg({ log: true })
-
 
 export default function Dashboard() {
 
@@ -19,12 +18,13 @@ export default function Dashboard() {
     const [ffmpegReady, setFfmpegReady] = useState(false);
     const [file, setFile] = useState('./');
     const [editedVideo, setEditedVideo] = useState('./')
+    const [editedAudio, setEditedAudio] = useState(new Blob([], { type: 'audio/mp3' }))
     const [progress, setProgress] = useState(0);
     const { currentUser } = useAuth();
     const [startTrim, setStartTrim] = useState(0);
     const [endTrim, setEndTrim] = useState(0);
     const [uploadName, setUploadName] = useState('')
-    const [uploadFile, setUploadFile] = useState(null)
+    const [uploadFile, setUploadFile] = useState(new Blob([], { type: 'video/mp4' }))
     //const [seeking, setSeeking] = useState(false);
     const [played, setPlayed] = useState(0);
     const [player, setPlayer] = useState(null)
@@ -80,10 +80,11 @@ export default function Dashboard() {
 
         setDuration(player.getDuration())
     }
+
     const brightnessVideo = async () => {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
+            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
             // Run trim command
             await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=brightness=${brightness}`, '-c:a', 'copy', 'testOut.mp4');
 
@@ -100,10 +101,28 @@ export default function Dashboard() {
 
     }
 
+    const splitAudioVideo = async () => {
+        if (ffmpegReady) {
+            // Write file to memory so webassemble can access it
+            ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(file));
+
+            // Run command
+            await ffmpeg.run('-i', 'video.mp4', '-q:a', '0', '-map', 'a', 'audio.mp3')
+
+            // Read result
+            const data = ffmpeg.FS('readFile', 'audio.mp3');
+
+            // Create URL
+            const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
+            setEditedAudio(audioBlob);
+
+        }
+    }
+
     const trimVideo = async () => {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
+            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
 
 
             // Run trim command
@@ -125,7 +144,7 @@ export default function Dashboard() {
     const contrastVideo = async () => {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
+            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
 
             // Run trim command
             await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=contrast=${contrast}`, '-c:a', 'copy', 'testOut.mp4');
@@ -146,7 +165,7 @@ export default function Dashboard() {
     const saturationVideo = async () => {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
+            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
 
             // Run trim command
             await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=saturation=${saturation}`, '-c:a', 'copy', 'testOut.mp4');
@@ -167,7 +186,7 @@ export default function Dashboard() {
     const gammaVideo = async () => {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
+            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
 
             // Run trim command
             await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=gamma=${gamma}`, '-c:a', 'copy', 'testOut.mp4');
@@ -188,7 +207,7 @@ export default function Dashboard() {
     const sharpnessVideo = async () => {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
+            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
 
             // Run trim command
             await ffmpeg.run('-i', 'test.mp4', '-vf', `unsharp=${lumax}:${lumay}:${lumaAmount}:${chromax}:${chromay}:${chromaAmount}`, '-c:a', 'copy', 'testOut.mp4');
@@ -255,9 +274,6 @@ export default function Dashboard() {
 
     }
 
-
-    //console.log(history.location.state.detail)
-
     const handleUpload = () => {
         const uploadTask = storage.ref(`user/${currentUser.uid}/${uploadName}`).put(uploadFile);
 
@@ -286,7 +302,6 @@ export default function Dashboard() {
             */
         )
     }
-
 
     const handleSeekChange = e => {
         setPlayed(parseFloat(e.target.value))
@@ -393,6 +408,30 @@ export default function Dashboard() {
                                 </Card>
                             </Col>
                         </Row>
+                    </Col>
+                </Row>
+                <Row className='major-row'>
+                    <Col xs={{ span: 10, offset: 1 }}>
+                        <Card bg='dark' text='white'>
+                            <Card.Header className='card-header'>AUDIO</Card.Header>
+                            <Card.Body>
+                                <Row className='justify-content-center'>
+                                    <Col className='justify-content-center'>
+                                        <Waveform blob={editedAudio}></Waveform>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
+                                        <Button variant='outline-light' onClick={splitAudioVideo} className='apply-button'>Split Video/Audio Tracks</Button>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
+                                        <Button variant='outline-light' onClick={splitAudioVideo} className='apply-button'>Merge Video/Audio Tracks</Button>
+                                    </Col>
+                                </Row>
+                            </Card.Body>
+                        </Card>
                     </Col>
                 </Row>
                 <Row className='major-row'>
@@ -793,6 +832,7 @@ export default function Dashboard() {
                         </Row>
                     </Col>
                 </Row>
+
             </Container>
         </>
     ) :
