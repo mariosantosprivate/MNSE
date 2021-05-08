@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Card, Container, ProgressBar, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import WaveSurfer from "wavesurfer.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faPause } from "@fortawesome/free-solid-svg-icons";
@@ -37,11 +37,6 @@ export default function Waveform({ blob }) {
         wavesurfer.current.loadBlob(blob);
 
         wavesurfer.current.on("ready", function () {
-            // https://wavesurfer-js.org/docs/methods.html
-            // wavesurfer.current.play();
-            // setPlay(true);
-
-            // make sure object stillavailable when file loaded
             if (wavesurfer.current) {
                 wavesurfer.current.setVolume(volume);
                 setVolume(volume);
@@ -51,7 +46,7 @@ export default function Waveform({ blob }) {
         // Removes events, elements and disconnects Web Audio nodes.
         // when component unmount
         return () => wavesurfer.current.destroy();
-    }, [blob]);
+    }, [blob,volume]);
 
     const handlePlayPause = () => {
         setPlay(!playing);

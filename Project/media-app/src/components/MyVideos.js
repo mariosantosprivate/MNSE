@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Container, Button, Row, Col } from 'react-bootstrap'
+import { Card, Container, Row, Col } from 'react-bootstrap'
 import MyNavbar from './MyNavbar'
 import '../styles/MyVideos.css'
 import { storage } from '../firebase'
@@ -11,11 +11,9 @@ export default function MyVideos() {
 
     const { currentUser } = useAuth();
     const history = useHistory();
-    const [list, setList] = useState([]);
-
     const storageRef = storage.ref()
     const [videoUrls, setVideoUrls] = useState([]);
-    
+
     function loadVideos() {
         const videosRef = storageRef.child(`user/${currentUser.uid}`);
         videosRef.listAll().then(res => {
@@ -45,22 +43,37 @@ export default function MyVideos() {
         <>
             <MyNavbar />
             <Container fluid className='main-container justify-content-center text-center mt-2'>
-                <Card className='file-video-card'>
-                    <Card.Body>
-                        <Row>
+
+                <Row>
+                    <Col xs={{ span: 10, offset: 1 }}>
+                        <Row className='justify-content-center'>
+
                             {videoUrls.map((itemRef, index) => (
                                 <Col xs={{ span: 4 }} key={index} className='video-col'>
-                                    <div key={index}>
-                                        <Button key={index} className='video-button' variant='primary' onClick={() => navigateTo(itemRef)}>
-                                        <ReactPlayer className='video-play' url={itemRef} playing={false} width='100%' height='100%'/>
-                                        </Button>
-                                    </div>
-                                </Col>
+                                    <Card bg='dark'className='file-video-card'>
+                                        <Card.Body>
+                                            <div key={index}>
+                                                <ReactPlayer key={index} onClick={() => navigateTo(itemRef)} className='video-play' url={itemRef} playing={true} volume={0} width='100%' height='100%'
+                                                    onMouseEnter={(event) => {
+                                                        event.target.playing = true;
+                                                        console.log(`MouseEnter - playing = ${event.target}`)
+                                                    }}
+                                                    onMouseLeave={(event) => {
+                                                        event.target.playing = false;
+                                                        console.log(`MouseLeave - playing = ${event.target}`)
+                                                    }} />
+                                            </div>
 
+                                        </Card.Body>
+                                    </Card>
+                                </Col>
                             ))}
+
                         </Row>
-                    </Card.Body>
-                </Card>
+                    </Col>
+                </Row>
+
+
             </Container>
         </>
     )

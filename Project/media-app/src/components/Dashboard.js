@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 import { Card, Container, ProgressBar, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
 import ReactPlayer from 'react-player';
@@ -9,10 +9,6 @@ import Waveform from './Waveform'
 import '../styles/Dashboard.css';
 import { useLocation } from "react-router-dom";
 import RangeSlider from 'react-bootstrap-range-slider';
-
-
-//import WaveSurfer from 'react-wavesurfer';
-import WaveSurfer from "wavesurfer.js";
 
 const ffmpeg = createFFmpeg({ log: true })
 
@@ -88,7 +84,7 @@ export default function Dashboard() {
     const brightnessVideo = async () => {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
+            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
             // Run trim command
             await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=brightness=${brightness}`, '-c:a', 'copy', 'testOut.mp4');
 
@@ -108,7 +104,7 @@ export default function Dashboard() {
     const splitAudioVideo = async () => {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(editedVideo));
+            ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(file));
 
             // Run command
             await ffmpeg.run('-i', 'video.mp4', '-q:a', '0', '-map', 'a', 'audio.mp3')
@@ -126,7 +122,7 @@ export default function Dashboard() {
     const trimVideo = async () => {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
+            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
 
 
             // Run trim command
@@ -148,7 +144,7 @@ export default function Dashboard() {
     const contrastVideo = async () => {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
+            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
 
             // Run trim command
             await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=contrast=${contrast}`, '-c:a', 'copy', 'testOut.mp4');
@@ -169,7 +165,7 @@ export default function Dashboard() {
     const saturationVideo = async () => {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
+            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
 
             // Run trim command
             await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=saturation=${saturation}`, '-c:a', 'copy', 'testOut.mp4');
@@ -190,7 +186,7 @@ export default function Dashboard() {
     const gammaVideo = async () => {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
+            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
 
             // Run trim command
             await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=gamma=${gamma}`, '-c:a', 'copy', 'testOut.mp4');
@@ -211,7 +207,7 @@ export default function Dashboard() {
     const sharpnessVideo = async () => {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
+            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
 
             // Run trim command
             await ffmpeg.run('-i', 'test.mp4', '-vf', `unsharp=${lumax}:${lumay}:${lumaAmount}:${chromax}:${chromay}:${chromaAmount}`, '-c:a', 'copy', 'testOut.mp4');
