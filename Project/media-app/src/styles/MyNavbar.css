@@ -1,9 +1,15 @@
-@media only screen and (min-width: 992px) {
-    .my-navbar {
-        width: 100%;
-        justify-content: center;
-        left: 0;
-        right: 0;
-        position: fixed;}
-  }
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;1,100;1,300;1,400&display=swap');
+.my-navbar {
+    justify-content: center;
+    left: 0;
+    right: 0;
+    background-color: #343a40;
+    border-color: #343a40;
+    position: fixed;
+}
 
+.navbar-item {
+    font-family: 'Roboto', sans-serif;
+    font-style: 300;
+    color: #d8d8d8 !important
+}
