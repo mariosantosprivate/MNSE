@@ -49,10 +49,10 @@ export default function UpdateProfile() {
             <MyNavbar />
             <Container
                 className='justify-content-center'
-                style={{ minHeight: "100vh" }}
+                style={{ minHeight: "100vh", color:"#d8d8d8", paddingTop: '1em' }}
             >
                 <div>
-                    <Card>
+                    <Card bg='dark'>
                         <Card.Body>
                             <h2 className='text-center mb-4'>Update Profile</h2>
                             {error && <Alert variant='danger'>{error}</Alert>}
@@ -72,13 +72,13 @@ export default function UpdateProfile() {
                                 <div className="update-button">
                                     <Row className='update-buttons-container'>
                                         <Col className='justify-content-center'>
-                                            <Button disabled={loading} type='submit'className='update-button' variant="primary">
+                                            <Button disabled={loading} type='submit'className='update-button' variant="secondary">
                                                 Update
                                             </Button>
                                         </Col>
                                         <Col className='justify-content-center'>
                                             <Link to='/'>
-                                                <Button type='submit' className='update-button' variant="outline-primary">
+                                                <Button type='submit' className='update-button' variant="danger">
                                                     Cancel
                                                 </Button>
                                             </Link>

@@ -31,10 +31,10 @@ export default function Login() {
         <>
         <Container 
                     className = 'd-flex align-items-center justify-content-center'
-                    style = {{ minHeight: "100vh"}}
+                    style = {{ minHeight: "100vh", color: '#d8d8d8'}}
                 >
             <div>
-                <Card>
+                <Card bg='dark'>
                     <Card.Body>
                         <h2 className='text-center mb-4'>Log In</h2>
                         {error && <Alert variant='danger'>{error}</Alert>}
@@ -47,7 +47,7 @@ export default function Login() {
                                 <Form.Label>Password</Form.Label>
                                 <Form.Control type = 'password' ref = {passwordRef} required/>
                             </Form.Group>
-                            <Button disabled = {loading} className = 'w-100' type = 'submit'>
+                            <Button variant='success' disabled = {loading} className = 'w-100' type = 'submit'>
                                 Log In
                             </Button>
                         </Form>

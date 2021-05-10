@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
-import { Card, Container, ProgressBar, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
+import { Card, Container, ProgressBar, Row, Col, Button, InputGroup, FormControl, Form } from 'react-bootstrap';
 import ReactPlayer from 'react-player';
 import { storage } from '../firebase';
 import { useAuth } from '../contexts/AuthContext';
@@ -10,11 +10,12 @@ import '../styles/Dashboard.css';
 import { useLocation } from "react-router-dom";
 import RangeSlider from 'react-bootstrap-range-slider';
 
-const ffmpeg = createFFmpeg({ log: true })
+const ffmpeg = createFFmpeg({
+    log: true,
+})
 
 export default function Dashboard() {
 
-    //const [url, setUrl] = useState('');
     const [ffmpegReady, setFfmpegReady] = useState(false);
     const [file, setFile] = useState('./');
     const [editedVideo, setEditedVideo] = useState('./')
@@ -25,7 +26,6 @@ export default function Dashboard() {
     const [endTrim, setEndTrim] = useState(0);
     const [uploadName, setUploadName] = useState('')
     const [uploadFile, setUploadFile] = useState(new Blob([], { type: 'video/mp4' }))
-    //const [seeking, setSeeking] = useState(false);
     const [played, setPlayed] = useState(0);
     const [player, setPlayer] = useState(null)
     const [duration, setDuration] = useState(0)
@@ -48,6 +48,7 @@ export default function Dashboard() {
     const [hueSaturation, setHueSaturation] = useState(1)
     const [hueBrightness, setHueBrightness] = useState(0)
     const [gamma, setGamma] = useState(1)
+    const [selectedFileName, setSelectedFileName] = useState('Choose File')
 
     const location = useLocation();
 
@@ -85,7 +86,7 @@ export default function Dashboard() {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
-            // Run trim command
+            // Run command
             await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=brightness=${brightness}`, '-c:a', 'copy', 'testOut.mp4');
 
             // Read result
@@ -94,7 +95,7 @@ export default function Dashboard() {
             // Update upload file
             setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
 
-            // Create URL
+            // Create video URL react-player
             const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
             setEditedVideo(editedVideoUrl)
         }
@@ -112,7 +113,7 @@ export default function Dashboard() {
             // Read result
             const data = ffmpeg.FS('readFile', 'audio.mp3');
 
-            // Create URL
+            // Create video URL react-player
             const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
             setEditedAudio(audioBlob);
 
@@ -125,7 +126,7 @@ export default function Dashboard() {
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
 
 
-            // Run trim command
+            // Run command
             await ffmpeg.run('-i', 'test.mp4', '-ss', startTrim, '-to', endTrim, '-c:v', 'copy', '-c:a', 'copy', 'testOut.mp4');
 
             // Read result
@@ -134,7 +135,7 @@ export default function Dashboard() {
             // Update upload file
             setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
 
-            // Create URL
+            // Create video URL react-player
             const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
             setEditedVideo(editedVideoUrl)
         }
@@ -146,7 +147,7 @@ export default function Dashboard() {
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
 
-            // Run trim command
+            // Run command
             await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=contrast=${contrast}`, '-c:a', 'copy', 'testOut.mp4');
 
             // Read result
@@ -155,7 +156,7 @@ export default function Dashboard() {
             // Update upload file
             setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
 
-            // Create URL
+            // Create video URL react-player
             const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
             setEditedVideo(editedVideoUrl)
         }
@@ -167,7 +168,7 @@ export default function Dashboard() {
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
 
-            // Run trim command
+            // Run command
             await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=saturation=${saturation}`, '-c:a', 'copy', 'testOut.mp4');
 
             // Read result
@@ -176,7 +177,7 @@ export default function Dashboard() {
             // Update upload file
             setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
 
-            // Create URL
+            // Create video URL react-player
             const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
             setEditedVideo(editedVideoUrl)
         }
@@ -188,7 +189,7 @@ export default function Dashboard() {
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
 
-            // Run trim command
+            // Run command
             await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=gamma=${gamma}`, '-c:a', 'copy', 'testOut.mp4');
 
             // Read result
@@ -197,7 +198,7 @@ export default function Dashboard() {
             // Update upload file
             setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
 
-            // Create URL
+            // Create video URL react-player
             const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
             setEditedVideo(editedVideoUrl)
         }
@@ -209,7 +210,7 @@ export default function Dashboard() {
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
 
-            // Run trim command
+            // Run command
             await ffmpeg.run('-i', 'test.mp4', '-vf', `unsharp=${lumax}:${lumay}:${lumaAmount}:${chromax}:${chromay}:${chromaAmount}`, '-c:a', 'copy', 'testOut.mp4');
 
             // Read result
@@ -218,7 +219,7 @@ export default function Dashboard() {
             // Update upload file
             setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
 
-            // Create URL
+            // Create video URL react-player
             const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
             setEditedVideo(editedVideoUrl)
         }
@@ -230,7 +231,7 @@ export default function Dashboard() {
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
 
-            // Run trim command
+            // Run command
             await ffmpeg.run('-i', 'test.mp4', '-vf', `smartblur=${lumaRadius}:${lumaStrength}:${lumaThreshold}:${chromaRadius}:${chromaStrength}:${chromaThreshold}`, '-c:a', 'copy', 'testOut.mp4');
 
             // Read result
@@ -239,7 +240,7 @@ export default function Dashboard() {
             // Update upload file
             setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
 
-            // Create URL
+            // Create video URL react-player
             const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
             setEditedVideo(editedVideoUrl)
         }
@@ -251,7 +252,7 @@ export default function Dashboard() {
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
 
-            // Run trim command
+            // Run command
             await ffmpeg.run('-i', 'test.mp4', '-vf', `hue=h=${hue}:s=${hueSaturation}:b=${hueBrightness}`, '-c:a', 'copy', 'testOut.mp4');
 
             // Read result
@@ -260,21 +261,22 @@ export default function Dashboard() {
             // Update upload file
             setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
 
-            // Create URL
+            // Create video URL react-player
             const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
             setEditedVideo(editedVideoUrl)
         }
 
     }
 
-    const handleSelectFile = e => {
+    const handleSelectFile = (e) => {
+        setSelectedFileName(inputRef.current.files[0].name)
         setFile(URL.createObjectURL(e.target.files?.item(0)));
         setUploadFile(e.target.files?.item(0));
         setEditedVideo(URL.createObjectURL(e.target.files?.item(0)))
 
     }
 
-    const handleUpload = () => {
+    const handleUpload = (e) => {
         const uploadTask = storage.ref(`user/${currentUser.uid}/${uploadName}`).put(uploadFile);
 
         uploadTask.on(
@@ -288,18 +290,6 @@ export default function Dashboard() {
             error => {
                 console.log(error);
             }
-            /** 
-            ,
-            () => {
-                storage
-                    .ref(`user/${currentUser.uid}`)
-                    .child(uploadName)
-                    .getDownloadURL()
-                    .then(url => {
-                        setUrl(url)
-                    })
-            }
-            */
         )
     }
 
@@ -319,6 +309,8 @@ export default function Dashboard() {
         setPlayer(myPlayer)
     }
 
+    const inputRef = useRef();
+
     return ffmpegReady ? (
         <>
             <MyNavbar />
@@ -328,11 +320,14 @@ export default function Dashboard() {
                         <Card className='file-upload-card'>
                             <Card.Body>
                                 <Row className='justify-content-center'>
-                                    <input type='file' className='input-form file-input-form' onChange={handleSelectFile} />
+                                    <div className="custom-file">
+                                        <input ref={inputRef} type="file" className="custom-file-input" id="customFile" onChange={handleSelectFile} />
+                                        <label className="custom-file-label" htmlFor="customFile">{selectedFileName}</label>
+                                    </div>
                                 </Row>
                                 <Row>
                                 </Row>
-                                <ProgressBar animated now={progress} label={`${progress}%`} md="auto" />
+                                <ProgressBar animated now={progress} label={`${progress}%`} md="auto" className='progress-bar-custom' />
                                 <br></br>
                                 <Row>
                                     <Col className='col-8'>
@@ -349,7 +344,7 @@ export default function Dashboard() {
                                         </InputGroup>
                                     </Col>
                                     <Col>
-                                        <Button className='upload-button' variant='outline-light' onClick={handleUpload}>Upload</Button>
+                                        <Button className='upload-button' variant='success' onClick={handleUpload}>Upload</Button>
                                     </Col>
                                 </Row>
                             </Card.Body>
@@ -413,7 +408,7 @@ export default function Dashboard() {
                 <Row className='major-row'>
                     <Col xs={{ span: 10, offset: 1 }}>
                         <Card bg='dark' text='white'>
-                            <Card.Header className='card-header'>AUDIO</Card.Header>
+                            <Card.Header className='card-header'>Audio</Card.Header>
                             <Card.Body>
                                 <Row className='justify-content-center'>
                                     <Col className='justify-content-center'>
@@ -422,12 +417,12 @@ export default function Dashboard() {
                                 </Row>
                                 <Row>
                                     <Col>
-                                        <Button variant='outline-light' onClick={splitAudioVideo} className='apply-button'>Split Video/Audio Tracks</Button>
+                                        <Button variant='secondary' onClick={splitAudioVideo} className='apply-button'>Split Video/Audio Tracks</Button>
                                     </Col>
                                 </Row>
                                 <Row>
                                     <Col>
-                                        <Button variant='outline-light' onClick={splitAudioVideo} className='apply-button'>Merge Video/Audio Tracks</Button>
+                                        <Button variant='secondary' onClick={splitAudioVideo} className='apply-button'>Merge Video/Audio Tracks</Button>
                                     </Col>
                                 </Row>
                             </Card.Body>
@@ -437,7 +432,7 @@ export default function Dashboard() {
                 <Row className='major-row'>
                     <Col xs={{ span: 10, offset: 1 }}>
                         <Card bg='dark' text='white'>
-                            <Card.Header className='card-header'>TRIM</Card.Header>
+                            <Card.Header className='card-header'>Trim</Card.Header>
                             <Card.Body>
 
                                 <Row className='justify-content-center'>
@@ -494,7 +489,7 @@ export default function Dashboard() {
                                         </InputGroup>
                                     </Col>
                                     <Col xs={{ span: 4 }} sm={{ span: 2 }}>
-                                        <Button variant='outline-light' className='trim-button' onClick={trimVideo}>Trim</Button>
+                                        <Button variant='secondary' className='trim-button' onClick={trimVideo}>Trim</Button>
                                     </Col>
                                 </Row>
 
@@ -505,7 +500,7 @@ export default function Dashboard() {
                 <Row className='major-row'>
                     <Col xs={{ span: 10, offset: 1 }}>
                         <Card style={{ textAlign: 'center' }} bg='dark' text='white'>
-                            <Card.Header className='card-header'>IMAGE ADJUSTMENTS</Card.Header>
+                            <Card.Header className='card-header'>Image Adjustments</Card.Header>
                             <Card.Body>
                                 <Row className='large-slider-row'>
 
@@ -523,7 +518,7 @@ export default function Dashboard() {
                                         />
                                     </Col>
                                     <Col xs={{ span: 4 }} sm={{ span: 3 }}>
-                                        <Button variant='outline-light' className='apply-button' onClick={brightnessVideo}>Apply</Button>
+                                        <Button variant='secondary' className='apply-button' onClick={brightnessVideo}>Apply</Button>
                                     </Col>
                                 </Row>
                                 <Row className='large-slider-row'>
@@ -541,7 +536,7 @@ export default function Dashboard() {
                                         />
                                     </Col>
                                     <Col xs={{ span: 4 }} sm={{ span: 3 }}>
-                                        <Button variant='outline-light' className='apply-button' onClick={contrastVideo}>Apply</Button>
+                                        <Button variant='secondary' className='apply-button' onClick={contrastVideo}>Apply</Button>
                                     </Col>
                                 </Row>
                                 <Row className='large-slider-row'>
@@ -559,7 +554,7 @@ export default function Dashboard() {
                                         />
                                     </Col>
                                     <Col xs={{ span: 4 }} sm={{ span: 3 }}>
-                                        <Button variant='outline-light' className='apply-button' onClick={saturationVideo}>Apply</Button>
+                                        <Button variant='secondary' className='apply-button' onClick={saturationVideo}>Apply</Button>
                                     </Col>
                                 </Row>
                                 <Row className='large-slider-row'>
@@ -577,7 +572,7 @@ export default function Dashboard() {
                                         />
                                     </Col>
                                     <Col xs={{ span: 4 }} sm={{ span: 3 }}>
-                                        <Button variant='outline-light' className='apply-button' onClick={gammaVideo}>Apply</Button>
+                                        <Button variant='secondary' className='apply-button' onClick={gammaVideo}>Apply</Button>
                                     </Col>
                                 </Row>
                             </Card.Body>
@@ -590,7 +585,7 @@ export default function Dashboard() {
                         <Row>
                             <Col>
                                 <Card bg='dark' text='white'>
-                                    <Card.Header className='card-header'>SHARPNESS</Card.Header>
+                                    <Card.Header className='card-header'>Sharpness</Card.Header>
                                     <Card.Body>
                                         <Row className='slider-label-row'>
                                             <p>Luma X</p>
@@ -676,14 +671,14 @@ export default function Dashboard() {
 
                                             'paddingTop': '3em'
                                         }}>
-                                            <Button className='apply-button' variant='outline-light' onClick={sharpnessVideo}>APPLY</Button>
+                                            <Button className='apply-button' variant='secondary' onClick={sharpnessVideo}>Apply</Button>
                                         </Row>
                                     </Card.Body>
                                 </Card>
                             </Col>
                             <Col>
                                 <Card bg='dark' text='white'>
-                                    <Card.Header className='card-header'>BLUR</Card.Header>
+                                    <Card.Header className='card-header'>Blur</Card.Header>
                                     <Card.Body>
                                         <Row className='slider-label-row'>
                                             <p>Luma Radius</p>
@@ -769,7 +764,7 @@ export default function Dashboard() {
                                             'textAlign': 'center',
                                             'paddingTop': '3em'
                                         }}>
-                                            <Button className='apply-button' variant='outline-light' onClick={BlurVideo}>APPLY</Button>
+                                            <Button className='apply-button' variant='secondary' onClick={BlurVideo}>Apply</Button>
                                         </Row>
                                     </Card.Body>
                                 </Card>
@@ -823,7 +818,7 @@ export default function Dashboard() {
                                             'textAlign': 'center',
                                             'paddingTop': '3em'
                                         }}>
-                                            <Button variant='outline-light' className='apply-button' onClick={colourVideo}>APPLY</Button>
+                                            <Button variant='secondary' className='apply-button' onClick={colourVideo}>Apply</Button>
                                         </Row>
                                     </Card.Body>
                                 </Card>
@@ -836,6 +831,21 @@ export default function Dashboard() {
             </Container>
         </>
     ) :
-        (<p>Loading FFmpeg...</p>)
+        (<Container fluid className='loader-container justify-content-center'>
+            <Row></Row>
+            <Row>
+                <Col xs={{ span: 10, offset: 1 }}>
+                    <div className="container">
+                        <div className="center">
+                            <label className='loading-label'>Loading FFmpeg...</label>
+                            <div className="loader"></div>
+                        </div>
+                    </div>
+
+                </Col>
+            </Row>
+            <Row></Row>
+        </Container>
+        )
 
 }
