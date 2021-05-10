@@ -52,7 +52,16 @@ export default function MyVideos() {
                                     <Card bg='dark' className='file-video-card'>
                                         <Card.Body>
                                             <div key={index}>
-                                                <ReactPlayer key={index} onClick={() => navigateTo(itemRef)} className='video-play' url={itemRef} playing={true} volume={0} width='100%' height='100%'
+                                                <ReactPlayer
+                                                    key={index}
+                                                    onClick={() => navigateTo(itemRef)}
+                                                    className='video-play'
+                                                    url={itemRef}
+                                                    playing={true}
+                                                    volume={0}
+                                                    width='100%'
+                                                    height='100%'
+                                                    loop={true}
                                                     onMouseEnter={(event) => {
                                                         event.target.playing = true;
                                                         console.log(`MouseEnter - playing = ${event.target}`)
