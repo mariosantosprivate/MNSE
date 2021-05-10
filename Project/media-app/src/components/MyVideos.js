@@ -14,20 +14,19 @@ export default function MyVideos() {
     const storageRef = storage.ref()
     const [videoUrls, setVideoUrls] = useState([]);
 
-    function loadVideos() {
-        const videosRef = storageRef.child(`user/${currentUser.uid}`);
-        videosRef.listAll().then(res => {
-            res.items.forEach(resItem => {
-                resItem.getDownloadURL().then(url => {
-                    setVideoUrls(oldArray => [...oldArray, url]) // This line has changed!
+    useEffect(() => {
+        const loadVideos = () => {
+            const videosRef = storageRef.child(`user/${currentUser.uid}`);
+            videosRef.listAll().then(res => {
+                res.items.forEach(resItem => {
+                    resItem.getDownloadURL().then(url => {
+                        setVideoUrls(oldArray => [...oldArray, url]) // This line has changed!
+                    })
                 })
             })
-        });
-        console.log(videoUrls)
-    }
-
-    useEffect(() => {
+        }
         loadVideos()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     function navigateTo(navurl) {
@@ -50,7 +49,7 @@ export default function MyVideos() {
 
                             {videoUrls.map((itemRef, index) => (
                                 <Col xs={{ span: 4 }} key={index} className='video-col'>
-                                    <Card bg='dark'className='file-video-card'>
+                                    <Card bg='dark' className='file-video-card'>
                                         <Card.Body>
                                             <div key={index}>
                                                 <ReactPlayer key={index} onClick={() => navigateTo(itemRef)} className='video-play' url={itemRef} playing={true} volume={0} width='100%' height='100%'
