@@ -117,6 +117,9 @@ export default function Dashboard() {
             const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
             setEditedAudio(audioBlob);
 
+
+
+
         }
     }
 
@@ -410,21 +413,107 @@ export default function Dashboard() {
                         <Card bg='dark' text='white'>
                             <Card.Header className='card-header'>Audio</Card.Header>
                             <Card.Body>
-                                <Row className='justify-content-center'>
-                                    <Col className='justify-content-center'>
-                                        <Waveform blob={editedAudio}></Waveform>
-                                    </Col>
-                                </Row>
                                 <Row>
                                     <Col>
                                         <Button variant='secondary' onClick={splitAudioVideo} className='apply-button'>Split Video/Audio Tracks</Button>
                                     </Col>
                                 </Row>
+                                <Row className='justify-content-center'>
+                                    <Col className='justify-content-center'>
+                                        <Waveform blob={editedAudio}></Waveform>
+                                    </Col>
+                                </Row>
+
+                                <Row className='justify-content-center'>
+                                    <Col>
+                                        <Card bg='dark' text='white'>
+                                            <Card.Header className='card-header card-header-custom'>Fade In</Card.Header>
+                                            <Card.Body className='card-custom'>
+                                                <Row style={{
+                                                    'justifyContent': 'center',
+                                                    'textAlign': 'center',
+                                                    'padding': '1%'
+                                                }}>
+                                                    <Col xs={{ span: 4 }} sm={{ span: 4 }}>
+                                                        <InputGroup>
+                                                            <FormControl
+                                                                placeholder="Start fade-in"
+                                                                aria-label="Start Fade-In"
+                                                                aria-describedby="fade-in-start-input"
+                                                                onChange={e => setStartTrim(e.target.value)}
+                                                            />
+                                                        </InputGroup>
+                                                    </Col>
+                                                    <Col xs={{ span: 4 }} sm={{ span: 4 }}>
+                                                        <InputGroup className='input-box'>
+                                                            <FormControl
+                                                                placeholder="End fade-in"
+                                                                aria-label="End fade-in"
+                                                                aria-describedby="fade-in-end-input"
+                                                                onChange={e => setEndTrim(e.target.value)}
+                                                            />
+                                                        </InputGroup>
+                                                    </Col>
+
+                                                </Row>
+                                                <Row>
+                                                    <Col>
+                                                        <Button variant='secondary' className='apply-button' onClick={trimVideo}>Apply</Button>
+                                                    </Col>
+                                                </Row>
+                                            </Card.Body>
+                                        </Card>
+                                    </Col>
+                                    <Col>
+                                        <Card bg='dark' text='white'>
+                                            <Card.Header className='card-header card-header-custom'>Fade Out</Card.Header>
+                                            <Card.Body className='card-custom'>
+                                                <Row style={{
+                                                    'justifyContent': 'center',
+                                                    'textAlign': 'center',
+                                                    'padding': '1%'
+                                                }}>
+                                                    <Col xs={{ span: 4 }} sm={{ span: 4 }}>
+                                                        <InputGroup>
+                                                            <InputGroup.Prepend>
+                                                                <InputGroup.Text id="fade-out-start-input">Start</InputGroup.Text>
+                                                            </InputGroup.Prepend>
+                                                            <FormControl
+                                                                placeholder="...seconds"
+                                                                aria-label="Start Fade-out"
+                                                                aria-describedby="fade-out-start-input"
+                                                                onChange={e => setStartTrim(e.target.value)}
+                                                            />
+                                                        </InputGroup>
+                                                    </Col>
+                                                    <Col xs={{ span: 4 }} sm={{ span: 4 }}>
+                                                        <InputGroup className='input-box'>
+                                                            <FormControl
+                                                                placeholder="End fade-out"
+                                                                aria-label="End fade-out"
+                                                                aria-describedby="fade-out-end-input"
+                                                                onChange={e => setEndTrim(e.target.value)}
+                                                            />
+                                                        </InputGroup>
+                                                    </Col>
+
+                                                </Row>
+                                                <Row>
+                                                    <Col>
+                                                        <Button variant='secondary' className='apply-button' onClick={trimVideo}>Apply</Button>
+                                                    </Col>
+                                                </Row>
+                                            </Card.Body>
+                                        </Card>
+                                    </Col>
+                                </Row>
+
                                 <Row>
                                     <Col>
                                         <Button variant='secondary' onClick={splitAudioVideo} className='apply-button'>Merge Video/Audio Tracks</Button>
                                     </Col>
                                 </Row>
+
                             </Card.Body>
                         </Card>
                     </Col>
@@ -489,7 +578,7 @@ export default function Dashboard() {
                                         </InputGroup>
                                     </Col>
                                     <Col xs={{ span: 4 }} sm={{ span: 2 }}>
-                                        <Button variant='secondary' className='trim-button' onClick={trimVideo}>Trim</Button>
+                                        <Button variant='secondary' className='trim-button' onClick={trimVideo}>Apply</Button>
                                     </Col>
                                 </Row>
 
@@ -832,7 +921,7 @@ export default function Dashboard() {
         </>
     ) :
         (<Container fluid className='loader-container justify-content-center'>
-            <Row></Row>
+
             <Row>
                 <Col xs={{ span: 10, offset: 1 }}>
                     <div className="container">
@@ -844,7 +933,7 @@ export default function Dashboard() {
 
                 </Col>
             </Row>
-            <Row></Row>
+
         </Container>
         )
 
