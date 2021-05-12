@@ -7,9 +7,9 @@ import { faPlay, faPause } from "@fortawesome/free-solid-svg-icons";
 import '../styles/Waveform.css';
 const formWaveSurferOptions = ref => ({
     container: ref,
-    waveColor: "#eee",
-    progressColor: "OrangeRed",
-    cursorColor: "OrangeRed",
+    waveColor: "violet",
+    progressColor: "purple",
+    cursorColor: "purple",
     barWidth: 3,
     barRadius: 3,
     responsive: true,

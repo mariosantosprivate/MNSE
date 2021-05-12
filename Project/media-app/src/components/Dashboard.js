@@ -123,13 +123,36 @@ export default function Dashboard() {
         }
     }
 
+    const mergeVideoAudio = async () => {
+        if (ffmpegReady) {
+            // Write file to memory so webassemble can access it
+            ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(file));
+            // Run command
+            ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
+
+            // Run command
+            //ffmpeg -i input_0.mp4 -i input_1.mp4 -c copy -map 0:v:0 -map 1:a:0 -shortest out.mp4
+            await ffmpeg.run('-i', 'video.mp4', '-i', 'audio.mp3', '-c', 'copy', '-map', '0:v:0', '-map', '1:a:0', 'videoOut.mp4')
+
+            // Read result
+            const data = ffmpeg.FS('readFile', 'videoOut.mp4');
+
+            // Update upload file
+            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+
+            // Create video URL react-player
+            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+            setEditedVideo(editedVideoUrl)
+        }
+    }
+
     const fadeInAudio = async () => {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
 
             // Run command
-            await ffmpeg.run('-i', 'audio.mp3', '-af', `afade=t=in:st=${startAudioFadeIn}:d=${endAudioFadeIn-startAudioFadeIn}`, 'audioOut.mp3')
+            await ffmpeg.run('-i', 'audio.mp3', '-af', `afade=t=in:st=${startAudioFadeIn}:d=${endAudioFadeIn - startAudioFadeIn}`, 'audioOut.mp3')
 
             // Read result
             const data = ffmpeg.FS('readFile', 'audioOut.mp3');
@@ -146,7 +169,7 @@ export default function Dashboard() {
             ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
 
             // Run command
-            await ffmpeg.run('-i', 'audio.mp3', '-af', `afade=t=out:st=${startAudioFadeOut}:d=${endAudioFadeOut-startAudioFadeOut}`, 'audioOut.mp3')
+            await ffmpeg.run('-i', 'audio.mp3', '-af', `afade=t=out:st=${startAudioFadeOut}:d=${endAudioFadeOut - startAudioFadeOut}`, 'audioOut.mp3')
 
             // Read result
             const data = ffmpeg.FS('readFile', 'audioOut.mp3');
@@ -544,7 +567,7 @@ export default function Dashboard() {
 
                                 <Row>
                                     <Col>
-                                        <Button variant='secondary' onClick={splitAudioVideo} className='apply-button'>Merge Video/Audio Tracks</Button>
+                                        <Button variant='secondary' onClick={mergeVideoAudio} className='apply-button'>Merge Video/Audio Tracks</Button>
                                     </Col>
                                 </Row>
 
