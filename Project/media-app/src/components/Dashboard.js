@@ -376,7 +376,7 @@ export default function Dashboard() {
             <MyNavbar />
             <Container fluid className='main-container justify-content-center'>
                 <Row className='major-row'>
-                    <Col xs={{ span: 10, offset: 1 }}>
+                    <Col sm={{ span: 10, offset: 1 }}>
                         <Card className='file-upload-card'>
                             <Card.Body>
                                 <Row className='justify-content-center'>
@@ -412,7 +412,7 @@ export default function Dashboard() {
                     </Col>
                 </Row>
                 <Row className='major-row'>
-                    <Col xs={{ span: 10, offset: 1 }}>
+                    <Col sm={{ span: 10, offset: 1 }}>
                         <Card bg='dark' border="warning" style={{ color: '#ffc107' }}>
                             <Card.Header>Warning</Card.Header>
                             <Card.Body>
@@ -424,7 +424,7 @@ export default function Dashboard() {
                     </Col>
                 </Row>
                 <Row className='major-row'>
-                    <Col xs={{ span: 10, offset: 1 }}>
+                    <Col sm={{ span: 10, offset: 1 }}>
                         <Row>
                             <Col xs={{ span: 12 }} sm={{ span: 6 }}>
                                 <Card bg='dark' text='white'>
@@ -466,7 +466,7 @@ export default function Dashboard() {
                     </Col>
                 </Row>
                 <Row className='major-row'>
-                    <Col xs={{ span: 10, offset: 1 }}>
+                    <Col sm={{ span: 10, offset: 1 }}>
                         <Card bg='dark' text='white'>
                             <Card.Header className='card-header'>Audio</Card.Header>
                             <Card.Body>
@@ -476,7 +476,7 @@ export default function Dashboard() {
                                     </Col>
                                 </Row>
                                 <Row className='justify-content-center'>
-                                    <Col className='justify-content-center'>
+                                    <Col className='justify-content-center audio-waveform-col'>
                                         <Waveform blob={editedAudio}></Waveform>
                                     </Col>
                                 </Row>
@@ -491,7 +491,7 @@ export default function Dashboard() {
                                                     'textAlign': 'center',
                                                     'padding': '1%'
                                                 }}>
-                                                    <Col xs={{ span: 4 }} sm={{ span: 4 }}>
+                                                    <Col xs={{ span: 12 }} sm={{ span: 4 }}>
                                                         <InputGroup>
                                                             <FormControl
                                                                 placeholder="Start fade-in"
@@ -501,7 +501,7 @@ export default function Dashboard() {
                                                             />
                                                         </InputGroup>
                                                     </Col>
-                                                    <Col xs={{ span: 4 }} sm={{ span: 4 }}>
+                                                    <Col xs={{ span: 12 }} sm={{ span: 4 }}>
                                                         <InputGroup className='input-box'>
                                                             <FormControl
                                                                 placeholder="End fade-in"
@@ -530,20 +530,17 @@ export default function Dashboard() {
                                                     'textAlign': 'center',
                                                     'padding': '1%'
                                                 }}>
-                                                    <Col xs={{ span: 4 }} sm={{ span: 4 }}>
+                                                    <Col xs={{ span: 12 }} sm={{ span: 4 }}>
                                                         <InputGroup>
-                                                            <InputGroup.Prepend>
-                                                                <InputGroup.Text id="fade-out-start-input">Start</InputGroup.Text>
-                                                            </InputGroup.Prepend>
                                                             <FormControl
-                                                                placeholder="...seconds"
+                                                                placeholder="Start fade-out"
                                                                 aria-label="Start Fade-out"
                                                                 aria-describedby="fade-out-start-input"
                                                                 onChange={e => setStartAudioFadeOut(e.target.value)}
                                                             />
                                                         </InputGroup>
                                                     </Col>
-                                                    <Col xs={{ span: 4 }} sm={{ span: 4 }}>
+                                                    <Col xs={{ span: 12 }} sm={{ span: 4 }}>
                                                         <InputGroup className='input-box'>
                                                             <FormControl
                                                                 placeholder="End fade-out"
@@ -576,7 +573,7 @@ export default function Dashboard() {
                     </Col>
                 </Row>
                 <Row className='major-row'>
-                    <Col xs={{ span: 10, offset: 1 }}>
+                    <Col sm={{ span: 10, offset: 1 }}>
                         <Card bg='dark' text='white'>
                             <Card.Header className='card-header'>Trim</Card.Header>
                             <Card.Body>
@@ -609,9 +606,6 @@ export default function Dashboard() {
                                 }}>
                                     <Col xs={{ span: 4 }} sm={{ span: 4 }}>
                                         <InputGroup>
-                                            <InputGroup.Prepend>
-                                                <InputGroup.Text id="trim-start-input">Start</InputGroup.Text>
-                                            </InputGroup.Prepend>
                                             <FormControl
                                                 placeholder="Start time in seconds..."
                                                 aria-label="Start Trim"
@@ -622,9 +616,6 @@ export default function Dashboard() {
                                     </Col>
                                     <Col xs={{ span: 4 }} sm={{ span: 4 }}>
                                         <InputGroup className='input-box'>
-                                            <InputGroup.Prepend>
-                                                <InputGroup.Text id="trim-end-input">End</InputGroup.Text>
-                                            </InputGroup.Prepend>
                                             <FormControl
 
                                                 placeholder="End time in seconds..."
@@ -644,7 +635,7 @@ export default function Dashboard() {
                     </Col>
                 </Row>
                 <Row className='major-row'>
-                    <Col xs={{ span: 10, offset: 1 }}>
+                    <Col sm={{ span: 10, offset: 1 }}>
                         <Card style={{ textAlign: 'center' }} bg='dark' text='white'>
                             <Card.Header className='card-header'>Image Adjustments</Card.Header>
                             <Card.Body>
@@ -727,7 +718,7 @@ export default function Dashboard() {
                     </Col>
                 </Row>
                 <Row className='major-row'>
-                    <Col xs={{ span: 10, offset: 1 }}>
+                    <Col sm={{ span: 10, offset: 1 }}>
                         <Row>
                             <Col>
                                 <Card bg='dark' text='white'>
@@ -917,7 +908,7 @@ export default function Dashboard() {
                             </Col>
                             <Col>
                                 <Card bg='dark' text='white'>
-                                    <Card.Header className='card-header'>COLOR</Card.Header>
+                                    <Card.Header className='card-header'>Color</Card.Header>
                                     <Card.Body>
                                         <Row className='slider-label-row'>
                                             <p>Hue</p>

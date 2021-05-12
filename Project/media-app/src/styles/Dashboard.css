@@ -385,3 +385,8 @@ input[type=range]:focus::-ms-fill-upper {
 .card-custom {
     background-color: #2d3135 !important;
 }
+
+.audio-waveform-col {
+    margin: 2em 1em 2em 1em; 
+    background-color: #24272b !important;
+}
