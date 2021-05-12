@@ -24,6 +24,10 @@ export default function Dashboard() {
     const { currentUser } = useAuth();
     const [startTrim, setStartTrim] = useState(0);
     const [endTrim, setEndTrim] = useState(0);
+    const [startAudioFadeIn, setStartAudioFadeIn] = useState(0);
+    const [endAudioFadeIn, setEndAudioFadeIn] = useState(0);
+    const [startAudioFadeOut, setStartAudioFadeOut] = useState(0);
+    const [endAudioFadeOut, setEndAudioFadeOut] = useState(0);
     const [uploadName, setUploadName] = useState('')
     const [uploadFile, setUploadFile] = useState(new Blob([], { type: 'video/mp4' }))
     const [played, setPlayed] = useState(0);
@@ -116,10 +120,40 @@ export default function Dashboard() {
             // Create video URL react-player
             const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
             setEditedAudio(audioBlob);
+        }
+    }
 
+    const fadeInAudio = async () => {
+        if (ffmpegReady) {
+            // Write file to memory so webassemble can access it
+            ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
 
+            // Run command
+            await ffmpeg.run('-i', 'audio.mp3', '-af', `afade=t=in:st=${startAudioFadeIn}:d=${endAudioFadeIn-startAudioFadeIn}`, 'audioOut.mp3')
 
+            // Read result
+            const data = ffmpeg.FS('readFile', 'audioOut.mp3');
 
+            // Create video URL react-player
+            const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
+            setEditedAudio(audioBlob);
+        }
+    }
+
+    const fadeOutAudio = async () => {
+        if (ffmpegReady) {
+            // Write file to memory so webassemble can access it
+            ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
+
+            // Run command
+            await ffmpeg.run('-i', 'audio.mp3', '-af', `afade=t=out:st=${startAudioFadeOut}:d=${endAudioFadeOut-startAudioFadeOut}`, 'audioOut.mp3')
+
+            // Read result
+            const data = ffmpeg.FS('readFile', 'audioOut.mp3');
+
+            // Create video URL react-player
+            const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
+            setEditedAudio(audioBlob);
         }
     }
 
@@ -440,7 +474,7 @@ export default function Dashboard() {
                                                                 placeholder="Start fade-in"
                                                                 aria-label="Start Fade-In"
                                                                 aria-describedby="fade-in-start-input"
-                                                                onChange={e => setStartTrim(e.target.value)}
+                                                                onChange={e => setStartAudioFadeIn(e.target.value)}
                                                             />
                                                         </InputGroup>
                                                     </Col>
@@ -450,7 +484,7 @@ export default function Dashboard() {
                                                                 placeholder="End fade-in"
                                                                 aria-label="End fade-in"
                                                                 aria-describedby="fade-in-end-input"
-                                                                onChange={e => setEndTrim(e.target.value)}
+                                                                onChange={e => setEndAudioFadeIn(e.target.value)}
                                                             />
                                                         </InputGroup>
                                                     </Col>
@@ -458,7 +492,7 @@ export default function Dashboard() {
                                                 </Row>
                                                 <Row>
                                                     <Col>
-                                                        <Button variant='secondary' className='apply-button' onClick={trimVideo}>Apply</Button>
+                                                        <Button variant='secondary' className='apply-button' onClick={fadeInAudio}>Apply</Button>
                                                     </Col>
                                                 </Row>
                                             </Card.Body>
@@ -482,7 +516,7 @@ export default function Dashboard() {
                                                                 placeholder="...seconds"
                                                                 aria-label="Start Fade-out"
                                                                 aria-describedby="fade-out-start-input"
-                                                                onChange={e => setStartTrim(e.target.value)}
+                                                                onChange={e => setStartAudioFadeOut(e.target.value)}
                                                             />
                                                         </InputGroup>
                                                     </Col>
@@ -492,7 +526,7 @@ export default function Dashboard() {
                                                                 placeholder="End fade-out"
                                                                 aria-label="End fade-out"
                                                                 aria-describedby="fade-out-end-input"
-                                                                onChange={e => setEndTrim(e.target.value)}
+                                                                onChange={e => setEndAudioFadeOut(e.target.value)}
                                                             />
                                                         </InputGroup>
                                                     </Col>
@@ -500,7 +534,7 @@ export default function Dashboard() {
                                                 </Row>
                                                 <Row>
                                                     <Col>
-                                                        <Button variant='secondary' className='apply-button' onClick={trimVideo}>Apply</Button>
+                                                        <Button variant='secondary' className='apply-button' onClick={fadeOutAudio}>Apply</Button>
                                                     </Col>
                                                 </Row>
                                             </Card.Body>
