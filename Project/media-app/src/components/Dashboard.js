@@ -491,7 +491,7 @@ export default function Dashboard() {
                                                     'textAlign': 'center',
                                                     'padding': '1%'
                                                 }}>
-                                                    <Col xs={{ span: 12 }} sm={{ span: 4 }}>
+                                                    <Col xs={{ span: 10 }} md={{ span: 5 }}>
                                                         <InputGroup>
                                                             <FormControl
                                                                 placeholder="Start fade-in"
@@ -501,7 +501,7 @@ export default function Dashboard() {
                                                             />
                                                         </InputGroup>
                                                     </Col>
-                                                    <Col xs={{ span: 12 }} sm={{ span: 4 }}>
+                                                    <Col xs={{ span: 10 }} md={{ span: 5 }}>
                                                         <InputGroup className='input-box'>
                                                             <FormControl
                                                                 placeholder="End fade-in"
@@ -530,7 +530,7 @@ export default function Dashboard() {
                                                     'textAlign': 'center',
                                                     'padding': '1%'
                                                 }}>
-                                                    <Col xs={{ span: 12 }} sm={{ span: 4 }}>
+                                                    <Col xs={{ span: 10 }} md={{ span: 5 }}>
                                                         <InputGroup>
                                                             <FormControl
                                                                 placeholder="Start fade-out"
@@ -540,7 +540,7 @@ export default function Dashboard() {
                                                             />
                                                         </InputGroup>
                                                     </Col>
-                                                    <Col xs={{ span: 12 }} sm={{ span: 4 }}>
+                                                    <Col xs={{ span: 10 }} md={{ span: 5 }}>
                                                         <InputGroup className='input-box'>
                                                             <FormControl
                                                                 placeholder="End fade-out"
@@ -625,7 +625,7 @@ export default function Dashboard() {
                                             />
                                         </InputGroup>
                                     </Col>
-                                    <Col xs={{ span: 4 }} sm={{ span: 2 }}>
+                                    <Col xs={{ span: 4 }} md={{ span: 2 }}>
                                         <Button variant='secondary' className='trim-button' onClick={trimVideo}>Apply</Button>
                                     </Col>
                                 </Row>
@@ -719,8 +719,8 @@ export default function Dashboard() {
                 </Row>
                 <Row className='major-row'>
                     <Col sm={{ span: 10, offset: 1 }}>
-                        <Row>
-                            <Col>
+                        <Row className = 'justify-content-center'>
+                            <Col xs={{span: 12}} md={{span: 4}} >
                                 <Card bg='dark' text='white'>
                                     <Card.Header className='card-header'>Sharpness</Card.Header>
                                     <Card.Body>
@@ -813,7 +813,7 @@ export default function Dashboard() {
                                     </Card.Body>
                                 </Card>
                             </Col>
-                            <Col>
+                            <Col xs={{span: 12}} md={{span: 4}} >
                                 <Card bg='dark' text='white'>
                                     <Card.Header className='card-header'>Blur</Card.Header>
                                     <Card.Body>
@@ -906,7 +906,7 @@ export default function Dashboard() {
                                     </Card.Body>
                                 </Card>
                             </Col>
-                            <Col>
+                            <Col xs={{span: 12}} md={{span: 4}} >
                                 <Card bg='dark' text='white'>
                                     <Card.Header className='card-header'>Color</Card.Header>
                                     <Card.Body>
