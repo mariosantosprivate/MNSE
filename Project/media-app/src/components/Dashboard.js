@@ -771,7 +771,7 @@ export default function Dashboard() {
                             </Col>
                             <Col>
                                 <Card bg='dark' text='white'>
-                                    <Card.Header className='card-header'>COLOR</Card.Header>
+                                    <Card.Header className='card-header'>Color</Card.Header>
                                     <Card.Body>
                                         <Row className='slider-label-row'>
                                             <p>Hue</p>
