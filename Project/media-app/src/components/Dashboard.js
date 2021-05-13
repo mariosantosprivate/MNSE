@@ -53,8 +53,6 @@ export default function Dashboard() {
     const [chromaStrength, setChromaStrength] = useState(1)
     const [chromaThreshold, setchromaThreshold] = useState(0)
     const [hue, setHue] = useState(0)
-    const [hueSaturation, setHueSaturation] = useState(1)
-    const [hueBrightness, setHueBrightness] = useState(0)
     const [gamma, setGamma] = useState(1)
     const [selectedFileName, setSelectedFileName] = useState('Choose File')
     const [echoType, setEchoType] = useState('indoor')
@@ -65,6 +63,7 @@ export default function Dashboard() {
     const [tremoloWidth, setTremoloWidth] = useState(0.1)
     const [tremoloOffset, setTremoloOffset] = useState(0)
 
+    // Allows accessing video URL from Videos component
     const location = useLocation();
 
     useEffect(() => {
@@ -75,6 +74,7 @@ export default function Dashboard() {
 
     }, [location]);
 
+    // Util
     const convertSecondsToTime = (seconds) => {
         let hours = Math.floor(seconds / 3600);
         let mins = Math.floor(seconds / 60 % 60);
@@ -87,35 +87,21 @@ export default function Dashboard() {
         return `${hours}:${mins}:${secs}`
     }
 
+    // Load FFmpeg library
     const loadFfmpeg = async () => {
         await ffmpeg.load();
         setFfmpegReady(true);
     }
 
+    useEffect(() => {
+        loadFfmpeg();
+    }, [])
+
     const handleLoadedVideo = () => {
         setDuration(player.getDuration())
     }
 
-    const brightnessVideo = async () => {
-        if (ffmpegReady) {
-            // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-            // Run command
-            await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=brightness=${brightness}`, '-c:a', 'copy', 'testOut.mp4');
-
-            // Read result
-            const data = ffmpeg.FS('readFile', 'testOut.mp4');
-
-            // Update upload file
-            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-            // Create video URL react-player
-            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-            setEditedVideo(editedVideoUrl)
-        }
-
-    }
-
+    // AUDIO
     const splitAudioVideo = async () => {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
@@ -319,19 +305,46 @@ export default function Dashboard() {
         }
     }
 
+    const resetAudio = () => {
+        setEditedAudio(originalAudio)
+
+    }
+
+    // VIDEO
     const trimVideo = async () => {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
 
             // Run command
-            
+
             //ffmpeg -ss 00:08:00 -i Video.mp4 -ss 00:01:00 -t 00:01:00 -c copy VideoClip.mp4
             //The first -ss seeks fast to (approximately) 8min0sec, and then the second -ss seeks accurately to 9min0sec, and the -t 00:01:00 takes out a 1min0sec clip.
-            
-            await ffmpeg.run('-i', 'test.mp4', '-ss', startTrim, '-t', `${endTrim-startTrim}`,'testOut.mp4');
+
+            await ffmpeg.run('-i', 'test.mp4', '-ss', startTrim, '-t', `${endTrim - startTrim}`, 'testOut.mp4');
 
             //await ffmpeg.run('-i', 'test.mp4', '-ss', startTrim, '-to', endTrim, '-c:v', 'copy', '-c:a', 'copy', 'testOut.mp4');
+
+            // Read result
+            const data = ffmpeg.FS('readFile', 'testOut.mp4');
+
+            // Update upload file
+            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+
+            // Create video URL react-player
+            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+            setEditedVideo(editedVideoUrl)
+        }
+
+    }
+
+    const brightnessVideo = async () => {
+        if (ffmpegReady) {
+            // Write file to memory so webassemble can access it
+            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
+
+            // Run command
+            await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=brightness=${brightness}`, '-c:a', 'copy', 'testOut.mp4');
 
             // Read result
             const data = ffmpeg.FS('readFile', 'testOut.mp4');
@@ -367,13 +380,13 @@ export default function Dashboard() {
 
     }
 
-    const saturationVideo = async () => {
+    const gammaVideo = async () => {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
 
             // Run command
-            await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=saturation=${saturation}`, '-c:a', 'copy', 'testOut.mp4');
+            await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=gamma=${gamma}`, '-c:a', 'copy', 'testOut.mp4');
 
             // Read result
             const data = ffmpeg.FS('readFile', 'testOut.mp4');
@@ -388,13 +401,34 @@ export default function Dashboard() {
 
     }
 
-    const gammaVideo = async () => {
+    const hueVideo = async () => {
+        if (ffmpegReady) {
+            // Write file to memory so webassemble can access it
+            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(uploadFile));
+
+            // Run command
+            await ffmpeg.run('-i', 'test.mp4', '-vf', `hue=h=${hue}`, '-c:a', 'copy', 'testOut.mp4');
+
+            // Read result
+            const data = ffmpeg.FS('readFile', 'testOut.mp4');
+
+            // Update upload file
+            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+
+            // Create video URL react-player
+            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+            setEditedVideo(editedVideoUrl)
+        }
+
+    }
+
+    const saturationVideo = async () => {
         if (ffmpegReady) {
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
 
             // Run command
-            await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=gamma=${gamma}`, '-c:a', 'copy', 'testOut.mp4');
+            await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=saturation=${saturation}`, '-c:a', 'copy', 'testOut.mp4');
 
             // Read result
             const data = ffmpeg.FS('readFile', 'testOut.mp4');
@@ -451,27 +485,12 @@ export default function Dashboard() {
 
     }
 
-    const colourVideo = async () => {
-        if (ffmpegReady) {
-            // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(uploadFile));
-
-            // Run command
-            await ffmpeg.run('-i', 'test.mp4', '-vf', `hue=h=${hue}:s=${hueSaturation}:b=${hueBrightness}`, '-c:a', 'copy', 'testOut.mp4');
-
-            // Read result
-            const data = ffmpeg.FS('readFile', 'testOut.mp4');
-
-            // Update upload file
-            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-            // Create video URL react-player
-            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-            setEditedVideo(editedVideoUrl)
-        }
-
+    const resetVideo = () => {
+        setUploadFile(originalFile)
+        setEditedVideo(URL.createObjectURL(originalFile))
     }
 
+    // Handlers
     const handleSelectFile = (e) => {
         setSelectedFileName(inputRef.current.files[0].name)
         setFile(URL.createObjectURL(e.target.files?.item(0)));
@@ -498,16 +517,6 @@ export default function Dashboard() {
         )
     }
 
-    const resetAudio = () => {
-        setEditedAudio(originalAudio)
-
-    }
-
-    const resetVideo = () => {
-        setUploadFile(originalFile)
-        setEditedVideo(URL.createObjectURL(originalFile))
-    }
-
     const handleSeekChange = e => {
         setPlayed(parseFloat(e.target.value))
     }
@@ -515,10 +524,6 @@ export default function Dashboard() {
     const handleSeekMouseUp = e => {
         player.seekTo(parseFloat(e.target.value))
     }
-
-    useEffect(() => {
-        loadFfmpeg();
-    }, [])
 
     const ref = myPlayer => {
         setPlayer(myPlayer)
@@ -584,12 +589,12 @@ export default function Dashboard() {
                             <Col xs={{ span: 12 }} sm={{ span: 6 }}>
                                 <Card bg='dark' text='white'>
                                     <Card.Header className='card-header'>
-                                    <Row style={{ justifyContent: 'center', textAlign: 'center' }}>
+                                        <Row style={{ justifyContent: 'center', textAlign: 'center' }}>
                                             <Col>
                                                 Original
                                             </Col>
                                             <Col>
-                                                <Button style={{opacity: 0}} title='Reset' variant='outline-light' onClick={() => { resetVideo() }}>
+                                                <Button style={{ opacity: 0 }} title='Reset' variant='outline-light' onClick={() => { resetVideo() }}>
                                                     <FontAwesomeIcon icon={faUndo} />
                                                 </Button>
                                             </Col>
@@ -696,6 +701,110 @@ export default function Dashboard() {
                                     </Col>
                                     <Col xs={{ span: 4 }} md={{ span: 2 }}>
                                         <Button variant='secondary' className='trim-button' onClick={trimVideo}>Trim</Button>
+                                    </Col>
+                                </Row>
+                                <Row style={{ padding: '1em 0 1em 0' }}>
+                                    <Col xs={{ span: 12 }} lg={{ span: 10, offset: 1 }}>
+                                        <Card bg='dark' text='white'>
+                                            <Card.Header className='card-header-custom'>
+                                                Video FX
+                                        </Card.Header>
+                                            <Card.Body className='card-custom'>
+                                                <Row className='large-slider-row'>
+
+                                                    <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
+                                                        <Row className='large-slider-label-row'>
+                                                            Brightness
+</Row>
+                                                        <RangeSlider
+                                                            variant='light'
+                                                            min={-1.0}
+                                                            max={1.0}
+                                                            step={0.1}
+                                                            value={brightness}
+                                                            onChange={changeEvent => setBrightness(changeEvent.target.value)}
+                                                        />
+                                                    </Col>
+                                                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
+                                                        <Button variant='secondary' className='apply-button' onClick={brightnessVideo}>Apply</Button>
+                                                    </Col>
+                                                </Row>
+                                                <Row className='large-slider-row'>
+                                                    <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
+                                                        <Row className='large-slider-label-row'>
+                                                            Contrast
+</Row>
+                                                        <RangeSlider
+                                                            variant='light'
+                                                            min={-1000.0}
+                                                            max={1000.0}
+                                                            step={0.1}
+                                                            value={contrast}
+                                                            onChange={changeEvent => setContrast(changeEvent.target.value)}
+                                                        />
+                                                    </Col>
+                                                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
+                                                        <Button variant='secondary' className='apply-button' onClick={contrastVideo}>Apply</Button>
+                                                    </Col>
+                                                </Row>
+                                                <Row className='large-slider-row'>
+
+                                                    <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
+                                                        <Row className='large-slider-label-row'>
+                                                            Hue
+</Row>
+                                                        <RangeSlider
+                                                            variant='light'
+                                                            min={0}
+                                                            max={360}
+                                                            step={0.1}
+                                                            value={hue}
+                                                            onChange={changeEvent => setHue(changeEvent.target.value)}
+                                                        />
+                                                    </Col>
+                                                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
+                                                        <Button variant='secondary' className='apply-button' onClick={hueVideo}>Apply</Button>
+                                                    </Col>
+                                                </Row>
+                                                <Row className='large-slider-row'>
+                                                    <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
+                                                        <Row className='large-slider-label-row'>
+                                                            Saturation
+    </Row>
+                                                        <RangeSlider
+                                                            variant='light'
+                                                            min={0.0}
+                                                            max={3.0}
+                                                            step={0.1}
+                                                            value={saturation}
+                                                            onChange={changeEvent => setSaturation(changeEvent.target.value)}
+                                                        />
+                                                    </Col>
+                                                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
+                                                        <Button variant='secondary' className='apply-button' onClick={saturationVideo}>Apply</Button>
+                                                    </Col>
+                                                </Row>
+                                                <Row className='large-slider-row'>
+                                                    <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
+                                                        <Row className='large-slider-label-row'>
+                                                            Gamma
+</Row>
+                                                        <RangeSlider
+                                                            variant='light'
+                                                            min={0.1}
+                                                            max={10.0}
+                                                            step={0.1}
+                                                            value={gamma}
+                                                            onChange={changeEvent => setGamma(changeEvent.target.value)}
+                                                        />
+                                                    </Col>
+                                                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
+                                                        <Button variant='secondary' className='apply-button' onClick={gammaVideo}>Apply</Button>
+                                                    </Col>
+                                                </Row>
+                                            </Card.Body>
+                                        </Card>
+
                                     </Col>
                                 </Row>
                                 <Row style={{ padding: '1em 0 1em 0' }}>
@@ -931,67 +1040,6 @@ export default function Dashboard() {
                                                         </Dropdown.Menu>
                                                     </Dropdown>
                                                 </Col>
-                                                <Col xs={{ span: 12 }} lg={{ span: 8, offset: 2 }}>
-                                                    <Dropdown className='audio-fx-dropdown' as={ButtonGroup}>
-                                                        <Button onClick={() => { colourVideo() }} variant="secondary">Color</Button>
-                                                        <Dropdown.Toggle split variant="secondary" id="dropdown-split-basic" />
-                                                        <Dropdown.Menu className='dropdown-menu-custom'>
-                                                            <Dropdown.Header>Color Settings</Dropdown.Header>
-                                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                                <Row>
-                                                                    <Col>Hue</Col>
-                                                                </Row>
-                                                                <Row>
-                                                                    <Col>
-                                                                        <RangeSlider
-                                                                            variant='light'
-                                                                            min={0.0}
-                                                                            max={360.0}
-                                                                            step={1}
-                                                                            value={hue}
-                                                                            onChange={changeEvent => setHue(changeEvent.target.value)}
-                                                                        />
-                                                                    </Col>
-                                                                </Row>
-                                                            </Dropdown.Item>
-                                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                                <Row>
-                                                                    <Col>Saturation</Col>
-                                                                </Row>
-                                                                <Row>
-                                                                    <Col>
-                                                                        <RangeSlider
-                                                                            variant='light'
-                                                                            min={-10.0}
-                                                                            max={10.0}
-                                                                            step={0.1}
-                                                                            value={hueSaturation}
-                                                                            onChange={changeEvent => setHueSaturation(changeEvent.target.value)}
-                                                                        />
-                                                                    </Col>
-                                                                </Row>
-                                                            </Dropdown.Item>
-                                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                                <Row>
-                                                                    <Col>Brightness</Col>
-                                                                </Row>
-                                                                <Row>
-                                                                    <Col>
-                                                                        <RangeSlider
-                                                                            variant='light'
-                                                                            min={-10.0}
-                                                                            max={10.0}
-                                                                            step={0.1}
-                                                                            value={hueBrightness}
-                                                                            onChange={changeEvent => setHueBrightness(changeEvent.target.value)}
-                                                                        />
-                                                                    </Col>
-                                                                </Row>
-                                                            </Dropdown.Item>
-                                                        </Dropdown.Menu>
-                                                    </Dropdown>
-                                                </Col>
-
                                             </Card.Body>
                                         </Card>
 
