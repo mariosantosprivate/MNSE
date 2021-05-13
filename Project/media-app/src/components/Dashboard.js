@@ -707,7 +707,7 @@ export default function Dashboard() {
                                     <Col xs={{ span: 12 }} lg={{ span: 10, offset: 1 }}>
                                         <Card bg='dark' text='white'>
                                             <Card.Header className='card-header-custom'>
-                                                Video FX
+                                                Image Adjustments
                                         </Card.Header>
                                             <Card.Body className='card-custom'>
                                                 <Row className='large-slider-row'>
