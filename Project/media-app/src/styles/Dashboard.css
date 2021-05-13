@@ -1,24 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;1,100;1,300;1,400&display=swap');
-
-.body{
+.body {
     font-family: 'Roboto', sans-serif;
 }
 
 ::-webkit-scrollbar {
     width: 10px;
-    height:10px;
-
+    height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.8); 
-    
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.8);
     background-color: #00000075;
 }
 
 ::-webkit-scrollbar-thumb {
-    
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.9); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.9);
     background-color: #464f58
 }
 
@@ -26,10 +22,9 @@
     font-family: 'Roboto', sans-serif;
     min-width: 100%;
     justify-content: center;
-    
 }
 
-.loader-container{
+.loader-container {
     min-width: 100%;
     justify-content: center;
     text-align: center;
@@ -296,14 +291,14 @@ input[type=range]:focus::-ms-fill-upper {
 }
 
 .large-slider-label-row {
-    justify-content: center; 
-    text-align: center; 
+    justify-content: center;
+    text-align: center;
     padding-top: 1em;
 }
 
 .slider-label-row {
-    justify-content: center; 
-    text-align: center; 
+    justify-content: center;
+    text-align: center;
     padding-top: 2em
 }
 
@@ -312,71 +307,127 @@ input[type=range]:focus::-ms-fill-upper {
     width: 80%;
 }
 
-.card-header{
+.card-header {
     font-size: large;
     font-weight: 300
-
 }
 
-.input-box{
+.input-box {
     background-color: #343a40;
 }
 
-.major-row{
+.major-row {
     text-align: center;
     padding-top: 1em;
     justify-content: 'center';
 }
 
-.file-input-form{
+.file-input-form {
     justify-content: center;
     text-align: center;
     color: white !important;
     padding-bottom: 1em
 }
 
-.custom-file-label{
+.custom-file-label {
     max-width: 100%;
     margin: 0em 1em 0em 1em;
 }
 
-.progress-bar-custom{
-
+.progress-bar-custom {
     margin-top: 1em;
-
 }
 
-.loading-label{
-font-size:x-large;
-padding-bottom: 2em;
+.loading-label {
+    font-size: x-large;
+    padding-bottom: 2em;
 }
 
 .loader {
-    
     margin: auto;
-    border: 16px solid #f3f3f3; /* Light grey */
-    border-top: 16px solid #3498db; /* Blue */
+    border: 16px solid #f3f3f3;
+    /* Light grey */
+    border-top: 16px solid #3498db;
+    /* Blue */
     border-radius: 50%;
     width: 120px;
     height: 120px;
     animation: spin 2s linear infinite;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+}
 
-  .container {
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.container {
     height: 100vh;
     position: relative;
-  }
-  
-  .center {
+}
+
+.center {
     margin: 0;
     position: absolute;
     top: 40%;
     left: 50%;
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
-  }
+}
+
+.card-header-custom {
+    background-color: #24272b !important;
+}
+
+.card-custom {
+    background-color: #2d3135 !important;
+}
+
+.audio-waveform-col {
+    margin: 2em 1em 2em 1em; 
+    background-color: #24272b !important;
+}
+
+.audio-fx-button{
+    width: 100%;
+    width: -moz-available;          /* WebKit-based browsers will ignore this. */
+    width: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
+    width: stretch;
+    margin-top: 1em;
+}
+
+.fill-available-custom{
+    width: 100%;
+    width: -moz-available;          /* WebKit-based browsers will ignore this. */
+    width: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
+    width: stretch;
+}
+
+.audio-fx-dropdown{
+    width: 100%;
+    width: -moz-available;          /* WebKit-based browsers will ignore this. */
+    width: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
+    width: stretch;
+    padding-top: 1em;
+}
+
+.fade-input-box{
+    margin-top: 1em;
+}
+
+.dropdown-menu-custom{
+    background-color: #343a40 !important;
+    
+}
+
+.dropdown-item-custom{
+    color: #d8d8d8 !important;
+}
+
+.dropdown-item-custom:hover{
+    color: #d8d8d8 !important;
+    background-color: #343a40 !important;
+}
