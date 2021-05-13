@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
-import { Card, Container, ProgressBar, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
+import { Card, Container, ProgressBar, Row, Col, Button, InputGroup, FormControl, Dropdown, ButtonGroup } from 'react-bootstrap';
 import ReactPlayer from 'react-player';
 import { storage } from '../firebase';
 import { useAuth } from '../contexts/AuthContext';
@@ -9,6 +9,8 @@ import Waveform from './Waveform'
 import '../styles/Dashboard.css';
 import { useLocation } from "react-router-dom";
 import RangeSlider from 'react-bootstrap-range-slider';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUndo } from "@fortawesome/free-solid-svg-icons";
 
 const ffmpeg = createFFmpeg({
     log: true,
@@ -19,6 +21,7 @@ export default function Dashboard() {
     const [ffmpegReady, setFfmpegReady] = useState(false);
     const [file, setFile] = useState('./');
     const [editedVideo, setEditedVideo] = useState('./')
+    const [originalAudio, setOriginalAudio] = useState(new Blob([], { type: 'audio/mp3' }))
     const [editedAudio, setEditedAudio] = useState(new Blob([], { type: 'audio/mp3' }))
     const [progress, setProgress] = useState(0);
     const { currentUser } = useAuth();
@@ -53,6 +56,13 @@ export default function Dashboard() {
     const [hueBrightness, setHueBrightness] = useState(0)
     const [gamma, setGamma] = useState(1)
     const [selectedFileName, setSelectedFileName] = useState('Choose File')
+    const [echoType, setEchoType] = useState('indoor')
+    const [phaserSpeed, setPhaseSpeed] = useState(0.5)
+    const [phaserDecay, setPhaseDecay] = useState(0.4)
+    const [phaserDelay, setPhaseDelay] = useState(3)
+    const [tremoloFrequency, setTremoloFrequency] = useState(3)
+    const [tremoloWidth, setTremoloWidth] = useState(0.1)
+    const [tremoloOffset, setTremoloOffset] = useState(0)
 
     const location = useLocation();
 
@@ -119,6 +129,7 @@ export default function Dashboard() {
 
             // Create video URL react-player
             const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
+            setOriginalAudio(audioBlob);
             setEditedAudio(audioBlob);
         }
     }
@@ -170,6 +181,134 @@ export default function Dashboard() {
 
             // Run command
             await ffmpeg.run('-i', 'audio.mp3', '-af', `afade=t=out:st=${startAudioFadeOut}:d=${endAudioFadeOut - startAudioFadeOut}`, 'audioOut.mp3')
+
+            // Read result
+            const data = ffmpeg.FS('readFile', 'audioOut.mp3');
+
+            // Create video URL react-player
+            const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
+            setEditedAudio(audioBlob);
+        }
+    }
+
+    const deessAudio = async () => {
+        if (ffmpegReady) {
+            // Write file to memory so webassemble can access it
+            ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
+
+            // Run command
+            // ./ffmpeg -i ~/audio_source/noisy_speech.wav -filter_complex "deesser=i=1" adeesser_out_voice.wav
+            await ffmpeg.run('-i', 'audio.mp3', '-filter_complex', `deesser=i=1`, 'audioOut.mp3')
+
+            // Read result
+            const data = ffmpeg.FS('readFile', 'audioOut.mp3');
+
+            // Create video URL react-player
+            const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
+            setEditedAudio(audioBlob);
+        }
+    }
+
+    const denoiseAudio = async () => {
+
+        if (ffmpegReady) {
+
+            // Write file to memory so webassemble can access it
+            ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
+
+            // Run command
+            await ffmpeg.run('-i', 'audio.mp3', '-af', `asplit[a][b],[a]adelay=32S|32S[a],[b][a]anlms=order=128:leakage=0.0005:mu=.5:out_mode=o`, 'audioOut.mp3')
+
+            // Read result
+            const data = ffmpeg.FS('readFile', 'audioOut.mp3');
+
+            // Create video URL react-player
+            const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
+            setEditedAudio(audioBlob);
+        }
+    }
+
+    const phaserAudio = async () => {
+
+        if (ffmpegReady) {
+
+            // Write file to memory so webassemble can access it
+            ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
+
+            // Run command
+            //./ffmpeg -i ~/audio_source/music.wav -filter_complex "aphaser=type=t:speed=2:decay=0.6" aphaser_out_music.wav
+            await ffmpeg.run('-i', 'audio.mp3', '-filter_complex', `aphaser=type=t:speed=${phaserSpeed}:decay=${phaserDecay}:delay=${phaserDelay}`, 'audioOut.mp3')
+
+            // Read result
+            const data = ffmpeg.FS('readFile', 'audioOut.mp3');
+
+            // Create video URL react-player
+            const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
+            setEditedAudio(audioBlob);
+        }
+    }
+
+    const tremoloAudio = async () => {
+
+        if (ffmpegReady) {
+
+            let offsetDirection = 'offset_r'
+            if (tremoloOffset < 0) {
+                setTremoloOffset(Math.abs(tremoloOffset))
+                offsetDirection = 'offset_l'
+            }
+
+            // Write file to memory so webassemble can access it
+            ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
+
+            // Run command
+            await ffmpeg.run('-i', 'audio.mp3', '-filter_complex', `apulsator=mode=sine:hz=${tremoloFrequency}:width=${tremoloWidth}:${offsetDirection}=${tremoloOffset}`, 'audioOut.mp3')
+
+            // Read result
+            const data = ffmpeg.FS('readFile', 'audioOut.mp3');
+
+            // Create video URL react-player
+            const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
+            setEditedAudio(audioBlob);
+        }
+    }
+
+    const reverseAudio = async () => {
+
+        if (ffmpegReady) {
+
+            // Write file to memory so webassemble can access it
+            ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
+
+            // Run command
+            ///ffmpeg -i ~/audio_source/noisy_speech.wav -filter_complex "areverse" areverse_out_voice.wav
+            await ffmpeg.run('-i', 'audio.mp3', '-filter_complex' `areverse`, 'audioOut.mp3')
+
+            // Read result
+            const data = ffmpeg.FS('readFile', 'audioOut.mp3');
+
+            // Create video URL react-player
+            const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
+            setEditedAudio(audioBlob);
+        }
+    }
+
+    const echoAudio = async () => {
+        if (ffmpegReady) {
+
+            let indoorEchoParams = '0.8:0.9:40|50|70:0.4|0.3|0.2'
+            let mountainEchoParams = '0.8:0.9:500|1000:0.2|0.1'
+            let echoParams = ''
+
+            echoType === 'indoor' ? echoParams = indoorEchoParams : echoParams = mountainEchoParams
+
+            // Write file to memory so webassemble can access it
+            ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
+
+            // Run command
+            // /ffmpeg -i ./arnn_out.wav -filter_complex "aecho=0.8:0.9:40|50|70:0.4|0.3|0.2" echo_indoor_out.wav
+
+            await ffmpeg.run('-i', 'audio.mp3', '-filter_complex', `aecho=${echoParams}`, 'audioOut.mp3')
 
             // Read result
             const data = ffmpeg.FS('readFile', 'audioOut.mp3');
@@ -353,6 +492,10 @@ export default function Dashboard() {
         )
     }
 
+    const resetAudio = () => {
+        setEditedAudio(originalAudio)
+    }
+
     const handleSeekChange = e => {
         setPlayed(parseFloat(e.target.value))
     }
@@ -480,6 +623,14 @@ export default function Dashboard() {
                                         <Waveform blob={editedAudio}></Waveform>
                                     </Col>
                                 </Row>
+                                <Row>
+                                    <Col>
+                                        <Button title='Reset' variant='outline-light' style={{ marginBottom: '2em' }} onClick={() => { resetAudio() }}>
+                                            <FontAwesomeIcon icon={faUndo} />
+                                        </Button>
+
+                                    </Col>
+                                </Row>
 
                                 <Row className='justify-content-center'>
                                     <Col>
@@ -555,6 +706,168 @@ export default function Dashboard() {
                                                 <Row>
                                                     <Col>
                                                         <Button variant='secondary' className='apply-button' onClick={fadeOutAudio}>Apply</Button>
+                                                    </Col>
+                                                </Row>
+                                            </Card.Body>
+                                        </Card>
+                                    </Col>
+                                    <Col>
+                                        <Card bg='dark' text='white'>
+                                            <Card.Header className='card-header card-header-custom'>Audio FX</Card.Header>
+                                            <Card.Body className='card-custom'>
+                                                <Row>
+                                                    <Col xs={{span: 12}} lg={{span: 6}}>
+                                                        <Button className='audio-fx-button' variant='secondary' onClick={deessAudio}>Deess</Button>
+                                                    </Col>
+                                                    <Col xs={{span: 12}} lg={{span: 6}}>
+                                                        <Button className='audio-fx-button' variant='secondary' onClick={denoiseAudio}>Denoise</Button>
+                                                    </Col>
+                                                    <Col xs={{span: 12}} lg={{span: 6}}>
+                                                        <Button className='audio-fx-button' variant='secondary' onClick={reverseAudio}>Reverse</Button>
+                                                    </Col>
+                                                
+                                                    <Col xs={{span: 12}} lg={{span: 6}}>
+                                                        <Dropdown className='audio-fx-dropdown' as={ButtonGroup}>
+                                                            <Button onClick={() => { tremoloAudio() }} variant="secondary">Tremolo</Button>
+
+                                                            <Dropdown.Toggle split variant="secondary" id="dropdown-split-basic" />
+
+                                                            <Dropdown.Menu>
+                                                                <Dropdown.Header>Tremolo Settings</Dropdown.Header>
+                                                                <Dropdown.Item>
+                                                                    <Row>
+                                                                        <Col>Frequency (Hz)</Col>
+                                                                    </Row>
+                                                                    <Row>
+                                                                        <Col>
+                                                                            <RangeSlider
+                                                                                variant='light'
+                                                                                min={0.01}
+                                                                                max={100}
+                                                                                step={0.1}
+                                                                                value={tremoloFrequency}
+                                                                                onChange={changeEvent => setTremoloFrequency(changeEvent.target.value)}
+                                                                            />
+                                                                        </Col>
+                                                                    </Row>
+                                                                </Dropdown.Item>
+                                                                <Dropdown.Item>
+                                                                    <Row>
+                                                                        <Col>Width</Col>
+                                                                    </Row>
+                                                                    <Row>
+                                                                        <Col>
+                                                                            <RangeSlider
+                                                                                variant='light'
+                                                                                min={0}
+                                                                                max={2}
+                                                                                step={0.1}
+                                                                                value={tremoloWidth}
+                                                                                onChange={changeEvent => setTremoloWidth(changeEvent.target.value)}
+                                                                            />
+                                                                        </Col>
+                                                                    </Row>
+                                                                </Dropdown.Item>
+                                                                <Dropdown.Item>
+                                                                    <Row>
+                                                                        <Col>Offset</Col>
+                                                                    </Row>
+                                                                    <Row>
+                                                                        <Col>
+                                                                            <RangeSlider
+                                                                                variant='light'
+                                                                                min={-1}
+                                                                                max={1}
+                                                                                step={0.01}
+                                                                                value={tremoloWidth}
+                                                                                onChange={changeEvent => {
+
+                                                                                    setTremoloOffset(changeEvent.target.value)
+                                                                                }}
+                                                                            />
+                                                                        </Col>
+                                                                    </Row>
+                                                                </Dropdown.Item>
+                                                            </Dropdown.Menu>
+                                                        </Dropdown>
+                                                    </Col>
+                                                    <Col xs={{span: 12}} lg={{span: 6}}>
+                                                        <Dropdown className='audio-fx-dropdown' as={ButtonGroup}>
+                                                            <Button onClick={() => { phaserAudio() }} variant="secondary">Phaser</Button>
+
+                                                            <Dropdown.Toggle split variant="secondary" id="dropdown-split-basic" />
+
+                                                            <Dropdown.Menu>
+                                                                <Dropdown.Header>Phaser Settings</Dropdown.Header>
+                                                                <Dropdown.Item>
+                                                                    <Row>
+                                                                        <Col>Speed (Hz)</Col>
+                                                                    </Row>
+                                                                    <Row>
+                                                                        <Col>
+                                                                            <RangeSlider
+                                                                                variant='light'
+                                                                                min={0.5}
+                                                                                max={100}
+                                                                                step={0.1}
+                                                                                value={tremoloFrequency}
+                                                                                onChange={changeEvent => setPhaseSpeed(changeEvent.target.value)}
+                                                                            />
+                                                                        </Col>
+                                                                    </Row>
+                                                                </Dropdown.Item>
+                                                                <Dropdown.Item>
+                                                                    <Row>
+                                                                        <Col>Decay</Col>
+                                                                    </Row>
+                                                                    <Row>
+                                                                        <Col>
+                                                                            <RangeSlider
+                                                                                variant='light'
+                                                                                min={0}
+                                                                                max={1}
+                                                                                step={0.05}
+                                                                                value={phaserDecay}
+                                                                                onChange={changeEvent => setPhaseDecay(changeEvent.target.value)}
+                                                                            />
+                                                                        </Col>
+                                                                    </Row>
+                                                                </Dropdown.Item>
+                                                                <Dropdown.Item>
+                                                                    <Row>
+                                                                        <Col>Delay</Col>
+                                                                    </Row>
+                                                                    <Row>
+                                                                        <Col>
+                                                                            <RangeSlider
+                                                                                variant='light'
+                                                                                min={0.5}
+                                                                                max={5000}
+                                                                                step={5}
+                                                                                value={phaserDelay}
+                                                                                onChange={changeEvent => {
+                                                                                    setPhaseDelay(changeEvent.target.value)
+                                                                                }}
+                                                                            />
+                                                                        </Col>
+                                                                    </Row>
+                                                                </Dropdown.Item>
+                                                            </Dropdown.Menu>
+                                                        </Dropdown>
+                                                    </Col>
+                                                    <Col xs={{span: 12}} lg={{span: 6}}>
+                                                        <Dropdown className='audio-fx-dropdown' as={ButtonGroup}>
+                                                            <Button onClick={echoAudio} variant="secondary">Echo</Button>
+
+                                                            <Dropdown.Toggle split variant="secondary" id="dropdown-split-basic" />
+
+                                                            <Dropdown.Menu>
+                                                                <Dropdown.Header>Echo Type</Dropdown.Header>
+                                                                <Dropdown.Item onClick={() => { setEchoType('indoor') }}>Indoors</Dropdown.Item>
+                                                                <Dropdown.Item onClick={() => { setEchoType('mountain') }}>Mountains</Dropdown.Item>
+                                                            </Dropdown.Menu>
+                                                        </Dropdown>
+
                                                     </Col>
                                                 </Row>
                                             </Card.Body>
@@ -680,7 +993,7 @@ export default function Dashboard() {
                                     <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
                                         <Row className='large-slider-label-row'>
                                             Saturation
-                                </Row>
+                                        </Row>
                                         <RangeSlider
                                             variant='light'
                                             min={0.0}
@@ -719,8 +1032,8 @@ export default function Dashboard() {
                 </Row>
                 <Row className='major-row'>
                     <Col sm={{ span: 10, offset: 1 }}>
-                        <Row className = 'justify-content-center'>
-                            <Col xs={{span: 12}} md={{span: 4}} >
+                        <Row className='justify-content-center'>
+                            <Col xs={{ span: 12 }} md={{ span: 4 }} >
                                 <Card bg='dark' text='white'>
                                     <Card.Header className='card-header'>Sharpness</Card.Header>
                                     <Card.Body>
@@ -813,7 +1126,7 @@ export default function Dashboard() {
                                     </Card.Body>
                                 </Card>
                             </Col>
-                            <Col xs={{span: 12}} md={{span: 4}} >
+                            <Col xs={{ span: 12 }} md={{ span: 4 }} >
                                 <Card bg='dark' text='white'>
                                     <Card.Header className='card-header'>Blur</Card.Header>
                                     <Card.Body>
@@ -906,7 +1219,7 @@ export default function Dashboard() {
                                     </Card.Body>
                                 </Card>
                             </Col>
-                            <Col xs={{span: 12}} md={{span: 4}} >
+                            <Col xs={{ span: 12 }} md={{ span: 4 }} >
                                 <Card bg='dark' text='white'>
                                     <Card.Header className='card-header'>Color</Card.Header>
                                     <Card.Body>

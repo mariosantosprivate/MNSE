@@ -390,3 +390,19 @@ input[type=range]:focus::-ms-fill-upper {
     margin: 2em 1em 2em 1em; 
     background-color: #24272b !important;
 }
+
+.audio-fx-button{
+    width: 100%;
+    width: -moz-available;          /* WebKit-based browsers will ignore this. */
+    width: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
+    width: stretch;
+    margin-top: 1em;
+}
+
+.audio-fx-dropdown{
+    width: 100%;
+    width: -moz-available;          /* WebKit-based browsers will ignore this. */
+    width: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
+    width: stretch;
+    padding-top: 1em;
+}
