@@ -399,10 +399,35 @@ input[type=range]:focus::-ms-fill-upper {
     margin-top: 1em;
 }
 
+.fill-available-custom{
+    width: 100%;
+    width: -moz-available;          /* WebKit-based browsers will ignore this. */
+    width: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
+    width: stretch;
+}
+
 .audio-fx-dropdown{
     width: 100%;
     width: -moz-available;          /* WebKit-based browsers will ignore this. */
     width: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
     width: stretch;
     padding-top: 1em;
+}
+
+.fade-input-box{
+    margin-top: 1em;
+}
+
+.dropdown-menu-custom{
+    background-color: #343a40 !important;
+    
+}
+
+.dropdown-item-custom{
+    color: #d8d8d8 !important;
+}
+
+.dropdown-item-custom:hover{
+    color: #d8d8d8 !important;
+    background-color: #343a40 !important;
 }
