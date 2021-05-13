@@ -32,36 +32,37 @@ export default function Dashboard() {
     const [endAudioFadeIn, setEndAudioFadeIn] = useState(0);
     const [startAudioFadeOut, setStartAudioFadeOut] = useState(0);
     const [endAudioFadeOut, setEndAudioFadeOut] = useState(0);
-    const [uploadName, setUploadName] = useState('')
-    const [uploadFile, setUploadFile] = useState(new Blob([], { type: 'video/mp4' }))
+    const [uploadName, setUploadName] = useState('');
+    const [uploadFile, setUploadFile] = useState(new Blob([], { type: 'video/mp4' }));
     const [played, setPlayed] = useState(0);
-    const [player, setPlayer] = useState(null)
-    const [duration, setDuration] = useState(0)
-    const [brightness, setBrightness] = useState(0)
-    const [contrast, setContrast] = useState(1)
-    const [saturation, setSaturation] = useState(1)
-    const [lumax, setLumax] = useState(5)
-    const [lumay, setLumay] = useState(5)
-    const [lumaAmount, setLumaAmount] = useState(1)
-    const [chromax, setChromax] = useState(5)
-    const [chromay, setChromay] = useState(5)
-    const [chromaAmount, setchromaAmount] = useState(0)
-    const [lumaRadius, setLumaRadius] = useState(1)
-    const [lumaStrength, setLumaStrength] = useState(1)
-    const [lumaThreshold, setLumaThreshold] = useState(0)
-    const [chromaRadius, setChromaRadius] = useState(1)
-    const [chromaStrength, setChromaStrength] = useState(1)
-    const [chromaThreshold, setchromaThreshold] = useState(0)
-    const [hue, setHue] = useState(0)
-    const [gamma, setGamma] = useState(1)
-    const [selectedFileName, setSelectedFileName] = useState('Choose File')
-    const [echoType, setEchoType] = useState('indoor')
-    const [phaserSpeed, setPhaseSpeed] = useState(0.5)
-    const [phaserDecay, setPhaseDecay] = useState(0.4)
-    const [phaserDelay, setPhaseDelay] = useState(3)
-    const [tremoloFrequency, setTremoloFrequency] = useState(3)
-    const [tremoloWidth, setTremoloWidth] = useState(0.1)
-    const [tremoloOffset, setTremoloOffset] = useState(0)
+    const [player, setPlayer] = useState(null);
+    const [duration, setDuration] = useState(0);
+    const [brightness, setBrightness] = useState(0);
+    const [contrast, setContrast] = useState(1);
+    const [saturation, setSaturation] = useState(1);
+    const [lumax, setLumax] = useState(5);
+    const [lumay, setLumay] = useState(5);
+    const [lumaAmount, setLumaAmount] = useState(1);
+    const [chromax, setChromax] = useState(5);
+    const [chromay, setChromay] = useState(5);
+    const [chromaAmount, setchromaAmount] = useState(0);
+    const [lumaRadius, setLumaRadius] = useState(1);
+    const [lumaStrength, setLumaStrength] = useState(1);
+    const [lumaThreshold, setLumaThreshold] = useState(0);
+    const [chromaRadius, setChromaRadius] = useState(1);
+    const [chromaStrength, setChromaStrength] = useState(1);
+    const [chromaThreshold, setchromaThreshold] = useState(0);
+    const [hue, setHue] = useState(0);
+    const [gamma, setGamma] = useState(1);
+    const [selectedFileName, setSelectedFileName] = useState('Choose File');
+    const [echoType, setEchoType] = useState('indoor');
+    const [phaserSpeed, setPhaseSpeed] = useState(0.5);
+    const [phaserDecay, setPhaseDecay] = useState(0.4);
+    const [phaserDelay, setPhaseDelay] = useState(3);
+    const [tremoloFrequency, setTremoloFrequency] = useState(3);
+    const [tremoloWidth, setTremoloWidth] = useState(0.1);
+    const [tremoloOffset, setTremoloOffset] = useState(0);
+    const [rendering, setRendering] = useState(false);
 
     // Allows accessing video URL from Videos component
     const location = useLocation();
@@ -97,13 +98,10 @@ export default function Dashboard() {
         loadFfmpeg();
     }, [])
 
-    const handleLoadedVideo = () => {
-        setDuration(player.getDuration())
-    }
-
     // AUDIO
     const splitAudioVideo = async () => {
         if (ffmpegReady) {
+            setRendering(true)
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(file));
 
@@ -117,11 +115,13 @@ export default function Dashboard() {
             const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
             setOriginalAudio(audioBlob);
             setEditedAudio(audioBlob);
+            setRendering(false)
         }
     }
 
     const mergeVideoAudio = async () => {
         if (ffmpegReady) {
+            setRendering(true)
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(file));
             // Run command
@@ -140,11 +140,13 @@ export default function Dashboard() {
             // Create video URL react-player
             const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
             setEditedVideo(editedVideoUrl)
+            setRendering(false)
         }
     }
 
     const fadeInAudio = async () => {
         if (ffmpegReady) {
+            setRendering(true)
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
 
@@ -157,11 +159,13 @@ export default function Dashboard() {
             // Create video URL react-player
             const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
             setEditedAudio(audioBlob);
+            setRendering(false)
         }
     }
 
     const fadeOutAudio = async () => {
         if (ffmpegReady) {
+            setRendering(true)
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
 
@@ -174,11 +178,14 @@ export default function Dashboard() {
             // Create video URL react-player
             const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
             setEditedAudio(audioBlob);
+            setRendering(false)
         }
+
     }
 
     const deessAudio = async () => {
         if (ffmpegReady) {
+            setRendering(true)
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
 
@@ -192,12 +199,15 @@ export default function Dashboard() {
             // Create video URL react-player
             const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
             setEditedAudio(audioBlob);
+            setRendering(false)
         }
+
     }
 
     const denoiseAudio = async () => {
 
         if (ffmpegReady) {
+            setRendering(true)
 
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
@@ -211,12 +221,15 @@ export default function Dashboard() {
             // Create video URL react-player
             const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
             setEditedAudio(audioBlob);
+            setRendering(false);
         }
+
     }
 
     const phaserAudio = async () => {
 
         if (ffmpegReady) {
+            setRendering(true)
 
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
@@ -231,12 +244,15 @@ export default function Dashboard() {
             // Create video URL react-player
             const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
             setEditedAudio(audioBlob);
+            setRendering(false);
         }
+
     }
 
     const tremoloAudio = async () => {
 
         if (ffmpegReady) {
+            setRendering(true)
 
             let offsetDirection = 'offset_r'
             if (tremoloOffset < 0) {
@@ -256,12 +272,15 @@ export default function Dashboard() {
             // Create video URL react-player
             const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
             setEditedAudio(audioBlob);
+            setRendering(false);
         }
+
     }
 
     const reverseAudio = async () => {
 
         if (ffmpegReady) {
+            setRendering(true)
 
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
@@ -276,11 +295,13 @@ export default function Dashboard() {
             // Create video URL react-player
             const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
             setEditedAudio(audioBlob);
+            setRendering(false);
         }
     }
 
     const echoAudio = async () => {
         if (ffmpegReady) {
+            setRendering(true)
 
             let indoorEchoParams = '0.8:0.9:40|50|70:0.4|0.3|0.2'
             let mountainEchoParams = '0.8:0.9:500|1000:0.2|0.1'
@@ -302,6 +323,7 @@ export default function Dashboard() {
             // Create video URL react-player
             const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
             setEditedAudio(audioBlob);
+            setRendering(false);
         }
     }
 
@@ -313,6 +335,7 @@ export default function Dashboard() {
     // VIDEO
     const trimVideo = async () => {
         if (ffmpegReady) {
+            setRendering(true)
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
 
@@ -334,12 +357,14 @@ export default function Dashboard() {
             // Create video URL react-player
             const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
             setEditedVideo(editedVideoUrl)
+            setRendering(false);
         }
 
     }
 
     const brightnessVideo = async () => {
         if (ffmpegReady) {
+            setRendering(true)
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
 
@@ -355,12 +380,14 @@ export default function Dashboard() {
             // Create video URL react-player
             const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
             setEditedVideo(editedVideoUrl)
+            setRendering(false);
         }
 
     }
 
     const contrastVideo = async () => {
         if (ffmpegReady) {
+            setRendering(true)
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
 
@@ -376,12 +403,14 @@ export default function Dashboard() {
             // Create video URL react-player
             const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
             setEditedVideo(editedVideoUrl)
+            setRendering(false);
         }
 
     }
 
     const gammaVideo = async () => {
         if (ffmpegReady) {
+            setRendering(true)
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
 
@@ -397,12 +426,14 @@ export default function Dashboard() {
             // Create video URL react-player
             const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
             setEditedVideo(editedVideoUrl)
+            setRendering(false);
         }
 
     }
 
     const hueVideo = async () => {
         if (ffmpegReady) {
+            setRendering(true)
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(uploadFile));
 
@@ -418,12 +449,14 @@ export default function Dashboard() {
             // Create video URL react-player
             const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
             setEditedVideo(editedVideoUrl)
+            setRendering(false);
         }
 
     }
 
     const saturationVideo = async () => {
         if (ffmpegReady) {
+            setRendering(true)
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
 
@@ -439,12 +472,14 @@ export default function Dashboard() {
             // Create video URL react-player
             const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
             setEditedVideo(editedVideoUrl)
+            setRendering(false);
         }
 
     }
 
     const sharpnessVideo = async () => {
         if (ffmpegReady) {
+            setRendering(true)
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
 
@@ -460,12 +495,14 @@ export default function Dashboard() {
             // Create video URL react-player
             const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
             setEditedVideo(editedVideoUrl)
+            setRendering(false);
         }
 
     }
 
     const blurVideo = async () => {
         if (ffmpegReady) {
+            setRendering(true)
             // Write file to memory so webassemble can access it
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
 
@@ -481,6 +518,7 @@ export default function Dashboard() {
             // Create video URL react-player
             const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
             setEditedVideo(editedVideoUrl)
+            setRendering(false);
         }
 
     }
@@ -497,7 +535,10 @@ export default function Dashboard() {
         setOriginalFile(e.target.files?.item(0))
         setUploadFile(e.target.files?.item(0));
         setEditedVideo(URL.createObjectURL(e.target.files?.item(0)))
+    }
 
+    const handleLoadedVideo = () => {
+        setDuration(player.getDuration())
     }
 
     const handleUpload = (e) => {
@@ -535,6 +576,26 @@ export default function Dashboard() {
         <>
             <MyNavbar />
             <Container fluid className='main-container justify-content-center'>
+                {
+                    rendering ? (
+                        <Container fluid className='loader-container justify-content-center'>
+                            <Row className='rendering-loader'>
+                                <Col xs={{ span: 10, offset: 1 }}>
+                                    <div className="container">
+                                        <div className="center">
+                                            <p className='loading loading-label'>Rendering</p>
+                                            <div className="loader"></div>
+                                        </div>
+                                    </div>
+
+                                </Col>
+                            </Row>
+                        </Container>
+                    )
+                        :
+                        <div></div>
+                }
+
                 <Row className='major-row'>
                     <Col sm={{ span: 10, offset: 1 }}>
                         <Card className='file-upload-card'>
@@ -1330,7 +1391,7 @@ export default function Dashboard() {
                 <Col xs={{ span: 10, offset: 1 }}>
                     <div className="container">
                         <div className="center">
-                            <label className='loading-label'>Loading FFmpeg...</label>
+                            <label className='loading-label loading'>Loading FFmpeg</label>
                             <div className="loader"></div>
                         </div>
                     </div>
