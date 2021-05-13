@@ -1212,7 +1212,7 @@ export default function Dashboard() {
                                                                                 min={-1}
                                                                                 max={1}
                                                                                 step={0.01}
-                                                                                value={tremoloWidth}
+                                                                                value={tremoloOffset}
                                                                                 onChange={changeEvent => {
 
                                                                                     setTremoloOffset(changeEvent.target.value)
@@ -1243,7 +1243,7 @@ export default function Dashboard() {
                                                                                 min={0.5}
                                                                                 max={100}
                                                                                 step={0.1}
-                                                                                value={tremoloFrequency}
+                                                                                value={phaserSpeed}
                                                                                 onChange={changeEvent => setPhaseSpeed(changeEvent.target.value)}
                                                                             />
                                                                         </Col>
