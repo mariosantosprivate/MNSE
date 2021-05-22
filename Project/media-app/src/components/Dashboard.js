@@ -40,18 +40,11 @@ export default function Dashboard() {
     const [brightness, setBrightness] = useState(0);
     const [contrast, setContrast] = useState(1);
     const [saturation, setSaturation] = useState(1);
-    const [lumax, setLumax] = useState(5);
     const [lumay, setLumay] = useState(5);
-    const [lumaAmount, setLumaAmount] = useState(1);
     const [chromax, setChromax] = useState(5);
-    const [chromay, setChromay] = useState(5);
     const [chromaAmount, setchromaAmount] = useState(0);
-    const [lumaRadius, setLumaRadius] = useState(1);
-    const [lumaStrength, setLumaStrength] = useState(1);
-    const [lumaThreshold, setLumaThreshold] = useState(0);
-    const [chromaRadius, setChromaRadius] = useState(1);
-    const [chromaStrength, setChromaStrength] = useState(1);
-    const [chromaThreshold, setchromaThreshold] = useState(0);
+    const [lumaRadius, setLumaRadius] = useState(2);
+    const [lumaStrength, setLumaStrength] = useState(2);
     const [hue, setHue] = useState(0);
     const [gamma, setGamma] = useState(1);
     const [selectedFileName, setSelectedFileName] = useState('Choose File');
@@ -484,7 +477,7 @@ export default function Dashboard() {
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
 
             // Run command
-            await ffmpeg.run('-i', 'test.mp4', '-vf', `unsharp=${lumax}:${lumay}:${lumaAmount}:${chromax}:${chromay}:${chromaAmount}`, '-c:a', 'copy', 'testOut.mp4');
+            await ffmpeg.run('-i', 'test.mp4', '-vf', `unsharp=${lumay}:${lumay}:${chromaAmount}:${chromax}:${chromax}:${chromaAmount}`, '-c:a', 'copy', 'testOut.mp4');
 
             // Read result
             const data = ffmpeg.FS('readFile', 'testOut.mp4');
@@ -507,7 +500,7 @@ export default function Dashboard() {
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
 
             // Run command
-            await ffmpeg.run('-i', 'test.mp4', '-vf', `smartblur=${lumaRadius}:${lumaStrength}:${lumaThreshold}:${chromaRadius}:${chromaStrength}:${chromaThreshold}`, '-c:a', 'copy', 'testOut.mp4');
+            await ffmpeg.run('-i', 'test.mp4', '-vf', `boxblur=${lumaRadius}:${lumaStrength}`, '-c:a', 'copy', 'testOut.mp4');
 
             // Read result
             const data = ffmpeg.FS('readFile', 'testOut.mp4');
@@ -885,24 +878,7 @@ export default function Dashboard() {
                                                             <Dropdown.Header>Sharpen Settings</Dropdown.Header>
                                                             <Dropdown.Item className='dropdown-item-custom' as='button'>
                                                                 <Row>
-                                                                    <Col>Luma X</Col>
-                                                                </Row>
-                                                                <Row>
-                                                                    <Col>
-                                                                        <RangeSlider
-                                                                            variant='light'
-                                                                            min={3.0}
-                                                                            max={19.0}
-                                                                            step={2}
-                                                                            value={lumax}
-                                                                            onChange={(e) => setLumax(e.target.value)}
-                                                                        />
-                                                                    </Col>
-                                                                </Row>
-                                                            </Dropdown.Item>
-                                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                                <Row>
-                                                                    <Col>Luma Y</Col>
+                                                                    <Col>Luma</Col>
                                                                 </Row>
                                                                 <Row>
                                                                     <Col>
@@ -919,31 +895,14 @@ export default function Dashboard() {
                                                             </Dropdown.Item>
                                                             <Dropdown.Item className='dropdown-item-custom' as='button'>
                                                                 <Row>
-                                                                    <Col>Luma Amount</Col>
-                                                                </Row>
-                                                                <Row>
-                                                                    <Col>
-                                                                        <RangeSlider
-                                                                            variant='light'
-                                                                            min={-1.5}
-                                                                            max={1.5}
-                                                                            step={0.1}
-                                                                            value={lumaAmount}
-                                                                            onChange={changeEvent => setLumaAmount(changeEvent.target.value)}
-                                                                        />
-                                                                    </Col>
-                                                                </Row>
-                                                            </Dropdown.Item>
-                                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                                <Row>
-                                                                    <Col>Chroma X</Col>
+                                                                    <Col>Chroma </Col>
                                                                 </Row>
                                                                 <Row>
                                                                     <Col>
                                                                         <RangeSlider
                                                                             variant='light'
                                                                             min={3.0}
-                                                                            max={23.0}
+                                                                            max={13.0}
                                                                             step={2}
                                                                             value={chromax}
                                                                             onChange={changeEvent => setChromax(changeEvent.target.value)}
@@ -953,24 +912,7 @@ export default function Dashboard() {
                                                             </Dropdown.Item>
                                                             <Dropdown.Item className='dropdown-item-custom' as='button'>
                                                                 <Row>
-                                                                    <Col>Chroma Y</Col>
-                                                                </Row>
-                                                                <Row>
-                                                                    <Col>
-                                                                        <RangeSlider
-                                                                            variant='light'
-                                                                            min={3.0}
-                                                                            max={23.0}
-                                                                            step={2}
-                                                                            value={chromay}
-                                                                            onChange={changeEvent => setChromay(changeEvent.target.value)}
-                                                                        />
-                                                                    </Col>
-                                                                </Row>
-                                                            </Dropdown.Item>
-                                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                                <Row>
-                                                                    <Col>Chroma Amount</Col>
+                                                                    <Col>Amount</Col>
                                                                 </Row>
                                                                 <Row>
                                                                     <Col>
@@ -998,15 +940,15 @@ export default function Dashboard() {
                                                             <Dropdown.Header>Blur Settings</Dropdown.Header>
                                                             <Dropdown.Item className='dropdown-item-custom' as='button'>
                                                                 <Row>
-                                                                    <Col>Luma Radius</Col>
+                                                                    <Col>Radius</Col>
                                                                 </Row>
                                                                 <Row>
                                                                     <Col>
                                                                         <RangeSlider
                                                                             variant='light'
-                                                                            min={0.1}
-                                                                            max={5.0}
-                                                                            step={0.1}
+                                                                            min={0}
+                                                                            max={100}
+                                                                            step={1}
                                                                             value={lumaRadius}
                                                                             onChange={changeEvent => setLumaRadius(changeEvent.target.value)}
                                                                         />
@@ -1015,85 +957,17 @@ export default function Dashboard() {
                                                             </Dropdown.Item>
                                                             <Dropdown.Item className='dropdown-item-custom' as='button'>
                                                                 <Row>
-                                                                    <Col>Luma Strength</Col>
+                                                                    <Col>Power</Col>
                                                                 </Row>
                                                                 <Row>
                                                                     <Col>
                                                                         <RangeSlider
                                                                             variant='light'
-                                                                            min={-1.0}
-                                                                            max={1.0}
-                                                                            step={0.1}
+                                                                            min={0}
+                                                                            max={100}
+                                                                            step={1}
                                                                             value={lumaStrength}
                                                                             onChange={changeEvent => setLumaStrength(changeEvent.target.value)}
-                                                                        />
-                                                                    </Col>
-                                                                </Row>
-                                                            </Dropdown.Item>
-                                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                                <Row>
-                                                                    <Col>Luma Threshold</Col>
-                                                                </Row>
-                                                                <Row>
-                                                                    <Col>
-                                                                        <RangeSlider
-                                                                            variant='light'
-                                                                            min={-30}
-                                                                            max={30}
-                                                                            step={1}
-                                                                            value={lumaThreshold}
-                                                                            onChange={changeEvent => setLumaThreshold(changeEvent.target.value)}
-                                                                        />
-                                                                    </Col>
-                                                                </Row>
-                                                            </Dropdown.Item>
-                                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                                <Row>
-                                                                    <Col>Chroma Radius</Col>
-                                                                </Row>
-                                                                <Row>
-                                                                    <Col>
-                                                                        <RangeSlider
-                                                                            variant='light'
-                                                                            min={0.1}
-                                                                            max={5.0}
-                                                                            step={0.1}
-                                                                            value={chromaRadius}
-                                                                            onChange={changeEvent => setChromaRadius(changeEvent.target.value)}
-                                                                        />
-                                                                    </Col>
-                                                                </Row>
-                                                            </Dropdown.Item>
-                                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                                <Row>
-                                                                    <Col>Chroma Strength</Col>
-                                                                </Row>
-                                                                <Row>
-                                                                    <Col>
-                                                                        <RangeSlider
-                                                                            variant='light'
-                                                                            min={-1.0}
-                                                                            max={1.0}
-                                                                            step={0.1}
-                                                                            value={chromaStrength}
-                                                                            onChange={changeEvent => setChromaStrength(changeEvent.target.value)}
-                                                                        />
-                                                                    </Col>
-                                                                </Row>
-                                                            </Dropdown.Item>
-                                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                                <Row>
-                                                                    <Col>Chroma Threshold</Col>
-                                                                </Row>
-                                                                <Row>
-                                                                    <Col>
-                                                                        <RangeSlider
-                                                                            variant='light'
-                                                                            min={-30}
-                                                                            max={30}
-                                                                            step={1}
-                                                                            value={chromaThreshold}
-                                                                            onChange={changeEvent => setchromaThreshold(changeEvent.target.value)}
                                                                         />
                                                                     </Col>
                                                                 </Row>
