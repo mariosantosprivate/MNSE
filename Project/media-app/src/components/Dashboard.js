@@ -93,105 +93,138 @@ export default function Dashboard() {
 
     // AUDIO
     const splitAudioVideo = async () => {
-        if (ffmpegReady) {
-            setRendering(true)
-            // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(uploadFile));
+        try {
 
-            // Run command
-            await ffmpeg.run('-i', 'video.mp4', '-q:a', '0', '-map', 'a', 'audio.mp3')
+            if (ffmpegReady) {
+                setRendering(true)
+                // Write file to memory so webassemble can access it
+                ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(uploadFile));
 
-            // Read result
-            const data = ffmpeg.FS('readFile', 'audio.mp3');
+                // Run command
+                await ffmpeg.run('-i', 'video.mp4', '-q:a', '0', '-map', 'a', 'audio.mp3')
 
-            // Create video URL react-player
-            const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
-            setOriginalAudio(audioBlob);
-            setEditedAudio(audioBlob);
+                // Read result
+                const data = ffmpeg.FS('readFile', 'audio.mp3');
+
+                // Create video URL react-player
+                const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
+                setOriginalAudio(audioBlob);
+                setEditedAudio(audioBlob);
+                setRendering(false)
+            }
+        }
+        catch (e) {
+            console.log(e)
             setRendering(false)
         }
     }
 
     const mergeVideoAudio = async () => {
-        if (ffmpegReady) {
-            setRendering(true)
-            // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(uploadFile));
-            // Run command
-            ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
+        try {
+            if (ffmpegReady) {
+                setRendering(true)
+                // Write file to memory so webassemble can access it
+                ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(uploadFile));
+                // Run command
+                ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
 
-            // Run command
-            //ffmpeg -i input_0.mp4 -i input_1.mp4 -c copy -map 0:v:0 -map 1:a:0 -shortest out.mp4
-            await ffmpeg.run('-i', 'video.mp4', '-i', 'audio.mp3', '-c', 'copy', '-map', '0:v:0', '-map', '1:a:0', 'videoOut.mp4')
+                // Run command
+                //ffmpeg -i input_0.mp4 -i input_1.mp4 -c copy -map 0:v:0 -map 1:a:0 -shortest out.mp4
+                await ffmpeg.run('-i', 'video.mp4', '-i', 'audio.mp3', '-c', 'copy', '-map', '0:v:0', '-map', '1:a:0', 'videoOut.mp4')
 
-            // Read result
-            const data = ffmpeg.FS('readFile', 'videoOut.mp4');
+                // Read result
+                const data = ffmpeg.FS('readFile', 'videoOut.mp4');
 
-            // Update upload file
-            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+                // Update upload file
+                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
 
-            // Create video URL react-player
-            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-            setEditedVideo(editedVideoUrl)
+                // Create video URL react-player
+                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                setEditedVideo(editedVideoUrl)
+                setRendering(false)
+            }
+        }
+        catch (e) {
+            console.log(e)
             setRendering(false)
         }
     }
 
     const fadeInAudio = async () => {
-        if (ffmpegReady) {
-            setRendering(true)
-            // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
+        try {
+            if (ffmpegReady) {
+                setRendering(true)
+                // Write file to memory so webassemble can access it
+                ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
 
-            // Run command
-            await ffmpeg.run('-i', 'audio.mp3', '-af', `afade=t=in:st=${startAudioFadeIn}:d=${endAudioFadeIn - startAudioFadeIn}`, 'audioOut.mp3')
+                // Run command
+                await ffmpeg.run('-i', 'audio.mp3', '-af', `afade=t=in:st=${startAudioFadeIn}:d=${endAudioFadeIn - startAudioFadeIn}`, 'audioOut.mp3')
 
-            // Read result
-            const data = ffmpeg.FS('readFile', 'audioOut.mp3');
+                // Read result
+                const data = ffmpeg.FS('readFile', 'audioOut.mp3');
 
-            // Create video URL react-player
-            const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
-            setEditedAudio(audioBlob);
+                // Create video URL react-player
+                const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
+                setEditedAudio(audioBlob);
+                setRendering(false)
+            }
+        }
+
+        catch (e) {
+            console.log(e)
             setRendering(false)
         }
     }
 
     const fadeOutAudio = async () => {
-        if (ffmpegReady) {
-            setRendering(true)
-            // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
+        try {
+            if (ffmpegReady) {
+                setRendering(true)
+                // Write file to memory so webassemble can access it
+                ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
 
-            // Run command
-            await ffmpeg.run('-i', 'audio.mp3', '-af', `afade=t=out:st=${startAudioFadeOut}:d=${endAudioFadeOut - startAudioFadeOut}`, 'audioOut.mp3')
+                // Run command
+                await ffmpeg.run('-i', 'audio.mp3', '-af', `afade=t=out:st=${startAudioFadeOut}:d=${endAudioFadeOut - startAudioFadeOut}`, 'audioOut.mp3')
 
-            // Read result
-            const data = ffmpeg.FS('readFile', 'audioOut.mp3');
+                // Read result
+                const data = ffmpeg.FS('readFile', 'audioOut.mp3');
 
-            // Create video URL react-player
-            const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
-            setEditedAudio(audioBlob);
+                // Create video URL react-player
+                const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
+                setEditedAudio(audioBlob);
+                setRendering(false)
+            }
+        }
+        catch (e) {
+            console.log(e)
             setRendering(false)
         }
-
     }
 
     const deessAudio = async () => {
-        if (ffmpegReady) {
-            setRendering(true)
-            // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
+        try {
 
-            // Run command
-            // ./ffmpeg -i ~/audio_source/noisy_speech.wav -filter_complex "deesser=i=1" adeesser_out_voice.wav
-            await ffmpeg.run('-i', 'audio.mp3', '-filter_complex', 'deesser=i=1', 'audioOut.mp3')
 
-            // Read result
-            const data = ffmpeg.FS('readFile', 'audioOut.mp3');
+            if (ffmpegReady) {
+                setRendering(true)
+                // Write file to memory so webassemble can access it
+                ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
 
-            // Create video URL react-player
-            const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
-            setEditedAudio(audioBlob);
+                // Run command
+                // ./ffmpeg -i ~/audio_source/noisy_speech.wav -filter_complex "deesser=i=1" adeesser_out_voice.wav
+                await ffmpeg.run('-i', 'audio.mp3', '-filter_complex', 'deesser=i=1', 'audioOut.mp3')
+
+                // Read result
+                const data = ffmpeg.FS('readFile', 'audioOut.mp3');
+
+                // Create video URL react-player
+                const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
+                setEditedAudio(audioBlob);
+                setRendering(false)
+            }
+        }
+        catch (e) {
+            console.log(e)
             setRendering(false)
         }
 
@@ -199,124 +232,149 @@ export default function Dashboard() {
 
     const denoiseAudio = async () => {
 
-        if (ffmpegReady) {
-            setRendering(true)
+        try {
+            if (ffmpegReady) {
+                setRendering(true)
 
-            // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
+                // Write file to memory so webassemble can access it
+                ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
 
-            // Run command
-            await ffmpeg.run('-i', 'audio.mp3', '-af', `asplit[a][b],[a]adelay=32S|32S[a],[b][a]anlms=order=128:leakage=0.0005:mu=.5:out_mode=o`, 'audioOut.mp3')
+                // Run command
+                await ffmpeg.run('-i', 'audio.mp3', '-af', `asplit[a][b],[a]adelay=32S|32S[a],[b][a]anlms=order=128:leakage=0.0005:mu=.5:out_mode=o`, 'audioOut.mp3')
 
-            // Read result
-            const data = ffmpeg.FS('readFile', 'audioOut.mp3');
+                // Read result
+                const data = ffmpeg.FS('readFile', 'audioOut.mp3');
 
-            // Create video URL react-player
-            const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
-            setEditedAudio(audioBlob);
-            setRendering(false);
+                // Create video URL react-player
+                const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
+                setEditedAudio(audioBlob);
+                setRendering(false);
+            }
+        } catch (err) {
+            console.log(err)
+            setRendering(false)
         }
 
     }
 
     const phaserAudio = async () => {
 
-        if (ffmpegReady) {
-            setRendering(true)
+        try {
+            if (ffmpegReady) {
+                setRendering(true)
 
-            // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
+                // Write file to memory so webassemble can access it
+                ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
 
-            // Run command
-            //./ffmpeg -i ~/audio_source/music.wav -filter_complex "aphaser=type=t:speed=2:decay=0.6" aphaser_out_music.wav
-            await ffmpeg.run('-i', 'audio.mp3', '-filter_complex', `aphaser=type=t:speed=${phaserSpeed}:decay=${phaserDecay}:delay=${phaserDelay}`, 'audioOut.mp3')
+                // Run command
+                //./ffmpeg -i ~/audio_source/music.wav -filter_complex "aphaser=type=t:speed=2:decay=0.6" aphaser_out_music.wav
+                await ffmpeg.run('-i', 'audio.mp3', '-filter_complex', `aphaser=type=t:speed=${phaserSpeed}:decay=${phaserDecay}:delay=${phaserDelay}`, 'audioOut.mp3')
 
-            // Read result
-            const data = ffmpeg.FS('readFile', 'audioOut.mp3');
+                // Read result
+                const data = ffmpeg.FS('readFile', 'audioOut.mp3');
 
-            // Create video URL react-player
-            const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
-            setEditedAudio(audioBlob);
-            setRendering(false);
+                // Create video URL react-player
+                const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
+                setEditedAudio(audioBlob);
+                setRendering(false);
+            }
+        } catch (err) {
+            console.log(err)
+            setRendering(false)
         }
 
     }
 
     const tremoloAudio = async () => {
+        try {
 
-        if (ffmpegReady) {
-            setRendering(true)
+            if (ffmpegReady) {
+                setRendering(true)
 
-            let offsetDirection = 'offset_r'
-            if (tremoloOffset < 0) {
-                setTremoloOffset(Math.abs(tremoloOffset))
-                offsetDirection = 'offset_l'
+                let offsetDirection = 'offset_r'
+                if (tremoloOffset < 0) {
+                    setTremoloOffset(Math.abs(tremoloOffset))
+                    offsetDirection = 'offset_l'
+                }
+
+                // Write file to memory so webassemble can access it
+                ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
+
+                // Run command
+                await ffmpeg.run('-i', 'audio.mp3', '-filter_complex', `apulsator=mode=sine:hz=${tremoloFrequency}:width=${tremoloWidth}:${offsetDirection}=${tremoloOffset}`, 'audioOut.mp3')
+
+                // Read result
+                const data = ffmpeg.FS('readFile', 'audioOut.mp3');
+
+                // Create video URL react-player
+                const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
+                setEditedAudio(audioBlob);
+                setRendering(false);
             }
-
-            // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
-
-            // Run command
-            await ffmpeg.run('-i', 'audio.mp3', '-filter_complex', `apulsator=mode=sine:hz=${tremoloFrequency}:width=${tremoloWidth}:${offsetDirection}=${tremoloOffset}`, 'audioOut.mp3')
-
-            // Read result
-            const data = ffmpeg.FS('readFile', 'audioOut.mp3');
-
-            // Create video URL react-player
-            const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
-            setEditedAudio(audioBlob);
-            setRendering(false);
+        } catch (err) {
+            console.log(err)
+            setRendering(false)
         }
 
     }
 
     const reverseAudio = async () => {
 
-        if (ffmpegReady) {
-            setRendering(true)
-
-            // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
-
-            // Run command
-            ///ffmpeg -i ~/audio_source/noisy_speech.wav -filter_complex "areverse" areverse_out_voice.wav
-            await ffmpeg.run('-i', 'audio.mp3', '-filter_complex', `areverse`, 'audioOut.mp3')
-
-            // Read result
-            const data = ffmpeg.FS('readFile', 'audioOut.mp3');
-
-            // Create video URL react-player
-            const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
-            setEditedAudio(audioBlob);
-            setRendering(false);
+        try {
+            if (ffmpegReady) {
+                setRendering(true)
+    
+                // Write file to memory so webassemble can access it
+                ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
+    
+                // Run command
+                ///ffmpeg -i ~/audio_source/noisy_speech.wav -filter_complex "areverse" areverse_out_voice.wav
+                await ffmpeg.run('-i', 'audio.mp3', '-filter_complex', `areverse`, 'audioOut.mp3')
+    
+                // Read result
+                const data = ffmpeg.FS('readFile', 'audioOut.mp3');
+    
+                // Create video URL react-player
+                const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
+                setEditedAudio(audioBlob);
+                setRendering(false);
+            }
+        } catch (err) {
+            console.log(err)
+            setRendering(false)
         }
     }
 
     const echoAudio = async () => {
-        if (ffmpegReady) {
-            setRendering(true)
-
-            let indoorEchoParams = '0.8:0.9:40|50|70:0.4|0.3|0.2'
-            let mountainEchoParams = '0.8:0.9:500|1000:0.2|0.1'
-            let echoParams = ''
-
-            echoType === 'indoor' ? echoParams = indoorEchoParams : echoParams = mountainEchoParams
-
-            // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
-
-            // Run command
-            // /ffmpeg -i ./arnn_out.wav -filter_complex "aecho=0.8:0.9:40|50|70:0.4|0.3|0.2" echo_indoor_out.wav
-
-            await ffmpeg.run('-i', 'audio.mp3', '-filter_complex', `aecho=${echoParams}`, 'audioOut.mp3')
-
-            // Read result
-            const data = ffmpeg.FS('readFile', 'audioOut.mp3');
-
-            // Create video URL react-player
-            const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
-            setEditedAudio(audioBlob);
-            setRendering(false);
+        try {
+            if (ffmpegReady) {
+                setRendering(true)
+    
+                let indoorEchoParams = '0.8:0.9:40|50|70:0.4|0.3|0.2'
+                let mountainEchoParams = '0.8:0.9:500|1000:0.2|0.1'
+                let echoParams = ''
+    
+                echoType === 'indoor' ? echoParams = indoorEchoParams : echoParams = mountainEchoParams
+    
+                // Write file to memory so webassemble can access it
+                ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
+    
+                // Run command
+                // /ffmpeg -i ./arnn_out.wav -filter_complex "aecho=0.8:0.9:40|50|70:0.4|0.3|0.2" echo_indoor_out.wav
+    
+                await ffmpeg.run('-i', 'audio.mp3', '-filter_complex', `aecho=${echoParams}`, 'audioOut.mp3')
+    
+                // Read result
+                const data = ffmpeg.FS('readFile', 'audioOut.mp3');
+    
+                // Create video URL react-player
+                const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
+                setEditedAudio(audioBlob);
+                setRendering(false);
+            }
+        } catch (err) {
+            console.log(err)
+            setRendering(false)
         }
     }
 
@@ -327,190 +385,230 @@ export default function Dashboard() {
 
     // VIDEO
     const trimVideo = async () => {
-        if (ffmpegReady) {
-            setRendering(true)
-            // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-
-            // Run command
-
-            //ffmpeg -ss 00:08:00 -i Video.mp4 -ss 00:01:00 -t 00:01:00 -c copy VideoClip.mp4
-            //The first -ss seeks fast to (approximately) 8min0sec, and then the second -ss seeks accurately to 9min0sec, and the -t 00:01:00 takes out a 1min0sec clip.
-
-            await ffmpeg.run('-i', 'test.mp4', '-ss', startTrim, '-t', `${endTrim - startTrim}`, 'testOut.mp4');
-
-            //await ffmpeg.run('-i', 'test.mp4', '-ss', startTrim, '-to', endTrim, '-c:v', 'copy', '-c:a', 'copy', 'testOut.mp4');
-
-            // Read result
-            const data = ffmpeg.FS('readFile', 'testOut.mp4');
-
-            // Update upload file
-            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-            // Create video URL react-player
-            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-            setEditedVideo(editedVideoUrl)
-            setRendering(false);
+        try {
+            if (ffmpegReady) {
+                setRendering(true)
+                // Write file to memory so webassemble can access it
+                ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
+    
+                // Run command
+    
+                //ffmpeg -ss 00:08:00 -i Video.mp4 -ss 00:01:00 -t 00:01:00 -c copy VideoClip.mp4
+                //The first -ss seeks fast to (approximately) 8min0sec, and then the second -ss seeks accurately to 9min0sec, and the -t 00:01:00 takes out a 1min0sec clip.
+    
+                await ffmpeg.run('-i', 'test.mp4', '-ss', startTrim, '-t', `${endTrim - startTrim}`, 'testOut.mp4');
+    
+                //await ffmpeg.run('-i', 'test.mp4', '-ss', startTrim, '-to', endTrim, '-c:v', 'copy', '-c:a', 'copy', 'testOut.mp4');
+    
+                // Read result
+                const data = ffmpeg.FS('readFile', 'testOut.mp4');
+    
+                // Update upload file
+                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+                // Create video URL react-player
+                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                setEditedVideo(editedVideoUrl)
+                setRendering(false);
+            }
+        } catch (err) {
+            console.log(err)
+            setRendering(false)
         }
 
     }
 
     const brightnessVideo = async () => {
-        if (ffmpegReady) {
-            setRendering(true)
-            // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-
-            // Run command
-            await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=brightness=${brightness}`, '-c:a', 'copy', 'testOut.mp4');
-
-            // Read result
-            const data = ffmpeg.FS('readFile', 'testOut.mp4');
-
-            // Update upload file
-            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-            // Create video URL react-player
-            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-            setEditedVideo(editedVideoUrl)
-            setRendering(false);
+        try {
+            if (ffmpegReady) {
+                setRendering(true)
+                // Write file to memory so webassemble can access it
+                ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
+    
+                // Run command
+                await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=brightness=${brightness}`, '-c:a', 'copy', 'testOut.mp4');
+    
+                // Read result
+                const data = ffmpeg.FS('readFile', 'testOut.mp4');
+    
+                // Update upload file
+                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+    
+                // Create video URL react-player
+                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                setEditedVideo(editedVideoUrl)
+                setRendering(false);
+            }
+        } catch (err) {
+            console.log(err)
+            setRendering(false)
         }
 
     }
 
     const contrastVideo = async () => {
-        if (ffmpegReady) {
-            setRendering(true)
-            // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-
-            // Run command
-            await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=contrast=${contrast}`, '-c:a', 'copy', 'testOut.mp4');
-
-            // Read result
-            const data = ffmpeg.FS('readFile', 'testOut.mp4');
-
-            // Update upload file
-            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-            // Create video URL react-player
-            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-            setEditedVideo(editedVideoUrl)
-            setRendering(false);
+        try {
+            if (ffmpegReady) {
+                setRendering(true)
+                // Write file to memory so webassemble can access it
+                ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
+    
+                // Run command
+                await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=contrast=${contrast}`, '-c:a', 'copy', 'testOut.mp4');
+    
+                // Read result
+                const data = ffmpeg.FS('readFile', 'testOut.mp4');
+    
+                // Update upload file
+                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+    
+                // Create video URL react-player
+                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                setEditedVideo(editedVideoUrl)
+                setRendering(false);
+            }
+        } catch (err) {
+            console.log(err)
+            setRendering(false)
         }
 
     }
 
     const gammaVideo = async () => {
-        if (ffmpegReady) {
-            setRendering(true)
-            // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-
-            // Run command
-            await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=gamma=${gamma}`, '-c:a', 'copy', 'testOut.mp4');
-
-            // Read result
-            const data = ffmpeg.FS('readFile', 'testOut.mp4');
-
-            // Update upload file
-            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-            // Create video URL react-player
-            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-            setEditedVideo(editedVideoUrl)
-            setRendering(false);
+        try {
+            if (ffmpegReady) {
+                setRendering(true)
+                // Write file to memory so webassemble can access it
+                ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
+    
+                // Run command
+                await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=gamma=${gamma}`, '-c:a', 'copy', 'testOut.mp4');
+    
+                // Read result
+                const data = ffmpeg.FS('readFile', 'testOut.mp4');
+    
+                // Update upload file
+                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+    
+                // Create video URL react-player
+                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                setEditedVideo(editedVideoUrl)
+                setRendering(false);
+            }
+        } catch (err) {
+            console.log(err)
+            setRendering(false)
         }
 
     }
 
     const hueVideo = async () => {
-        if (ffmpegReady) {
-            setRendering(true)
-            // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(uploadFile));
-
-            // Run command
-            await ffmpeg.run('-i', 'test.mp4', '-vf', `hue=h=${hue}`, '-c:a', 'copy', 'testOut.mp4');
-
-            // Read result
-            const data = ffmpeg.FS('readFile', 'testOut.mp4');
-
-            // Update upload file
-            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-            // Create video URL react-player
-            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-            setEditedVideo(editedVideoUrl)
-            setRendering(false);
+        try {
+            if (ffmpegReady) {
+                setRendering(true)
+                // Write file to memory so webassemble can access it
+                ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(uploadFile));
+    
+                // Run command
+                await ffmpeg.run('-i', 'test.mp4', '-vf', `hue=h=${hue}`, '-c:a', 'copy', 'testOut.mp4');
+    
+                // Read result
+                const data = ffmpeg.FS('readFile', 'testOut.mp4');
+    
+                // Update upload file
+                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+    
+                // Create video URL react-player
+                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                setEditedVideo(editedVideoUrl)
+                setRendering(false);
+            }
+        } catch (err) {
+            console.log(err)
+            setRendering(false)
         }
 
     }
 
     const saturationVideo = async () => {
-        if (ffmpegReady) {
-            setRendering(true)
-            // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-
-            // Run command
-            await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=saturation=${saturation}`, '-c:a', 'copy', 'testOut.mp4');
-
-            // Read result
-            const data = ffmpeg.FS('readFile', 'testOut.mp4');
-
-            // Update upload file
-            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-            // Create video URL react-player
-            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-            setEditedVideo(editedVideoUrl)
-            setRendering(false);
+        try {
+            if (ffmpegReady) {
+                setRendering(true)
+                // Write file to memory so webassemble can access it
+                ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
+    
+                // Run command
+                await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=saturation=${saturation}`, '-c:a', 'copy', 'testOut.mp4');
+    
+                // Read result
+                const data = ffmpeg.FS('readFile', 'testOut.mp4');
+    
+                // Update upload file
+                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+    
+                // Create video URL react-player
+                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                setEditedVideo(editedVideoUrl)
+                setRendering(false);
+            }
+        } catch (err) {
+            console.log(err)
+            setRendering(false)
         }
 
     }
 
     const sharpnessVideo = async () => {
-        if (ffmpegReady) {
-            setRendering(true)
-            // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-
-            // Run command
-            await ffmpeg.run('-i', 'test.mp4', '-vf', `unsharp=${lumay}:${lumay}:${chromaAmount}:${chromax}:${chromax}:${chromaAmount}`, '-c:a', 'copy', 'testOut.mp4');
-
-            // Read result
-            const data = ffmpeg.FS('readFile', 'testOut.mp4');
-
-            // Update upload file
-            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-            // Create video URL react-player
-            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-            setEditedVideo(editedVideoUrl)
-            setRendering(false);
+        try {
+            if (ffmpegReady) {
+                setRendering(true)
+                // Write file to memory so webassemble can access it
+                ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
+    
+                // Run command
+                await ffmpeg.run('-i', 'test.mp4', '-vf', `unsharp=${lumay}:${lumay}:${chromaAmount}:${chromax}:${chromax}:${chromaAmount}`, '-c:a', 'copy', 'testOut.mp4');
+    
+                // Read result
+                const data = ffmpeg.FS('readFile', 'testOut.mp4');
+    
+                // Update upload file
+                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+    
+                // Create video URL react-player
+                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                setEditedVideo(editedVideoUrl)
+                setRendering(false);
+            }
+        } catch (err) {
+            console.log(err)
+            setRendering(false)
         }
 
     }
 
     const blurVideo = async () => {
-        if (ffmpegReady) {
-            setRendering(true)
-            // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-
-            // Run command
-            await ffmpeg.run('-i', 'test.mp4', '-vf', `boxblur=${lumaRadius}:${lumaStrength}`, '-c:a', 'copy', 'testOut.mp4');
-
-            // Read result
-            const data = ffmpeg.FS('readFile', 'testOut.mp4');
-
-            // Update upload file
-            setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-            // Create video URL react-player
-            const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-            setEditedVideo(editedVideoUrl)
-            setRendering(false);
+        try {
+            if (ffmpegReady) {
+                setRendering(true)
+                // Write file to memory so webassemble can access it
+                ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
+    
+                // Run command
+                await ffmpeg.run('-i', 'test.mp4', '-vf', `boxblur=${lumaRadius}:${lumaStrength}`, '-c:a', 'copy', 'testOut.mp4');
+    
+                // Read result
+                const data = ffmpeg.FS('readFile', 'testOut.mp4');
+    
+                // Update upload file
+                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+    
+                // Create video URL react-player
+                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                setEditedVideo(editedVideoUrl)
+                setRendering(false);
+            }
+        } catch (err) {
+            console.log(err)
+            setRendering(false)
         }
 
     }
