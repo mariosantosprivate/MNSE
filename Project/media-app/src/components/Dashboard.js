@@ -789,8 +789,8 @@ export default function Dashboard() {
 </Row>
                                                         <RangeSlider
                                                             variant='light'
-                                                            min={-1000.0}
-                                                            max={1000.0}
+                                                            min={-3}
+                                                            max={5.0}
                                                             step={0.1}
                                                             value={contrast}
                                                             onChange={changeEvent => setContrast(changeEvent.target.value)}
