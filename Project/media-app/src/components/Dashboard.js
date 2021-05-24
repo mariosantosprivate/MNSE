@@ -639,7 +639,7 @@ export default function Dashboard() {
                 ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
 
                 // Run command
-                await ffmpeg.run('-i', 'test.mp4', '-vf', `boxblur=${lumaRadius}:${lumaStrength}`, '-c:a', 'copy', 'testOut.mp4');
+                await ffmpeg.run('-i', 'test.mp4', '-filter_complex', `[0:v]crop=${cropW}:${cropH}:${cropX}:${cropY},boxblur=${lumaRadius}:${lumaStrength}[fg]; [0:v][fg]overlay=${cropX}:${cropY}[v]`, '-map', '[v]', 'testOut.mp4');
 
                 // Read result
                 const data = ffmpeg.FS('readFile', 'testOut.mp4');
@@ -938,91 +938,7 @@ export default function Dashboard() {
                                     <Col xs={{ span: 4 }} md={{ span: 2 }}>
                                         <Button variant='secondary' className='trim-button' onClick={trimVideo}>Trim</Button>
                                     </Col>
-                                    <Col xs={{ span: 10, offset: 1 }} sm={{ span: 8, offset: 2 }} className='seeker-wrapper'>
-                                        <Row className='large-slider-row'>
-
-                                            <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
-                                                <Row className='large-slider-label-row'>
-                                                    Video/Audio Offset
-</Row>
-                                                <RangeSlider
-                                                    variant='light'
-                                                    min={-60}
-                                                    max={60}
-                                                    step={1}
-                                                    value={videoAudioOffset}
-                                                    onChange={changeEvent => setVideoAudioOffset(changeEvent.target.value)}
-                                                />
-                                            </Col>
-                                            <Col xs={{ span: 4 }} sm={{ span: 3 }}>
-                                                <Button variant='secondary' className='apply-button' onClick={offsetVideoAudio}>Apply</Button>
-                                            </Col>
-                                        </Row>
-                                    </Col>
                                 </Row>
-
-                                <Col sm={{ span: 10, offset: 1 }}>
-                                    <div className="crop-container">
-                                        <Cropper
-                                            video={editedVideo}
-                                            crop={crop}
-                                            zoom={zoom}
-                                            aspect={aspect} //1:1 square //4:3 standard //16:10 standard //16:9 standard
-                                            onCropChange={setCrop}
-                                            onCropComplete={onCropComplete}
-                                            onZoomChange={setZoom}
-                                        />
-                                    </div>
-                                </Col>
-
-                                <Col sm={{ span: 10, offset: 1 }}>
-                                    <Dropdown className='audio-fx-dropdown' as={ButtonGroup}>
-                                        <Button onClick={() => { phaserAudio() }} variant="secondary">Aspect Ratio</Button>
-
-                                        <Dropdown.Toggle split variant="secondary" id="dropdown-split-basic" />
-
-                                        <Dropdown.Menu className='dropdown-menu-custom'>
-                                            <Dropdown.Header>Aspect Ratio</Dropdown.Header>
-                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                <Row style={{ justifyContent: 'center', textAlign: 'center' }}>
-                                                    <Button onClick={() => { setAspect(16 / 9) }} style={{ width: '100%' }} variant="secondary">16:9</Button>
-                                                </Row>
-                                            </Dropdown.Item>
-                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                <Row style={{ justifyContent: 'center', textAlign: 'center' }}>
-                                                    <Button onClick={() => { setAspect(16 / 10) }} style={{ width: '100%' }} variant="secondary">16:10</Button>
-                                                </Row>
-                                            </Dropdown.Item>
-                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                <Row style={{ justifyContent: 'center', textAlign: 'center' }}>
-                                                    <Button onClick={() => { setAspect(4 / 3) }} style={{ width: '100%' }} variant="secondary">4:3</Button>
-                                                </Row>
-                                            </Dropdown.Item>
-                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                <Row style={{ justifyContent: 'center', textAlign: 'center' }}>
-                                                    <Button onClick={() => { setAspect(1 / 1) }} style={{ width: '100%' }} variant="secondary">1:1</Button>
-                                                </Row>
-                                            </Dropdown.Item>
-                                        </Dropdown.Menu>
-                                    </Dropdown>
-                                </Col>
-                                <Col sm={{ span: 10, offset: 1 }} className="controls">
-                                    <Row style={{ justifyContent: 'center', textAlign: 'center' }}>
-
-                                    </Row>
-                                    <RangeSlider
-                                        variant='light'
-                                        value={zoom}
-                                        min={1}
-                                        max={100}
-                                        step={1}
-                                        aria-labelledby="Zoom"
-                                        onChange={(e, zoom) => setZoom(zoom)}
-                                    />
-                                </Col>
-                                <Col sm={{ span: 10, offset: 1 }}>
-                                    <Button style={{ width: '100%', marginTop: '1em' }} variant='secondary' onClick={cropVideo}> Crop </Button>
-                                </Col>
                                 <Row style={{ padding: '1em 0 1em 0' }}>
                                     <Col xs={{ span: 12 }} lg={{ span: 10, offset: 1 }}>
                                         <Card bg='dark' text='white'>
@@ -1134,6 +1050,70 @@ export default function Dashboard() {
                                                 Video FX
                                         </Card.Header>
                                             <Card.Body className='card-custom'>
+
+                                                <Col xs={{ span: 12 }} lg={{ span: 8, offset: 2 }}>
+                                                    <div className="crop-container">
+                                                        <Cropper
+                                                            video={editedVideo}
+                                                            crop={crop}
+                                                            zoom={zoom}
+                                                            aspect={aspect} //1:1 square //4:3 standard //16:10 standard //16:9 standard
+                                                            onCropChange={setCrop}
+                                                            onCropComplete={onCropComplete}
+                                                            onZoomChange={setZoom}
+                                                        />
+                                                    </div>
+                                                </Col>
+                                                <Col xs={{ span: 12 }} lg={{ span: 8, offset: 2 }} className="controls">
+                                                    <Row style={{ justifyContent: 'center', textAlign: 'center' }}>
+
+                                                    </Row>
+                                                    <RangeSlider
+                                                        variant='light'
+                                                        value={zoom}
+                                                        min={1}
+                                                        max={100}
+                                                        step={1}
+                                                        aria-labelledby="Zoom"
+                                                        onChange={(e, zoom) => setZoom(zoom)}
+                                                    />
+                                                </Col>
+
+                                                <Col xs={{ span: 12 }} lg={{ span: 8, offset: 2 }}>
+                                                    <Dropdown className='audio-fx-dropdown' as={ButtonGroup}>
+                                                        <Button disabled variant="secondary">Aspect Ratio</Button>
+
+                                                        <Dropdown.Toggle split variant="secondary" id="dropdown-split-basic" />
+
+                                                        <Dropdown.Menu className='dropdown-menu-custom'>
+                                                            <Dropdown.Header>Aspect Ratio</Dropdown.Header>
+                                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
+                                                                <Row style={{ justifyContent: 'center', textAlign: 'center' }}>
+                                                                    <Button onClick={() => { setAspect(16 / 9) }} style={{ width: '100%' }} variant="secondary">16:9</Button>
+                                                                </Row>
+                                                            </Dropdown.Item>
+                                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
+                                                                <Row style={{ justifyContent: 'center', textAlign: 'center' }}>
+                                                                    <Button onClick={() => { setAspect(16 / 10) }} style={{ width: '100%' }} variant="secondary">16:10</Button>
+                                                                </Row>
+                                                            </Dropdown.Item>
+                                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
+                                                                <Row style={{ justifyContent: 'center', textAlign: 'center' }}>
+                                                                    <Button onClick={() => { setAspect(4 / 3) }} style={{ width: '100%' }} variant="secondary">4:3</Button>
+                                                                </Row>
+                                                            </Dropdown.Item>
+                                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
+                                                                <Row style={{ justifyContent: 'center', textAlign: 'center' }}>
+                                                                    <Button onClick={() => { setAspect(1 / 1) }} style={{ width: '100%' }} variant="secondary">1:1</Button>
+                                                                </Row>
+                                                            </Dropdown.Item>
+                                                        </Dropdown.Menu>
+                                                    </Dropdown>
+                                                </Col>
+                                                <Col xs={{ span: 12 }} lg={{ span: 8, offset: 2 }}>
+                                                    <Button style={{ width: '100%', marginTop: '1em' }} variant='secondary' onClick={cropVideo}> Crop </Button>
+                                                </Col>
+
                                                 <Col xs={{ span: 12 }} lg={{ span: 8, offset: 2 }}>
                                                     <Dropdown className='audio-fx-dropdown' as={ButtonGroup}>
                                                         <Button onClick={() => { sharpnessVideo() }} variant="secondary">Sharpen</Button>
@@ -1198,6 +1178,35 @@ export default function Dashboard() {
                                                 </Col>
                                                 <Col xs={{ span: 12 }} lg={{ span: 8, offset: 2 }}>
                                                     <Dropdown className='audio-fx-dropdown' as={ButtonGroup}>
+                                                        <Button onClick={() => { offsetVideoAudio() }} variant="secondary">Synchronize</Button>
+
+                                                        <Dropdown.Toggle split variant="secondary" id="dropdown-split-basic" />
+
+                                                        <Dropdown.Menu className='dropdown-menu-custom'>
+                                                            <Dropdown.Header>Synchronization</Dropdown.Header>
+                                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
+                                                                <Row>
+                                                                    <Col>Audio Offset</Col>
+                                                                </Row>
+                                                                <Row>
+                                                                    <Col>
+                                                                        <RangeSlider
+                                                                            variant='light'
+                                                                            min={1}
+                                                                            max={60}
+                                                                            step={1}
+                                                                            value={videoAudioOffset}
+                                                                            onChange={changeEvent => setVideoAudioOffset(changeEvent.target.value)}
+                                                                        />
+                                                                    </Col>
+                                                                </Row>
+                                                            </Dropdown.Item>
+                                                        </Dropdown.Menu>
+                                                    </Dropdown>
+                                                </Col>
+
+                                                <Col xs={{ span: 12 }} lg={{ span: 8, offset: 2 }}>
+                                                    <Dropdown className='audio-fx-dropdown' as={ButtonGroup}>
                                                         <Button onClick={() => { blurVideo() }} variant="secondary">Blur</Button>
 
                                                         <Dropdown.Toggle split variant="secondary" id="dropdown-split-basic" />
@@ -1229,9 +1238,9 @@ export default function Dashboard() {
                                                                     <Col>
                                                                         <RangeSlider
                                                                             variant='light'
-                                                                            min={0}
-                                                                            max={100}
-                                                                            step={1}
+                                                                            min={-3}
+                                                                            max={3}
+                                                                            step={0.1}
                                                                             value={lumaStrength}
                                                                             onChange={changeEvent => setLumaStrength(changeEvent.target.value)}
                                                                         />
