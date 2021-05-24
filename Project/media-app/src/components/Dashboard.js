@@ -56,6 +56,7 @@ export default function Dashboard() {
     const [tremoloWidth, setTremoloWidth] = useState(0.1);
     const [tremoloOffset, setTremoloOffset] = useState(0);
     const [rendering, setRendering] = useState(false);
+    const [videoAudioOffset, setVideoAudioOffset] = useState(0)
 
     // Allows accessing video URL from Videos component
     const location = useLocation();
@@ -110,6 +111,35 @@ export default function Dashboard() {
                 const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
                 setOriginalAudio(audioBlob);
                 setEditedAudio(audioBlob);
+                setRendering(false)
+            }
+        }
+        catch (e) {
+            console.log(e)
+            setRendering(false)
+        }
+    }
+
+    const offsetVideoAudio = async () => {
+        try {
+            if (ffmpegReady) {
+                setRendering(true)
+                // Write file to memory so webassemble can access it
+                ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(uploadFile));
+
+                // Run command
+                //ffmpeg.exe -i "movie.mp4" -itsoffset 3.84 -i "movie.mp4" -map 0:v -map 1:a -c copy "movie-audio-delayed.mp4"
+                await ffmpeg.run('-i', 'video.mp4', '-itsoffset', `${videoAudioOffset}`, '-i', 'video.mp4', '-map', '0:v', '-map', '1:a', '-c', 'copy', 'videoOut.mp4')
+
+                // Read result
+                const data = ffmpeg.FS('readFile', 'videoOut.mp4');
+
+                // Update upload file
+                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+
+                // Create video URL react-player
+                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                setEditedVideo(editedVideoUrl)
                 setRendering(false)
             }
         }
@@ -805,12 +835,12 @@ export default function Dashboard() {
                             <Card.Body>
                                 <Row className='justify-content-center'>
                                     <Col xs={{ span: 10, offset: 1 }} sm={{ span: 8, offset: 2 }} className='seeker-wrapper'>
-                                        <Card bg='dark' border="light" style={{ color: 'white'}}>
+                                        <Card bg='dark' border="light" style={{ color: 'white' }}>
                                             <Card.Header>Tip</Card.Header>
                                             <Card.Body>
                                                 <Card.Text>
                                                     If you wish to avoid long rendering times every time you want to display your changes, first trim the video to 0.01 seconds, edit the short clip, when satisfied with final result, revert back to original video and reapply each edit.
-                            </Card.Text>
+                                                </Card.Text>
                                             </Card.Body>
                                         </Card>
                                     </Col>
@@ -862,6 +892,27 @@ export default function Dashboard() {
                                     </Col>
                                     <Col xs={{ span: 4 }} md={{ span: 2 }}>
                                         <Button variant='secondary' className='trim-button' onClick={trimVideo}>Trim</Button>
+                                    </Col>
+                                    <Col xs={{ span: 10, offset: 1 }} sm={{ span: 8, offset: 2 }} className='seeker-wrapper'>
+                                        <Row className='large-slider-row'>
+
+                                            <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
+                                                <Row className='large-slider-label-row'>
+                                                    Video/Audio Offset
+</Row>
+                                                <RangeSlider
+                                                    variant='light'
+                                                    min={-60}
+                                                    max={60}
+                                                    step={1}
+                                                    value={videoAudioOffset}
+                                                    onChange={changeEvent => setVideoAudioOffset(changeEvent.target.value)}
+                                                />
+                                            </Col>
+                                            <Col xs={{ span: 4 }} sm={{ span: 3 }}>
+                                                <Button variant='secondary' className='apply-button' onClick={offsetVideoAudio}>Apply</Button>
+                                            </Col>
+                                        </Row>
                                     </Col>
                                 </Row>
                                 <Row style={{ padding: '1em 0 1em 0' }}>
