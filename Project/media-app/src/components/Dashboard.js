@@ -37,21 +37,14 @@ export default function Dashboard() {
     const [played, setPlayed] = useState(0);
     const [player, setPlayer] = useState(null);
     const [duration, setDuration] = useState(0);
-    const [lumax, setLumax] = useState(5);
-    const [lumay, setLumay] = useState(5);
-    const [lumaAmount, setLumaAmount] = useState(1);
-    const [chromax, setChromax] = useState(5);
-    const [chromay, setChromay] = useState(5);
-    const [chromaAmount, setchromaAmount] = useState(0);
-    const [lumaRadius, setLumaRadius] = useState(1);
-    const [lumaStrength, setLumaStrength] = useState(1);
-    const [lumaThreshold, setLumaThreshold] = useState(0);
-    const [chromaRadius, setChromaRadius] = useState(1);
-    const [chromaStrength, setChromaStrength] = useState(1);
-    const [chromaThreshold, setchromaThreshold] = useState(0);
     const [brightness, setBrightness] = useState(0);
     const [contrast, setContrast] = useState(1);
     const [saturation, setSaturation] = useState(1);
+    const [lumay, setLumay] = useState(5);
+    const [chromax, setChromax] = useState(5);
+    const [chromaAmount, setchromaAmount] = useState(0);
+    const [lumaRadius, setLumaRadius] = useState(2);
+    const [lumaStrength, setLumaStrength] = useState(2);
     const [hue, setHue] = useState(0);
     const [gamma, setGamma] = useState(1);
     const [selectedFileName, setSelectedFileName] = useState('Choose File');
@@ -103,7 +96,7 @@ export default function Dashboard() {
         if (ffmpegReady) {
             setRendering(true)
             // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(file));
+            ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(uploadFile));
 
             // Run command
             await ffmpeg.run('-i', 'video.mp4', '-q:a', '0', '-map', 'a', 'audio.mp3')
@@ -123,7 +116,7 @@ export default function Dashboard() {
         if (ffmpegReady) {
             setRendering(true)
             // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(file));
+            ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(uploadFile));
             // Run command
             ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
 
@@ -287,7 +280,7 @@ export default function Dashboard() {
 
             // Run command
             ///ffmpeg -i ~/audio_source/noisy_speech.wav -filter_complex "areverse" areverse_out_voice.wav
-            await ffmpeg.run('-i', 'audio.mp3', '-filter_complex' `areverse`, 'audioOut.mp3')
+            await ffmpeg.run('-i', 'audio.mp3', '-filter_complex', `areverse`, 'audioOut.mp3')
 
             // Read result
             const data = ffmpeg.FS('readFile', 'audioOut.mp3');
@@ -353,7 +346,6 @@ export default function Dashboard() {
 
             // Update upload file
             setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
             // Create video URL react-player
             const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
             setEditedVideo(editedVideoUrl)
@@ -484,7 +476,7 @@ export default function Dashboard() {
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
 
             // Run command
-            await ffmpeg.run('-i', 'test.mp4', '-vf', `unsharp=${lumax}:${lumay}:${lumaAmount}:${chromax}:${chromay}:${chromaAmount}`, '-c:a', 'copy', 'testOut.mp4');
+            await ffmpeg.run('-i', 'test.mp4', '-vf', `unsharp=${lumay}:${lumay}:${chromaAmount}:${chromax}:${chromax}:${chromaAmount}`, '-c:a', 'copy', 'testOut.mp4');
 
             // Read result
             const data = ffmpeg.FS('readFile', 'testOut.mp4');
@@ -507,7 +499,7 @@ export default function Dashboard() {
             ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
 
             // Run command
-            await ffmpeg.run('-i', 'test.mp4', '-vf', `smartblur=${lumaRadius}:${lumaStrength}:${lumaThreshold}:${chromaRadius}:${chromaStrength}:${chromaThreshold}`, '-c:a', 'copy', 'testOut.mp4');
+            await ffmpeg.run('-i', 'test.mp4', '-vf', `boxblur=${lumaRadius}:${lumaStrength}`, '-c:a', 'copy', 'testOut.mp4');
 
             // Read result
             const data = ffmpeg.FS('readFile', 'testOut.mp4');
@@ -713,9 +705,60 @@ export default function Dashboard() {
                         <Card style={{ textAlign: 'center' }} bg='dark' text='white'>
                             <Card.Header className='card-header'>Video</Card.Header>
                             <Card.Body>
+                                <Row className='justify-content-center'>
+                                    <Col xs={{ span: 10, offset: 1 }} sm={{ span: 8, offset: 2 }} className='seeker-wrapper'>
+                                        <input className='seek-bar'
+                                            type='range' min={0} max={0.999999} step='any'
+                                            value={played}
+                                            //onMouseDown={handleSeekMouseDown}
+                                            onChange={handleSeekChange}
+                                            onMouseUp={handleSeekMouseUp}
+                                            //onTouchStart={handleSeekMouseDown}   
+                                            onTouchMove={handleSeekChange}
+                                            onTouchEnd={handleSeekMouseUp}
+                                        />
+                                    </Col>
+                                </Row>
+                                <Row className='justify-content-center' style={{
+                                    textAlign: 'center'
+                                }}>
+                                    <Col>00:00:00</Col>
+                                    <Col>{convertSecondsToTime(played * duration)}</Col>
+                                    <Col>{convertSecondsToTime(duration)}</Col>
+                                </Row>
+                                <Row style={{
+                                    'justifyContent': 'center',
+                                    'textAlign': 'center',
+                                    'padding': '1%'
+                                }}>
+                                    <Col xs={{ span: 4 }} sm={{ span: 4 }}>
+                                        <InputGroup>
+                                            <FormControl
+                                                placeholder="Start time in seconds..."
+                                                aria-label="Start Trim"
+                                                aria-describedby="trim-start-input"
+                                                onChange={e => setStartTrim(e.target.value)}
+                                            />
+                                        </InputGroup>
+                                    </Col>
+                                    <Col xs={{ span: 4 }} sm={{ span: 4 }}>
+                                        <InputGroup className='input-box'>
+                                            <FormControl
+
+                                                placeholder="End time in seconds..."
+                                                aria-label="End Trim"
+                                                aria-describedby="trim-end-input"
+                                                onChange={e => setEndTrim(e.target.value)}
+                                            />
+                                        </InputGroup>
+                                    </Col>
+                                    <Col xs={{ span: 4 }} md={{ span: 2 }}>
+                                        <Button variant='secondary' className='trim-button' onClick={trimVideo}>Trim</Button>
+                                    </Col>
+                                </Row>
                                 <Row style={{ padding: '1em 0 1em 0' }}>
-                                    <Col xs={{ span: 12 }} lg={{ span: 6 }}>
-                                        <Card bg='dark' text='white' id='image-adjustments-card'>
+                                    <Col xs={{ span: 12 }} lg={{ span: 10, offset: 1 }}>
+                                        <Card bg='dark' text='white'>
                                             <Card.Header className='card-header-custom'>
                                                 Image Adjustments
                                         </Card.Header>
@@ -746,8 +789,8 @@ export default function Dashboard() {
 </Row>
                                                         <RangeSlider
                                                             variant='light'
-                                                            min={-1000.0}
-                                                            max={1000.0}
+                                                            min={-3}
+                                                            max={5.0}
                                                             step={0.1}
                                                             value={contrast}
                                                             onChange={changeEvent => setContrast(changeEvent.target.value)}
@@ -814,309 +857,127 @@ export default function Dashboard() {
                                                 </Row>
                                             </Card.Body>
                                         </Card>
+
                                     </Col>
-                                    <Col xs={{ span: 12 }} lg={{ span: 6 }}>
-                                        <Row>
-                                            <Col xs={{ span: 12 }}>
-                                                <Card bg='dark' text='white' id='trim-video-card'>
-                                                    <Card.Header className='card-header-custom'>
-                                                        Trim Video
+                                </Row>
+                                <Row style={{ padding: '1em 0 1em 0' }}>
+                                    <Col xs={{ span: 12 }} lg={{ span: 10, offset: 1 }}>
+                                        <Card bg='dark' text='white'>
+                                            <Card.Header className='card-header-custom'>
+                                                Video FX
                                         </Card.Header>
-                                                    <Card.Body className='card-custom'>
-                                                        <Row className='justify-content-center'>
-                                                            <Col xs={{ span: 10, offset: 1 }} sm={{ span: 8, offset: 2 }} className='seeker-wrapper'>
-                                                                <input className='seek-bar'
-                                                                    type='range' min={0} max={0.999999} step='any'
-                                                                    value={played}
-                                                                    //onMouseDown={handleSeekMouseDown}
-                                                                    onChange={handleSeekChange}
-                                                                    onMouseUp={handleSeekMouseUp}
-                                                                    //onTouchStart={handleSeekMouseDown}   
-                                                                    onTouchMove={handleSeekChange}
-                                                                    onTouchEnd={handleSeekMouseUp}
-                                                                />
-                                                            </Col>
-                                                        </Row>
-                                                        <Row className='justify-content-center' style={{
-                                                            textAlign: 'center'
-                                                        }}>
-                                                            <Col>00:00:00</Col>
-                                                            <Col>{convertSecondsToTime(played * duration)}</Col>
-                                                            <Col>{convertSecondsToTime(duration)}</Col>
-                                                        </Row>
-                                                        <Row style={{
-                                                            'justifyContent': 'center',
-                                                            'textAlign': 'center',
-                                                            'padding': '1%'
-                                                        }}>
-                                                            <Col xs={{ span: 4 }} sm={{ span: 4 }}>
-                                                                <InputGroup>
-                                                                    <FormControl
-                                                                        placeholder="Start time in seconds..."
-                                                                        aria-label="Start Trim"
-                                                                        aria-describedby="trim-start-input"
-                                                                        onChange={e => setStartTrim(e.target.value)}
-                                                                    />
-                                                                </InputGroup>
-                                                            </Col>
-                                                            <Col xs={{ span: 4 }} sm={{ span: 4 }}>
-                                                                <InputGroup className='input-box'>
-                                                                    <FormControl
+                                            <Card.Body className='card-custom'>
+                                                <Col xs={{ span: 12 }} lg={{ span: 8, offset: 2 }}>
+                                                    <Dropdown className='audio-fx-dropdown' as={ButtonGroup}>
+                                                        <Button onClick={() => { sharpnessVideo() }} variant="secondary">Sharpen</Button>
 
-                                                                        placeholder="End time in seconds..."
-                                                                        aria-label="End Trim"
-                                                                        aria-describedby="trim-end-input"
-                                                                        onChange={e => setEndTrim(e.target.value)}
-                                                                    />
-                                                                </InputGroup>
-                                                            </Col>
-                                                            <Col xs={{ span: 4 }} md={{ span: 2 }}>
-                                                                <Button variant='secondary' className='trim-button' onClick={trimVideo}>Trim</Button>
-                                                            </Col>
-                                                        </Row>
+                                                        <Dropdown.Toggle split variant="secondary" id="dropdown-split-basic" />
 
-                                                    </Card.Body>
-                                                </Card>
-                                            </Col>
-                                            <Col xs={{ span: 12 }}  style={{ paddingTop: '1em' }}>
-                                                <Card bg='dark' text='white' id='video-fx-card'>
-                                                    <Card.Header className='card-header-custom'>
-                                                        Video FX
-                                        </Card.Header>
-                                                    <Card.Body className='card-custom'>
-                                                        <Col xs={{ span: 12 }} lg={{ span: 8, offset: 2 }}>
-                                                            <Dropdown className='audio-fx-dropdown' as={ButtonGroup}>
-                                                                <Button onClick={() => { sharpnessVideo() }} variant="secondary">Sharpen</Button>
+                                                        <Dropdown.Menu className='dropdown-menu-custom'>
+                                                            <Dropdown.Header>Sharpen Settings</Dropdown.Header>
+                                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
+                                                                <Row>
+                                                                    <Col>Luma</Col>
+                                                                </Row>
+                                                                <Row>
+                                                                    <Col>
+                                                                        <RangeSlider
+                                                                            variant='light'
+                                                                            min={3.0}
+                                                                            max={7.0}
+                                                                            step={2}
+                                                                            value={lumay}
+                                                                            onChange={changeEvent => setLumay(changeEvent.target.value)}
+                                                                        />
+                                                                    </Col>
+                                                                </Row>
+                                                            </Dropdown.Item>
+                                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
+                                                                <Row>
+                                                                    <Col>Chroma </Col>
+                                                                </Row>
+                                                                <Row>
+                                                                    <Col>
+                                                                        <RangeSlider
+                                                                            variant='light'
+                                                                            min={3.0}
+                                                                            max={13.0}
+                                                                            step={2}
+                                                                            value={chromax}
+                                                                            onChange={changeEvent => setChromax(changeEvent.target.value)}
+                                                                        />
+                                                                    </Col>
+                                                                </Row>
+                                                            </Dropdown.Item>
+                                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
+                                                                <Row>
+                                                                    <Col>Amount</Col>
+                                                                </Row>
+                                                                <Row>
+                                                                    <Col>
+                                                                        <RangeSlider
+                                                                            variant='light'
+                                                                            min={-1.5}
+                                                                            max={1.5}
+                                                                            step={0.1}
+                                                                            value={chromaAmount}
+                                                                            onChange={changeEvent => setchromaAmount(changeEvent.target.value)}
+                                                                        />
+                                                                    </Col>
+                                                                </Row>
+                                                            </Dropdown.Item>
+                                                        </Dropdown.Menu>
+                                                    </Dropdown>
+                                                </Col>
+                                                <Col xs={{ span: 12 }} lg={{ span: 8, offset: 2 }}>
+                                                    <Dropdown className='audio-fx-dropdown' as={ButtonGroup}>
+                                                        <Button onClick={() => { blurVideo() }} variant="secondary">Blur</Button>
 
-                                                                <Dropdown.Toggle split variant="secondary" id="dropdown-split-basic" />
+                                                        <Dropdown.Toggle split variant="secondary" id="dropdown-split-basic" />
 
-                                                                <Dropdown.Menu className='dropdown-menu-custom'>
-                                                                    <Dropdown.Header>Sharpen Settings</Dropdown.Header>
-                                                                    <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                                        <Row>
-                                                                            <Col>Luma X</Col>
-                                                                        </Row>
-                                                                        <Row>
-                                                                            <Col>
-                                                                                <RangeSlider
-                                                                                    variant='light'
-                                                                                    min={3.0}
-                                                                                    max={19.0}
-                                                                                    step={2}
-                                                                                    value={lumax}
-                                                                                    onChange={(e) => setLumax(e.target.value)}
-                                                                                />
-                                                                            </Col>
-                                                                        </Row>
-                                                                    </Dropdown.Item>
-                                                                    <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                                        <Row>
-                                                                            <Col>Luma Y</Col>
-                                                                        </Row>
-                                                                        <Row>
-                                                                            <Col>
-                                                                                <RangeSlider
-                                                                                    variant='light'
-                                                                                    min={3.0}
-                                                                                    max={7.0}
-                                                                                    step={2}
-                                                                                    value={lumay}
-                                                                                    onChange={changeEvent => setLumay(changeEvent.target.value)}
-                                                                                />
-                                                                            </Col>
-                                                                        </Row>
-                                                                    </Dropdown.Item>
-                                                                    <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                                        <Row>
-                                                                            <Col>Luma Amount</Col>
-                                                                        </Row>
-                                                                        <Row>
-                                                                            <Col>
-                                                                                <RangeSlider
-                                                                                    variant='light'
-                                                                                    min={-1.5}
-                                                                                    max={1.5}
-                                                                                    step={0.1}
-                                                                                    value={lumaAmount}
-                                                                                    onChange={changeEvent => setLumaAmount(changeEvent.target.value)}
-                                                                                />
-                                                                            </Col>
-                                                                        </Row>
-                                                                    </Dropdown.Item>
-                                                                    <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                                        <Row>
-                                                                            <Col>Chroma X</Col>
-                                                                        </Row>
-                                                                        <Row>
-                                                                            <Col>
-                                                                                <RangeSlider
-                                                                                    variant='light'
-                                                                                    min={3.0}
-                                                                                    max={23.0}
-                                                                                    step={2}
-                                                                                    value={chromax}
-                                                                                    onChange={changeEvent => setChromax(changeEvent.target.value)}
-                                                                                />
-                                                                            </Col>
-                                                                        </Row>
-                                                                    </Dropdown.Item>
-                                                                    <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                                        <Row>
-                                                                            <Col>Chroma Y</Col>
-                                                                        </Row>
-                                                                        <Row>
-                                                                            <Col>
-                                                                                <RangeSlider
-                                                                                    variant='light'
-                                                                                    min={3.0}
-                                                                                    max={23.0}
-                                                                                    step={2}
-                                                                                    value={chromay}
-                                                                                    onChange={changeEvent => setChromay(changeEvent.target.value)}
-                                                                                />
-                                                                            </Col>
-                                                                        </Row>
-                                                                    </Dropdown.Item>
-                                                                    <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                                        <Row>
-                                                                            <Col>Chroma Amount</Col>
-                                                                        </Row>
-                                                                        <Row>
-                                                                            <Col>
-                                                                                <RangeSlider
-                                                                                    variant='light'
-                                                                                    min={-1.5}
-                                                                                    max={1.5}
-                                                                                    step={0.1}
-                                                                                    value={chromaAmount}
-                                                                                    onChange={changeEvent => setchromaAmount(changeEvent.target.value)}
-                                                                                />
-                                                                            </Col>
-                                                                        </Row>
-                                                                    </Dropdown.Item>
-                                                                </Dropdown.Menu>
-                                                            </Dropdown>
-                                                        </Col>
-                                                        <Col xs={{ span: 12 }} lg={{ span: 8, offset: 2 }}>
-                                                            <Dropdown className='audio-fx-dropdown' as={ButtonGroup}>
-                                                                <Button onClick={() => { blurVideo() }} variant="secondary">Blur</Button>
+                                                        <Dropdown.Menu className='dropdown-menu-custom'>
+                                                            <Dropdown.Header>Blur Settings</Dropdown.Header>
+                                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
+                                                                <Row>
+                                                                    <Col>Radius</Col>
+                                                                </Row>
+                                                                <Row>
+                                                                    <Col>
+                                                                        <RangeSlider
+                                                                            variant='light'
+                                                                            min={0}
+                                                                            max={100}
+                                                                            step={1}
+                                                                            value={lumaRadius}
+                                                                            onChange={changeEvent => setLumaRadius(changeEvent.target.value)}
+                                                                        />
+                                                                    </Col>
+                                                                </Row>
+                                                            </Dropdown.Item>
+                                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
+                                                                <Row>
+                                                                    <Col>Power</Col>
+                                                                </Row>
+                                                                <Row>
+                                                                    <Col>
+                                                                        <RangeSlider
+                                                                            variant='light'
+                                                                            min={0}
+                                                                            max={100}
+                                                                            step={1}
+                                                                            value={lumaStrength}
+                                                                            onChange={changeEvent => setLumaStrength(changeEvent.target.value)}
+                                                                        />
+                                                                    </Col>
+                                                                </Row>
+                                                            </Dropdown.Item>
+                                                        </Dropdown.Menu>
+                                                    </Dropdown>
+                                                </Col>
+                                            </Card.Body>
+                                        </Card>
 
-                                                                <Dropdown.Toggle split variant="secondary" id="dropdown-split-basic" />
-
-                                                                <Dropdown.Menu className='dropdown-menu-custom'>
-                                                                    <Dropdown.Header>Blur Settings</Dropdown.Header>
-                                                                    <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                                        <Row>
-                                                                            <Col>Luma Radius</Col>
-                                                                        </Row>
-                                                                        <Row>
-                                                                            <Col>
-                                                                                <RangeSlider
-                                                                                    variant='light'
-                                                                                    min={0.1}
-                                                                                    max={5.0}
-                                                                                    step={0.1}
-                                                                                    value={lumaRadius}
-                                                                                    onChange={changeEvent => setLumaRadius(changeEvent.target.value)}
-                                                                                />
-                                                                            </Col>
-                                                                        </Row>
-                                                                    </Dropdown.Item>
-                                                                    <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                                        <Row>
-                                                                            <Col>Luma Strength</Col>
-                                                                        </Row>
-                                                                        <Row>
-                                                                            <Col>
-                                                                                <RangeSlider
-                                                                                    variant='light'
-                                                                                    min={-1.0}
-                                                                                    max={1.0}
-                                                                                    step={0.1}
-                                                                                    value={lumaStrength}
-                                                                                    onChange={changeEvent => setLumaStrength(changeEvent.target.value)}
-                                                                                />
-                                                                            </Col>
-                                                                        </Row>
-                                                                    </Dropdown.Item>
-                                                                    <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                                        <Row>
-                                                                            <Col>Luma Threshold</Col>
-                                                                        </Row>
-                                                                        <Row>
-                                                                            <Col>
-                                                                                <RangeSlider
-                                                                                    variant='light'
-                                                                                    min={-30}
-                                                                                    max={30}
-                                                                                    step={1}
-                                                                                    value={lumaThreshold}
-                                                                                    onChange={changeEvent => setLumaThreshold(changeEvent.target.value)}
-                                                                                />
-                                                                            </Col>
-                                                                        </Row>
-                                                                    </Dropdown.Item>
-                                                                    <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                                        <Row>
-                                                                            <Col>Chroma Radius</Col>
-                                                                        </Row>
-                                                                        <Row>
-                                                                            <Col>
-                                                                                <RangeSlider
-                                                                                    variant='light'
-                                                                                    min={0.1}
-                                                                                    max={5.0}
-                                                                                    step={0.1}
-                                                                                    value={chromaRadius}
-                                                                                    onChange={changeEvent => setChromaRadius(changeEvent.target.value)}
-                                                                                />
-                                                                            </Col>
-                                                                        </Row>
-                                                                    </Dropdown.Item>
-                                                                    <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                                        <Row>
-                                                                            <Col>Chroma Strength</Col>
-                                                                        </Row>
-                                                                        <Row>
-                                                                            <Col>
-                                                                                <RangeSlider
-                                                                                    variant='light'
-                                                                                    min={-1.0}
-                                                                                    max={1.0}
-                                                                                    step={0.1}
-                                                                                    value={chromaStrength}
-                                                                                    onChange={changeEvent => setChromaStrength(changeEvent.target.value)}
-                                                                                />
-                                                                            </Col>
-                                                                        </Row>
-                                                                    </Dropdown.Item>
-                                                                    <Dropdown.Item className='dropdown-item-custom' as='button'>
-                                                                        <Row>
-                                                                            <Col>Chroma Threshold</Col>
-                                                                        </Row>
-                                                                        <Row>
-                                                                            <Col>
-                                                                                <RangeSlider
-                                                                                    variant='light'
-                                                                                    min={-30}
-                                                                                    max={30}
-                                                                                    step={1}
-                                                                                    value={chromaThreshold}
-                                                                                    onChange={changeEvent => setchromaThreshold(changeEvent.target.value)}
-                                                                                />
-                                                                            </Col>
-                                                                        </Row>
-                                                                    </Dropdown.Item>
-                                                                </Dropdown.Menu>
-                                                            </Dropdown>
-                                                        </Col>
-                                                    </Card.Body>
-                                                </Card>
-                                            </Col>
-
-                                        </Row>
                                     </Col>
-
                                 </Row>
                             </Card.Body>
                         </Card>
