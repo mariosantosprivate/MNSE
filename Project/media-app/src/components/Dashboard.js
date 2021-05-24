@@ -323,17 +323,17 @@ export default function Dashboard() {
         try {
             if (ffmpegReady) {
                 setRendering(true)
-    
+
                 // Write file to memory so webassemble can access it
                 ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
-    
+
                 // Run command
                 ///ffmpeg -i ~/audio_source/noisy_speech.wav -filter_complex "areverse" areverse_out_voice.wav
                 await ffmpeg.run('-i', 'audio.mp3', '-filter_complex', `areverse`, 'audioOut.mp3')
-    
+
                 // Read result
                 const data = ffmpeg.FS('readFile', 'audioOut.mp3');
-    
+
                 // Create video URL react-player
                 const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
                 setEditedAudio(audioBlob);
@@ -349,24 +349,24 @@ export default function Dashboard() {
         try {
             if (ffmpegReady) {
                 setRendering(true)
-    
+
                 let indoorEchoParams = '0.8:0.9:40|50|70:0.4|0.3|0.2'
                 let mountainEchoParams = '0.8:0.9:500|1000:0.2|0.1'
                 let echoParams = ''
-    
+
                 echoType === 'indoor' ? echoParams = indoorEchoParams : echoParams = mountainEchoParams
-    
+
                 // Write file to memory so webassemble can access it
                 ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
-    
+
                 // Run command
                 // /ffmpeg -i ./arnn_out.wav -filter_complex "aecho=0.8:0.9:40|50|70:0.4|0.3|0.2" echo_indoor_out.wav
-    
+
                 await ffmpeg.run('-i', 'audio.mp3', '-filter_complex', `aecho=${echoParams}`, 'audioOut.mp3')
-    
+
                 // Read result
                 const data = ffmpeg.FS('readFile', 'audioOut.mp3');
-    
+
                 // Create video URL react-player
                 const audioBlob = new Blob([data.buffer], { type: 'audio/mp3' });
                 setEditedAudio(audioBlob);
@@ -390,19 +390,19 @@ export default function Dashboard() {
                 setRendering(true)
                 // Write file to memory so webassemble can access it
                 ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-    
+
                 // Run command
-    
+
                 //ffmpeg -ss 00:08:00 -i Video.mp4 -ss 00:01:00 -t 00:01:00 -c copy VideoClip.mp4
                 //The first -ss seeks fast to (approximately) 8min0sec, and then the second -ss seeks accurately to 9min0sec, and the -t 00:01:00 takes out a 1min0sec clip.
-    
+
                 await ffmpeg.run('-i', 'test.mp4', '-ss', startTrim, '-t', `${endTrim - startTrim}`, 'testOut.mp4');
-    
+
                 //await ffmpeg.run('-i', 'test.mp4', '-ss', startTrim, '-to', endTrim, '-c:v', 'copy', '-c:a', 'copy', 'testOut.mp4');
-    
+
                 // Read result
                 const data = ffmpeg.FS('readFile', 'testOut.mp4');
-    
+
                 // Update upload file
                 setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
                 // Create video URL react-player
@@ -423,16 +423,16 @@ export default function Dashboard() {
                 setRendering(true)
                 // Write file to memory so webassemble can access it
                 ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-    
+
                 // Run command
                 await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=brightness=${brightness}`, '-c:a', 'copy', 'testOut.mp4');
-    
+
                 // Read result
                 const data = ffmpeg.FS('readFile', 'testOut.mp4');
-    
+
                 // Update upload file
                 setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-    
+
                 // Create video URL react-player
                 const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
                 setEditedVideo(editedVideoUrl)
@@ -451,16 +451,16 @@ export default function Dashboard() {
                 setRendering(true)
                 // Write file to memory so webassemble can access it
                 ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-    
+
                 // Run command
                 await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=contrast=${contrast}`, '-c:a', 'copy', 'testOut.mp4');
-    
+
                 // Read result
                 const data = ffmpeg.FS('readFile', 'testOut.mp4');
-    
+
                 // Update upload file
                 setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-    
+
                 // Create video URL react-player
                 const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
                 setEditedVideo(editedVideoUrl)
@@ -479,16 +479,16 @@ export default function Dashboard() {
                 setRendering(true)
                 // Write file to memory so webassemble can access it
                 ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-    
+
                 // Run command
                 await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=gamma=${gamma}`, '-c:a', 'copy', 'testOut.mp4');
-    
+
                 // Read result
                 const data = ffmpeg.FS('readFile', 'testOut.mp4');
-    
+
                 // Update upload file
                 setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-    
+
                 // Create video URL react-player
                 const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
                 setEditedVideo(editedVideoUrl)
@@ -507,16 +507,16 @@ export default function Dashboard() {
                 setRendering(true)
                 // Write file to memory so webassemble can access it
                 ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(uploadFile));
-    
+
                 // Run command
                 await ffmpeg.run('-i', 'test.mp4', '-vf', `hue=h=${hue}`, '-c:a', 'copy', 'testOut.mp4');
-    
+
                 // Read result
                 const data = ffmpeg.FS('readFile', 'testOut.mp4');
-    
+
                 // Update upload file
                 setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-    
+
                 // Create video URL react-player
                 const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
                 setEditedVideo(editedVideoUrl)
@@ -535,16 +535,16 @@ export default function Dashboard() {
                 setRendering(true)
                 // Write file to memory so webassemble can access it
                 ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-    
+
                 // Run command
                 await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=saturation=${saturation}`, '-c:a', 'copy', 'testOut.mp4');
-    
+
                 // Read result
                 const data = ffmpeg.FS('readFile', 'testOut.mp4');
-    
+
                 // Update upload file
                 setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-    
+
                 // Create video URL react-player
                 const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
                 setEditedVideo(editedVideoUrl)
@@ -563,16 +563,16 @@ export default function Dashboard() {
                 setRendering(true)
                 // Write file to memory so webassemble can access it
                 ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-    
+
                 // Run command
                 await ffmpeg.run('-i', 'test.mp4', '-vf', `unsharp=${lumay}:${lumay}:${chromaAmount}:${chromax}:${chromax}:${chromaAmount}`, '-c:a', 'copy', 'testOut.mp4');
-    
+
                 // Read result
                 const data = ffmpeg.FS('readFile', 'testOut.mp4');
-    
+
                 // Update upload file
                 setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-    
+
                 // Create video URL react-player
                 const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
                 setEditedVideo(editedVideoUrl)
@@ -591,16 +591,16 @@ export default function Dashboard() {
                 setRendering(true)
                 // Write file to memory so webassemble can access it
                 ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-    
+
                 // Run command
                 await ffmpeg.run('-i', 'test.mp4', '-vf', `boxblur=${lumaRadius}:${lumaStrength}`, '-c:a', 'copy', 'testOut.mp4');
-    
+
                 // Read result
                 const data = ffmpeg.FS('readFile', 'testOut.mp4');
-    
+
                 // Update upload file
                 setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-    
+
                 // Create video URL react-player
                 const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
                 setEditedVideo(editedVideoUrl)
@@ -804,6 +804,16 @@ export default function Dashboard() {
                             <Card.Header className='card-header'>Video</Card.Header>
                             <Card.Body>
                                 <Row className='justify-content-center'>
+                                    <Col xs={{ span: 10, offset: 1 }} sm={{ span: 8, offset: 2 }} className='seeker-wrapper'>
+                                        <Card bg='dark' border="light" style={{ color: 'white'}}>
+                                            <Card.Header>Tip</Card.Header>
+                                            <Card.Body>
+                                                <Card.Text>
+                                                    If you wish to avoid long rendering times every time you want to display your changes, first trim the video to 0.01 seconds, edit the short clip, when satisfied with final result, revert back to original video and reapply each edit.
+                            </Card.Text>
+                                            </Card.Body>
+                                        </Card>
+                                    </Col>
                                     <Col xs={{ span: 10, offset: 1 }} sm={{ span: 8, offset: 2 }} className='seeker-wrapper'>
                                         <input className='seek-bar'
                                             type='range' min={0} max={0.999999} step='any'
