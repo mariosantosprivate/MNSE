@@ -280,7 +280,7 @@ export default function Dashboard() {
 
             // Run command
             ///ffmpeg -i ~/audio_source/noisy_speech.wav -filter_complex "areverse" areverse_out_voice.wav
-            await ffmpeg.run('-i', 'audio.mp3', '-filter_complex' `areverse`, 'audioOut.mp3')
+            await ffmpeg.run('-i', 'audio.mp3', '-filter_complex', `areverse`, 'audioOut.mp3')
 
             // Read result
             const data = ffmpeg.FS('readFile', 'audioOut.mp3');
