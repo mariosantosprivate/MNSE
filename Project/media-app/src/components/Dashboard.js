@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 import { Card, Container, ProgressBar, Row, Col, Button, InputGroup, FormControl, Dropdown, ButtonGroup } from 'react-bootstrap';
 import ReactPlayer from 'react-player';
@@ -11,12 +11,28 @@ import { useLocation } from "react-router-dom";
 import RangeSlider from 'react-bootstrap-range-slider';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUndo } from "@fortawesome/free-solid-svg-icons";
+import Cropper from 'react-easy-crop'
 
 const ffmpeg = createFFmpeg({
     log: true,
 })
 
 export default function Dashboard() {
+    const [cropW, setCropW] = useState(0);
+    const [cropX, setCropX] = useState(0);
+    const [cropH, setCropH] = useState(0);
+    const [cropY, setCropY] = useState(0);
+    const [crop, setCrop] = useState({ x: 0, y: 0 })
+    const [zoom, setZoom] = useState(1)
+    const [aspect, setAspect] = useState(4 / 3)
+    const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+
+        setCropW(croppedAreaPixels.width)
+        setCropH(croppedAreaPixels.height)
+        setCropX(croppedAreaPixels.x)
+        setCropY(croppedAreaPixels.y)
+    }, [])
+
 
     const [ffmpegReady, setFfmpegReady] = useState(false);
     const [file, setFile] = useState('./');
@@ -643,6 +659,34 @@ export default function Dashboard() {
 
     }
 
+    const cropVideo = async () => {
+        try {
+            if (ffmpegReady) {
+                setRendering(true)
+                // Write file to memory so webassemble can access it
+                ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
+
+                // Run command
+                await ffmpeg.run('-i', 'test.mp4', '-vf', `crop=${cropW}:${cropH}:${cropX}:${cropY}`, '-c:a', 'copy', 'testOut.mp4');
+
+                // Read result
+                const data = ffmpeg.FS('readFile', 'testOut.mp4');
+
+                // Update upload file
+                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+
+                // Create video URL react-player
+                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                setEditedVideo(editedVideoUrl)
+                setRendering(false);
+            }
+        } catch (err) {
+            console.log(err)
+            setRendering(false)
+        }
+
+    }
+
     const resetVideo = () => {
         setUploadFile(originalFile)
         setEditedVideo(URL.createObjectURL(originalFile))
@@ -828,6 +872,7 @@ export default function Dashboard() {
                         </Row>
                     </Col>
                 </Row>
+
                 <Row className='major-row'>
                     <Col sm={{ span: 10, offset: 1 }}>
                         <Card style={{ textAlign: 'center' }} bg='dark' text='white'>
@@ -915,6 +960,69 @@ export default function Dashboard() {
                                         </Row>
                                     </Col>
                                 </Row>
+
+                                <Col sm={{ span: 10, offset: 1 }}>
+                                    <div className="crop-container">
+                                        <Cropper
+                                            video={editedVideo}
+                                            crop={crop}
+                                            zoom={zoom}
+                                            aspect={aspect} //1:1 square //4:3 standard //16:10 standard //16:9 standard
+                                            onCropChange={setCrop}
+                                            onCropComplete={onCropComplete}
+                                            onZoomChange={setZoom}
+                                        />
+                                    </div>
+                                </Col>
+
+                                <Col sm={{ span: 10, offset: 1 }}>
+                                    <Dropdown className='audio-fx-dropdown' as={ButtonGroup}>
+                                        <Button onClick={() => { phaserAudio() }} variant="secondary">Aspect Ratio</Button>
+
+                                        <Dropdown.Toggle split variant="secondary" id="dropdown-split-basic" />
+
+                                        <Dropdown.Menu className='dropdown-menu-custom'>
+                                            <Dropdown.Header>Aspect Ratio</Dropdown.Header>
+                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
+                                                <Row style={{ justifyContent: 'center', textAlign: 'center' }}>
+                                                    <Button onClick={() => { setAspect(16 / 9) }} style={{ width: '100%' }} variant="secondary">16:9</Button>
+                                                </Row>
+                                            </Dropdown.Item>
+                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
+                                                <Row style={{ justifyContent: 'center', textAlign: 'center' }}>
+                                                    <Button onClick={() => { setAspect(16 / 10) }} style={{ width: '100%' }} variant="secondary">16:10</Button>
+                                                </Row>
+                                            </Dropdown.Item>
+                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
+                                                <Row style={{ justifyContent: 'center', textAlign: 'center' }}>
+                                                    <Button onClick={() => { setAspect(4 / 3) }} style={{ width: '100%' }} variant="secondary">4:3</Button>
+                                                </Row>
+                                            </Dropdown.Item>
+                                            <Dropdown.Item className='dropdown-item-custom' as='button'>
+                                                <Row style={{ justifyContent: 'center', textAlign: 'center' }}>
+                                                    <Button onClick={() => { setAspect(1 / 1) }} style={{ width: '100%' }} variant="secondary">1:1</Button>
+                                                </Row>
+                                            </Dropdown.Item>
+                                        </Dropdown.Menu>
+                                    </Dropdown>
+                                </Col>
+                                <Col sm={{ span: 10, offset: 1 }} className="controls">
+                                    <Row style={{ justifyContent: 'center', textAlign: 'center' }}>
+
+                                    </Row>
+                                    <RangeSlider
+                                        variant='light'
+                                        value={zoom}
+                                        min={1}
+                                        max={100}
+                                        step={1}
+                                        aria-labelledby="Zoom"
+                                        onChange={(e, zoom) => setZoom(zoom)}
+                                    />
+                                </Col>
+                                <Col sm={{ span: 10, offset: 1 }}>
+                                    <Button style={{ width: '100%', marginTop: '1em' }} variant='secondary' onClick={cropVideo}> Crop </Button>
+                                </Col>
                                 <Row style={{ padding: '1em 0 1em 0' }}>
                                     <Col xs={{ span: 12 }} lg={{ span: 10, offset: 1 }}>
                                         <Card bg='dark' text='white'>
@@ -1411,9 +1519,6 @@ export default function Dashboard() {
                         </Card>
                     </Col>
                 </Row>
-
-
-
             </Container>
         </>
     ) :
