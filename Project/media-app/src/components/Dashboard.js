@@ -96,7 +96,7 @@ export default function Dashboard() {
         if (ffmpegReady) {
             setRendering(true)
             // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(file));
+            ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(uploadFile));
 
             // Run command
             await ffmpeg.run('-i', 'video.mp4', '-q:a', '0', '-map', 'a', 'audio.mp3')
@@ -116,7 +116,7 @@ export default function Dashboard() {
         if (ffmpegReady) {
             setRendering(true)
             // Write file to memory so webassemble can access it
-            ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(file));
+            ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(uploadFile));
             // Run command
             ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(editedAudio));
 
@@ -346,7 +346,6 @@ export default function Dashboard() {
 
             // Update upload file
             setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
             // Create video URL react-player
             const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
             setEditedVideo(editedVideoUrl)
