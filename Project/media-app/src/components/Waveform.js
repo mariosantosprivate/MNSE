@@ -38,15 +38,15 @@ export default function Waveform({ blob }) {
 
         wavesurfer.current.on("ready", function () {
             if (wavesurfer.current) {
-                wavesurfer.current.setVolume(volume);
-                setVolume(volume);
+                wavesurfer.current.setVolume(0.5);
+                setVolume(0.5);
             }
         });
 
         // Removes events, elements and disconnects Web Audio nodes.
         // when component unmount
         return () => wavesurfer.current.destroy();
-    }, [blob,volume]);
+    }, [blob]);
 
     const handlePlayPause = () => {
         setPlay(!playing);
@@ -82,7 +82,7 @@ export default function Waveform({ blob }) {
                             max="1"
                             step=".025"
                             onChange={onVolumeChange}
-                            defaultValue={volume}
+                            value={volume}
                         />
                     </Row>
                 </Col>
