@@ -463,146 +463,6 @@ export default function Dashboard() {
 
     }
 
-    const brightnessVideo = async () => {
-        try {
-            if (ffmpegReady) {
-                setRendering(true)
-                // Write file to memory so webassemble can access it
-                ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-
-                // Run command
-                await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=brightness=${brightness}`, '-c:a', 'copy', 'testOut.mp4');
-
-                // Read result
-                const data = ffmpeg.FS('readFile', 'testOut.mp4');
-
-                // Update upload file
-                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-                // Create video URL react-player
-                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-                setEditedVideo(editedVideoUrl)
-                setRendering(false);
-            }
-        } catch (err) {
-            console.log(err)
-            setRendering(false)
-        }
-
-    }
-
-    const contrastVideo = async () => {
-        try {
-            if (ffmpegReady) {
-                setRendering(true)
-                // Write file to memory so webassemble can access it
-                ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-
-                // Run command
-                await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=contrast=${contrast}`, '-c:a', 'copy', 'testOut.mp4');
-
-                // Read result
-                const data = ffmpeg.FS('readFile', 'testOut.mp4');
-
-                // Update upload file
-                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-                // Create video URL react-player
-                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-                setEditedVideo(editedVideoUrl)
-                setRendering(false);
-            }
-        } catch (err) {
-            console.log(err)
-            setRendering(false)
-        }
-
-    }
-
-    const gammaVideo = async () => {
-        try {
-            if (ffmpegReady) {
-                setRendering(true)
-                // Write file to memory so webassemble can access it
-                ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-
-                // Run command
-                await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=gamma=${gamma}`, '-c:a', 'copy', 'testOut.mp4');
-
-                // Read result
-                const data = ffmpeg.FS('readFile', 'testOut.mp4');
-
-                // Update upload file
-                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-                // Create video URL react-player
-                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-                setEditedVideo(editedVideoUrl)
-                setRendering(false);
-            }
-        } catch (err) {
-            console.log(err)
-            setRendering(false)
-        }
-
-    }
-
-    const hueVideo = async () => {
-        try {
-            if (ffmpegReady) {
-                setRendering(true)
-                // Write file to memory so webassemble can access it
-                ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(uploadFile));
-
-                // Run command
-                await ffmpeg.run('-i', 'test.mp4', '-vf', `hue=h=${hue}`, '-c:a', 'copy', 'testOut.mp4');
-
-                // Read result
-                const data = ffmpeg.FS('readFile', 'testOut.mp4');
-
-                // Update upload file
-                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-                // Create video URL react-player
-                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-                setEditedVideo(editedVideoUrl)
-                setRendering(false);
-            }
-        } catch (err) {
-            console.log(err)
-            setRendering(false)
-        }
-
-    }
-
-    const saturationVideo = async () => {
-        try {
-            if (ffmpegReady) {
-                setRendering(true)
-                // Write file to memory so webassemble can access it
-                ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-
-                // Run command
-                await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=saturation=${saturation}`, '-c:a', 'copy', 'testOut.mp4');
-
-                // Read result
-                const data = ffmpeg.FS('readFile', 'testOut.mp4');
-
-                // Update upload file
-                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-                // Create video URL react-player
-                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-                setEditedVideo(editedVideoUrl)
-                setRendering(false);
-            }
-        } catch (err) {
-            console.log(err)
-            setRendering(false)
-        }
-
-    }
-
     const sharpnessVideo = async () => {
         try {
             if (ffmpegReady) {
@@ -639,7 +499,7 @@ export default function Dashboard() {
                 ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
 
                 // Run command
-                await ffmpeg.run('-i', 'test.mp4', '-filter_complex', `[0:v]crop=${cropW}:${cropH}:${cropX}:${cropY},boxblur=${lumaRadius}:${lumaStrength}[fg]; [0:v][fg]overlay=${cropX}:${cropY}[v]`, '-map', '[v]', 'testOut.mp4');
+                await ffmpeg.run('-i', 'test.mp4', '-filter_complex', `[0:v]crop=${cropW}:${cropH}:${cropX}:${cropY},boxblur=${lumaRadius}:${lumaStrength}[fg]; [0:v][fg]overlay=${cropX}:${cropY}[v]`, '-map', '[v]', '-map', '0:a', 'testOut.mp4');
 
                 // Read result
                 const data = ffmpeg.FS('readFile', 'testOut.mp4');
@@ -662,7 +522,6 @@ export default function Dashboard() {
     const cropVideo = async () => {
         try {
             if (ffmpegReady) {
-                setRendering(true)
                 // Write file to memory so webassemble can access it
                 ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
 
@@ -683,6 +542,41 @@ export default function Dashboard() {
         } catch (err) {
             console.log(err)
             setRendering(false)
+        }
+
+    }
+
+    const renderVideoAdjustments = async () => {
+        try {
+            if (ffmpegReady) {
+                setRendering(true)
+                // Write file to memory so webassemble can access it
+
+                ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(uploadFile));
+
+                await ffmpeg.run('-i', 'test.mp4', '-filter_complex',
+                    `[0:v]eq=brightness=${brightness}:
+                contrast=${contrast}:
+                saturation=${saturation}:
+                gamma=${gamma}[v];
+                [v]hue=h=${hue}[v]`,
+                    `-map`, `[v]`, '-map', '0:a',
+                    'testOut.mp4');
+                //if(hue !== 0){v
+                //    await ffmpeg.run('-i', 'test.mp4', '-vf', `hue=h=${hue}`, '-c:a', 'copy', 'testOut.mp4');
+                //}
+
+                const data = ffmpeg.FS('readFile', 'testOut.mp4');
+                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+
+                // Create video URL react-player
+                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                setEditedVideo(editedVideoUrl)
+                setRendering(false)
+
+            }
+        } catch (err) {
+            console.log(err)
         }
 
     }
@@ -819,7 +713,7 @@ export default function Dashboard() {
                                                 Original
                                             </Col>
                                             <Col>
-                                                <Button style={{ opacity: 0 }} title='Reset' variant='outline-light' onClick={() => { resetVideo() }}>
+                                                <Button disabled style={{ opacity: 0 }} variant='outline-light' onClick={() => { resetVideo() }}>
                                                     <FontAwesomeIcon icon={faUndo} />
                                                 </Button>
                                             </Col>
@@ -948,10 +842,10 @@ export default function Dashboard() {
                                             <Card.Body className='card-custom'>
                                                 <Row className='large-slider-row'>
 
-                                                    <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
+                                                    <Col xs={{ span: 10 }} className='seeker-wrapper'>
                                                         <Row className='large-slider-label-row'>
                                                             Brightness
-</Row>
+                                                        </Row>
                                                         <RangeSlider
                                                             variant='light'
                                                             min={-1.0}
@@ -961,15 +855,12 @@ export default function Dashboard() {
                                                             onChange={changeEvent => setBrightness(changeEvent.target.value)}
                                                         />
                                                     </Col>
-                                                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
-                                                        <Button variant='secondary' className='apply-button' onClick={brightnessVideo}>Apply</Button>
-                                                    </Col>
                                                 </Row>
                                                 <Row className='large-slider-row'>
-                                                    <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
+                                                    <Col xs={{ span: 10 }} className='seeker-wrapper'>
                                                         <Row className='large-slider-label-row'>
                                                             Contrast
-</Row>
+                                                        </Row>
                                                         <RangeSlider
                                                             variant='light'
                                                             min={-3}
@@ -979,16 +870,13 @@ export default function Dashboard() {
                                                             onChange={changeEvent => setContrast(changeEvent.target.value)}
                                                         />
                                                     </Col>
-                                                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
-                                                        <Button variant='secondary' className='apply-button' onClick={contrastVideo}>Apply</Button>
-                                                    </Col>
                                                 </Row>
                                                 <Row className='large-slider-row'>
 
-                                                    <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
+                                                    <Col xs={{ span: 10 }} className='seeker-wrapper'>
                                                         <Row className='large-slider-label-row'>
                                                             Hue
-</Row>
+                                                        </Row>
                                                         <RangeSlider
                                                             variant='light'
                                                             min={0}
@@ -998,15 +886,12 @@ export default function Dashboard() {
                                                             onChange={changeEvent => setHue(changeEvent.target.value)}
                                                         />
                                                     </Col>
-                                                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
-                                                        <Button variant='secondary' className='apply-button' onClick={hueVideo}>Apply</Button>
-                                                    </Col>
                                                 </Row>
                                                 <Row className='large-slider-row'>
-                                                    <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
+                                                    <Col xs={{ span: 10 }} className='seeker-wrapper'>
                                                         <Row className='large-slider-label-row'>
                                                             Saturation
-    </Row>
+                                                        </Row>
                                                         <RangeSlider
                                                             variant='light'
                                                             min={0.0}
@@ -1016,15 +901,12 @@ export default function Dashboard() {
                                                             onChange={changeEvent => setSaturation(changeEvent.target.value)}
                                                         />
                                                     </Col>
-                                                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
-                                                        <Button variant='secondary' className='apply-button' onClick={saturationVideo}>Apply</Button>
-                                                    </Col>
                                                 </Row>
                                                 <Row className='large-slider-row'>
-                                                    <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
+                                                    <Col xs={{ span: 10, offset: 1 }} className='seeker-wrapper'>
                                                         <Row className='large-slider-label-row'>
                                                             Gamma
-</Row>
+                                                        </Row>
                                                         <RangeSlider
                                                             variant='light'
                                                             min={0.1}
@@ -1034,8 +916,10 @@ export default function Dashboard() {
                                                             onChange={changeEvent => setGamma(changeEvent.target.value)}
                                                         />
                                                     </Col>
-                                                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
-                                                        <Button variant='secondary' className='apply-button' onClick={gammaVideo}>Apply</Button>
+                                                </Row>
+                                                <Row className='large-slider-row'>
+                                                    <Col xs={{ span: 10 }}>
+                                                        <Button style={{ width: '100%' }} onClick={() => { renderVideoAdjustments() }} variant="secondary">Apply</Button>
                                                     </Col>
                                                 </Row>
                                             </Card.Body>
@@ -1250,6 +1134,8 @@ export default function Dashboard() {
                                                         </Dropdown.Menu>
                                                     </Dropdown>
                                                 </Col>
+                                                <Row className='large-slider-row'></Row>
+
                                             </Card.Body>
                                         </Card>
 
@@ -1506,8 +1392,14 @@ export default function Dashboard() {
 
                                                             <Dropdown.Menu className='dropdown-menu-custom'>
                                                                 <Dropdown.Header>Echo Type</Dropdown.Header>
-                                                                <Dropdown.Item onClick={() => { setEchoType('indoor') }}>Indoors</Dropdown.Item>
-                                                                <Dropdown.Item onClick={() => { setEchoType('mountain') }}>Mountains</Dropdown.Item>
+                                                                <Dropdown.Item variant="secondary"
+                                                                //onClick={() => { setEchoType('indoor') }}
+                                                                >
+                                                                    <Button style={{ width: '100%' }} onClick={() => { setEchoType('indoor') }} variant="secondary">Indoors</Button></Dropdown.Item>
+                                                                <Dropdown.Item
+                                                                //onClick={() => { setEchoType('mountain') }}
+                                                                >
+                                                                    <Button style={{ width: '100%' }} onClick={() => { setEchoType('indoor') }} variant="secondary">Mountains</Button></Dropdown.Item>
                                                             </Dropdown.Menu>
                                                         </Dropdown>
 
