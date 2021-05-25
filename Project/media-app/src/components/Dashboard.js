@@ -704,7 +704,7 @@ export default function Dashboard() {
 
     }
 
-    const renderVideo = async () => {
+    const renderVideoImage = async () => {
         try {
             if (ffmpegReady) {
                 setRendering(true)
@@ -768,6 +768,21 @@ export default function Dashboard() {
                     setFile(editedVideoUrl);
                     setHue(0);
                 }
+                setUploadFile(file);
+                setRendering(false);
+            }
+        } catch (err) {
+            console.log(err)
+            setRendering(false)
+        }
+
+    }
+
+    const renderVideoFX = async () => {
+        try {
+            if (ffmpegReady) {
+                setRendering(true)
+                // Write file to memory so webassemble can access it
                 if(lumay !== 5 || chromax !== 5 || chromaAmount !== 0)
                 {
                     ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
@@ -814,7 +829,7 @@ export default function Dashboard() {
                     setTempCropX(0);
                     setTempCropY(0);
                 }
-                setUploadFile(editedVideo);
+                setUploadFile(file);
                 setRendering(false);
             }
         } catch (err) {
@@ -955,11 +970,6 @@ export default function Dashboard() {
                                             <Col>
                                                 Original
                                             </Col>
-                                            <Col>
-                                                <Button title='Render' variant='outline-light' onClick={() => { renderVideo() }}>
-                                                    <FontAwesomeIcon icon={faUndo} />
-                                                </Button>
-                                            </Col>
                                         </Row>
                                     </Card.Header>
                                     <Card.Body>
@@ -1088,7 +1098,7 @@ export default function Dashboard() {
                                                     <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
                                                         <Row className='large-slider-label-row'>
                                                             Brightness
-</Row>
+                                                        </Row>
                                                         <RangeSlider
                                                             variant='light'
                                                             min={-1.0}
@@ -1106,7 +1116,7 @@ export default function Dashboard() {
                                                     <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
                                                         <Row className='large-slider-label-row'>
                                                             Contrast
-</Row>
+                                                        </Row>
                                                         <RangeSlider
                                                             variant='light'
                                                             min={-3}
@@ -1125,7 +1135,7 @@ export default function Dashboard() {
                                                     <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
                                                         <Row className='large-slider-label-row'>
                                                             Colors
-</Row>
+                                                        </Row>
                                                         <RangeSlider
                                                             variant='light'
                                                             min={0}
@@ -1143,7 +1153,7 @@ export default function Dashboard() {
                                                     <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
                                                         <Row className='large-slider-label-row'>
                                                             Saturation
-    </Row>
+                                                        </Row>
                                                         <RangeSlider
                                                             variant='light'
                                                             min={0.0}
@@ -1161,7 +1171,7 @@ export default function Dashboard() {
                                                     <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
                                                         <Row className='large-slider-label-row'>
                                                             Gamma
-</Row>
+                                                        </Row>
                                                         <RangeSlider
                                                             variant='light'
                                                             min={0.1}
@@ -1173,6 +1183,12 @@ export default function Dashboard() {
                                                     </Col>
                                                     <Col xs={{ span: 4 }} sm={{ span: 3 }}>
                                                         <Button variant='secondary' className='apply-button' onClick={gammaVideo}>Apply</Button>
+                                                    </Col>
+                                                </Row>
+                                                <Row className='large-slider-row'></Row>
+                                                <Row className='large-slider-row'>
+                                                    <Col xs={{ span: 32 }} lg={{ span: 18, offset: 2 }}>
+                                                        <Button onClick={() => { renderVideoImage() }} variant="secondary">Apply all Image Adjustments</Button>
                                                     </Col>
                                                 </Row>
                                             </Card.Body>
@@ -1387,6 +1403,12 @@ export default function Dashboard() {
                                                         </Dropdown.Menu>
                                                     </Dropdown>
                                                 </Col>
+                                                <Row className='large-slider-row'></Row>
+                                                <Row className='large-slider-row'>
+                                                <Col xs={{ span: 132 }} lg={{ span: 118, offset: 2 }}>
+                                                    <Button onClick={() => { renderVideoFX() }} variant="secondary">Apply all Video FX Adjustements</Button>
+                                                </Col>
+                                                </Row>
                                             </Card.Body>
                                         </Card>
 
