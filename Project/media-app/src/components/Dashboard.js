@@ -73,6 +73,14 @@ export default function Dashboard() {
     const [tremoloOffset, setTremoloOffset] = useState(0);
     const [rendering, setRendering] = useState(false);
     const [videoAudioOffset, setVideoAudioOffset] = useState(0)
+    const [tempCropW, setTempCropW] = useState(0);
+    const [tempCropX, setTempCropX] = useState(0);
+    const [tempCropH, setTempCropH] = useState(0);
+    const [tempCropY, setTempCropY] = useState(0);
+    const [tempBlurW, setTempBlurW] = useState(0);
+    const [tempBlurX, setTempBlurX] = useState(0);
+    const [tempBlurH, setTempBlurH] = useState(0);
+    const [tempBlurY, setTempBlurY] = useState(0);
 
     // Allows accessing video URL from Videos component
     const location = useLocation();
@@ -482,6 +490,7 @@ export default function Dashboard() {
                 // Create video URL react-player
                 const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
                 setEditedVideo(editedVideoUrl)
+                
                 setRendering(false);
             }
         } catch (err) {
@@ -635,6 +644,10 @@ export default function Dashboard() {
         try {
             if (ffmpegReady) {
                 setRendering(true)
+                setTempBlurW(cropW);
+                setTempBlurH(cropH);
+                setTempBlurX(cropX);
+                setTempBlurY(cropY);
                 // Write file to memory so webassemble can access it
                 ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
 
@@ -663,6 +676,10 @@ export default function Dashboard() {
         try {
             if (ffmpegReady) {
                 setRendering(true)
+                setTempCropW(cropW);
+                setTempCropH(cropH);
+                setTempCropX(cropX);
+                setTempCropY(cropY);
                 // Write file to memory so webassemble can access it
                 ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
 
@@ -678,6 +695,126 @@ export default function Dashboard() {
                 // Create video URL react-player
                 const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
                 setEditedVideo(editedVideoUrl)
+                setRendering(false);
+            }
+        } catch (err) {
+            console.log(err)
+            setRendering(false)
+        }
+
+    }
+
+    const renderVideo = async () => {
+        try {
+            if (ffmpegReady) {
+                setRendering(true)
+                // Write file to memory so webassemble can access it
+                if(brightness !== 0){
+                    ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
+                    await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=brightness=${brightness}`, '-c:a', 'copy', 'testOut.mp4');
+                    const data = ffmpeg.FS('readFile', 'testOut.mp4');
+                    setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+
+                    // Create video URL react-player
+                    const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                    setFile(editedVideoUrl)
+                    setBrightness(0);
+                }
+                if(contrast !== 1)
+                {
+                    ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
+                    await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=contrast=${contrast}`, '-c:a', 'copy', 'testOut.mp4');
+                    const data = ffmpeg.FS('readFile', 'testOut.mp4');
+                    setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+
+                    // Create video URL react-player
+                    const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                    setFile(editedVideoUrl);
+                    setContrast(1);
+                }
+                if(saturation !== 1)
+                {
+                    ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
+                    await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=saturation=${saturation}`, '-c:a', 'copy', 'testOut.mp4');
+                    const data = ffmpeg.FS('readFile', 'testOut.mp4');
+                    setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+
+                    // Create video URL react-player
+                    const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                    setFile(editedVideoUrl);
+                    setSaturation(1);
+                }
+                if(gamma !== 1)
+                {
+                    ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
+                    await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=gamma=${gamma}`, '-c:a', 'copy', 'testOut.mp4');
+                    const data = ffmpeg.FS('readFile', 'testOut.mp4');
+                    setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+
+                    // Create video URL react-player
+                    const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                    setFile(editedVideoUrl);
+                    setGamma(1);
+                }
+                if(hue !== 0)
+                {
+                    ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
+                    await ffmpeg.run('-i', 'test.mp4', '-vf', `hue=h=${hue}`, '-c:a', 'copy', 'testOut.mp4');
+                    const data = ffmpeg.FS('readFile', 'testOut.mp4');
+                    setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+
+                    // Create video URL react-player
+                    const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                    setFile(editedVideoUrl);
+                    setHue(0);
+                }
+                if(lumay !== 5 || chromax !== 5 || chromaAmount !== 0)
+                {
+                    ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
+                    await ffmpeg.run('-i', 'test.mp4', '-vf', `unsharp=${lumay}:${lumay}:${chromaAmount}:${chromax}:${chromax}:${chromaAmount}`, '-c:a', 'copy', 'testOut.mp4');
+                    const data = ffmpeg.FS('readFile', 'testOut.mp4');
+                    setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+
+                    // Create video URL react-player
+                    const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                    setFile(editedVideoUrl);
+                    setLumay(5);
+                    setChromax(5);
+                    setchromaAmount(0);
+                }
+                if(tempBlurW !== 0 || tempBlurH !== 0 || tempBlurX !== 0 || tempBlurY !== 0 || lumaRadius !== 2 || lumaStrength !== 2)
+                {
+                    ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
+                    await ffmpeg.run('-i', 'test.mp4', '-filter_complex', `[0:v]crop=${tempBlurW}:${tempBlurH}:${tempBlurX}:${tempBlurY},boxblur=${lumaRadius}:${lumaStrength}[fg]; [0:v][fg]overlay=${tempBlurX}:${tempBlurY}[v]`, '-map', '[v]', 'testOut.mp4');
+                    const data = ffmpeg.FS('readFile', 'testOut.mp4');
+                    setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+
+                    // Create video URL react-player
+                    const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                    setFile(editedVideoUrl);
+                    setTempBlurH(0);
+                    setTempBlurW(0);
+                    setTempBlurX(0);
+                    setTempBlurY(0);
+                    setLumaRadius(2);
+                    setLumaStrength(2);
+                }
+                if(tempCropW !== 0 || tempCropH !== 0 || tempCropX !== 0 || tempCropY !== 0)
+                {
+                    ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
+                    await ffmpeg.run('-i', 'test.mp4', '-vf', `crop=${tempCropW}:${tempCropH}:${tempCropX}:${tempCropY}`, '-c:a', 'copy', 'testOut.mp4');
+                    const data = ffmpeg.FS('readFile', 'testOut.mp4');
+                    setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+
+                    // Create video URL react-player
+                    const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                    setFile(editedVideoUrl);
+                    setTempCropH(0);
+                    setTempCropW(0);
+                    setTempCropX(0);
+                    setTempCropY(0);
+                }
+                setUploadFile(editedVideo);
                 setRendering(false);
             }
         } catch (err) {
@@ -819,7 +956,7 @@ export default function Dashboard() {
                                                 Original
                                             </Col>
                                             <Col>
-                                                <Button style={{ opacity: 0 }} title='Reset' variant='outline-light' onClick={() => { resetVideo() }}>
+                                                <Button title='Render' variant='outline-light' onClick={() => { renderVideo() }}>
                                                     <FontAwesomeIcon icon={faUndo} />
                                                 </Button>
                                             </Col>
@@ -987,7 +1124,7 @@ export default function Dashboard() {
 
                                                     <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
                                                         <Row className='large-slider-label-row'>
-                                                            Hue
+                                                            Colors
 </Row>
                                                         <RangeSlider
                                                             variant='light'
