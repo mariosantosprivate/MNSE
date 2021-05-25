@@ -15,7 +15,7 @@ function App() {
 
         <Container fluid
             className='d-flex align-items-center justify-content-center'
-            style={{ minHeight: "100vh", minWidth: "100vw", overflowX: '-moz-hidden-unscrollable', backgroundColor:'#191c1f'}}
+            style={{ minHeight: "100vh", minWidth: "100vw", overflowX: '-moz-hidden-unscrollable', backgroundColor: '#191c1f' }}
         >
             <div style={{ minHeight: "100vh", minWidth: "100vw" }}>
                 <Router>
