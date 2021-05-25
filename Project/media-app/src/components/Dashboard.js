@@ -73,14 +73,6 @@ export default function Dashboard() {
     const [tremoloOffset, setTremoloOffset] = useState(0);
     const [rendering, setRendering] = useState(false);
     const [videoAudioOffset, setVideoAudioOffset] = useState(0)
-    const [tempCropW, setTempCropW] = useState(0);
-    const [tempCropX, setTempCropX] = useState(0);
-    const [tempCropH, setTempCropH] = useState(0);
-    const [tempCropY, setTempCropY] = useState(0);
-    const [tempBlurW, setTempBlurW] = useState(0);
-    const [tempBlurX, setTempBlurX] = useState(0);
-    const [tempBlurH, setTempBlurH] = useState(0);
-    const [tempBlurY, setTempBlurY] = useState(0);
 
     // Allows accessing video URL from Videos component
     const location = useLocation();
@@ -471,147 +463,6 @@ export default function Dashboard() {
 
     }
 
-    const brightnessVideo = async () => {
-        try {
-            if (ffmpegReady) {
-                setRendering(true)
-                // Write file to memory so webassemble can access it
-                ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-
-                // Run command
-                await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=brightness=${brightness}`, '-c:a', 'copy', 'testOut.mp4');
-
-                // Read result
-                const data = ffmpeg.FS('readFile', 'testOut.mp4');
-
-                // Update upload file
-                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-                // Create video URL react-player
-                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-                setEditedVideo(editedVideoUrl)
-                
-                setRendering(false);
-            }
-        } catch (err) {
-            console.log(err)
-            setRendering(false)
-        }
-
-    }
-
-    const contrastVideo = async () => {
-        try {
-            if (ffmpegReady) {
-                setRendering(true)
-                // Write file to memory so webassemble can access it
-                ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-
-                // Run command
-                await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=contrast=${contrast}`, '-c:a', 'copy', 'testOut.mp4');
-
-                // Read result
-                const data = ffmpeg.FS('readFile', 'testOut.mp4');
-
-                // Update upload file
-                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-                // Create video URL react-player
-                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-                setEditedVideo(editedVideoUrl)
-                setRendering(false);
-            }
-        } catch (err) {
-            console.log(err)
-            setRendering(false)
-        }
-
-    }
-
-    const gammaVideo = async () => {
-        try {
-            if (ffmpegReady) {
-                setRendering(true)
-                // Write file to memory so webassemble can access it
-                ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-
-                // Run command
-                await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=gamma=${gamma}`, '-c:a', 'copy', 'testOut.mp4');
-
-                // Read result
-                const data = ffmpeg.FS('readFile', 'testOut.mp4');
-
-                // Update upload file
-                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-                // Create video URL react-player
-                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-                setEditedVideo(editedVideoUrl)
-                setRendering(false);
-            }
-        } catch (err) {
-            console.log(err)
-            setRendering(false)
-        }
-
-    }
-
-    const hueVideo = async () => {
-        try {
-            if (ffmpegReady) {
-                setRendering(true)
-                // Write file to memory so webassemble can access it
-                ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(uploadFile));
-
-                // Run command
-                await ffmpeg.run('-i', 'test.mp4', '-vf', `hue=h=${hue}`, '-c:a', 'copy', 'testOut.mp4');
-
-                // Read result
-                const data = ffmpeg.FS('readFile', 'testOut.mp4');
-
-                // Update upload file
-                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-                // Create video URL react-player
-                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-                setEditedVideo(editedVideoUrl)
-                setRendering(false);
-            }
-        } catch (err) {
-            console.log(err)
-            setRendering(false)
-        }
-
-    }
-
-    const saturationVideo = async () => {
-        try {
-            if (ffmpegReady) {
-                setRendering(true)
-                // Write file to memory so webassemble can access it
-                ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
-
-                // Run command
-                await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=saturation=${saturation}`, '-c:a', 'copy', 'testOut.mp4');
-
-                // Read result
-                const data = ffmpeg.FS('readFile', 'testOut.mp4');
-
-                // Update upload file
-                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-                // Create video URL react-player
-                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-                setEditedVideo(editedVideoUrl)
-                setRendering(false);
-            }
-        } catch (err) {
-            console.log(err)
-            setRendering(false)
-        }
-
-    }
-
     const sharpnessVideo = async () => {
         try {
             if (ffmpegReady) {
@@ -644,15 +495,11 @@ export default function Dashboard() {
         try {
             if (ffmpegReady) {
                 setRendering(true)
-                setTempBlurW(cropW);
-                setTempBlurH(cropH);
-                setTempBlurX(cropX);
-                setTempBlurY(cropY);
                 // Write file to memory so webassemble can access it
                 ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
 
                 // Run command
-                await ffmpeg.run('-i', 'test.mp4', '-filter_complex', `[0:v]crop=${cropW}:${cropH}:${cropX}:${cropY},boxblur=${lumaRadius}:${lumaStrength}[fg]; [0:v][fg]overlay=${cropX}:${cropY}[v]`, '-map', '[v]', 'testOut.mp4');
+                await ffmpeg.run('-i', 'test.mp4', '-filter_complex', `[0:v]crop=${cropW}:${cropH}:${cropX}:${cropY},boxblur=${lumaRadius}:${lumaStrength}[fg]; [0:v][fg]overlay=${cropX}:${cropY}[v]`, '-map', '[v]', '-map', '0:a', 'testOut.mp4');
 
                 // Read result
                 const data = ffmpeg.FS('readFile', 'testOut.mp4');
@@ -675,11 +522,6 @@ export default function Dashboard() {
     const cropVideo = async () => {
         try {
             if (ffmpegReady) {
-                setRendering(true)
-                setTempCropW(cropW);
-                setTempCropH(cropH);
-                setTempCropX(cropX);
-                setTempCropY(cropY);
                 // Write file to memory so webassemble can access it
                 ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(editedVideo));
 
@@ -704,137 +546,37 @@ export default function Dashboard() {
 
     }
 
-    const renderVideoImage = async () => {
+    const renderVideoAdjustments = async () => {
         try {
             if (ffmpegReady) {
                 setRendering(true)
                 // Write file to memory so webassemble can access it
-                if(brightness !== 0){
-                    ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
-                    await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=brightness=${brightness}`, '-c:a', 'copy', 'testOut.mp4');
-                    const data = ffmpeg.FS('readFile', 'testOut.mp4');
-                    setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
 
-                    // Create video URL react-player
-                    const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-                    setFile(editedVideoUrl)
-                    setBrightness(0);
-                }
-                if(contrast !== 1)
-                {
-                    ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
-                    await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=contrast=${contrast}`, '-c:a', 'copy', 'testOut.mp4');
-                    const data = ffmpeg.FS('readFile', 'testOut.mp4');
-                    setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+                ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(uploadFile));
 
-                    // Create video URL react-player
-                    const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-                    setFile(editedVideoUrl);
-                    setContrast(1);
-                }
-                if(saturation !== 1)
-                {
-                    ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
-                    await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=saturation=${saturation}`, '-c:a', 'copy', 'testOut.mp4');
-                    const data = ffmpeg.FS('readFile', 'testOut.mp4');
-                    setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+                await ffmpeg.run('-i', 'test.mp4', '-filter_complex',
+                    `[0:v]eq=brightness=${brightness}:
+                contrast=${contrast}:
+                saturation=${saturation}:
+                gamma=${gamma}[v];
+                [v]hue=h=${hue}[v]`,
+                    `-map`, `[v]`, '-map', '0:a',
+                    'testOut.mp4');
+                //if(hue !== 0){v
+                //    await ffmpeg.run('-i', 'test.mp4', '-vf', `hue=h=${hue}`, '-c:a', 'copy', 'testOut.mp4');
+                //}
 
-                    // Create video URL react-player
-                    const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-                    setFile(editedVideoUrl);
-                    setSaturation(1);
-                }
-                if(gamma !== 1)
-                {
-                    ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
-                    await ffmpeg.run('-i', 'test.mp4', '-vf', `eq=gamma=${gamma}`, '-c:a', 'copy', 'testOut.mp4');
-                    const data = ffmpeg.FS('readFile', 'testOut.mp4');
-                    setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+                const data = ffmpeg.FS('readFile', 'testOut.mp4');
+                setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
 
-                    // Create video URL react-player
-                    const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-                    setFile(editedVideoUrl);
-                    setGamma(1);
-                }
-                if(hue !== 0)
-                {
-                    ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
-                    await ffmpeg.run('-i', 'test.mp4', '-vf', `hue=h=${hue}`, '-c:a', 'copy', 'testOut.mp4');
-                    const data = ffmpeg.FS('readFile', 'testOut.mp4');
-                    setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
+                // Create video URL react-player
+                const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                setEditedVideo(editedVideoUrl)
+                setRendering(false)
 
-                    // Create video URL react-player
-                    const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-                    setFile(editedVideoUrl);
-                    setHue(0);
-                }
-                setUploadFile(file);
-                setRendering(false);
             }
         } catch (err) {
             console.log(err)
-            setRendering(false)
-        }
-
-    }
-
-    const renderVideoFX = async () => {
-        try {
-            if (ffmpegReady) {
-                setRendering(true)
-                // Write file to memory so webassemble can access it
-                if(lumay !== 5 || chromax !== 5 || chromaAmount !== 0)
-                {
-                    ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
-                    await ffmpeg.run('-i', 'test.mp4', '-vf', `unsharp=${lumay}:${lumay}:${chromaAmount}:${chromax}:${chromax}:${chromaAmount}`, '-c:a', 'copy', 'testOut.mp4');
-                    const data = ffmpeg.FS('readFile', 'testOut.mp4');
-                    setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-                    // Create video URL react-player
-                    const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-                    setFile(editedVideoUrl);
-                    setLumay(5);
-                    setChromax(5);
-                    setchromaAmount(0);
-                }
-                if(tempBlurW !== 0 || tempBlurH !== 0 || tempBlurX !== 0 || tempBlurY !== 0 || lumaRadius !== 2 || lumaStrength !== 2)
-                {
-                    ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
-                    await ffmpeg.run('-i', 'test.mp4', '-filter_complex', `[0:v]crop=${tempBlurW}:${tempBlurH}:${tempBlurX}:${tempBlurY},boxblur=${lumaRadius}:${lumaStrength}[fg]; [0:v][fg]overlay=${tempBlurX}:${tempBlurY}[v]`, '-map', '[v]', 'testOut.mp4');
-                    const data = ffmpeg.FS('readFile', 'testOut.mp4');
-                    setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-                    // Create video URL react-player
-                    const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-                    setFile(editedVideoUrl);
-                    setTempBlurH(0);
-                    setTempBlurW(0);
-                    setTempBlurX(0);
-                    setTempBlurY(0);
-                    setLumaRadius(2);
-                    setLumaStrength(2);
-                }
-                if(tempCropW !== 0 || tempCropH !== 0 || tempCropX !== 0 || tempCropY !== 0)
-                {
-                    ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(file));
-                    await ffmpeg.run('-i', 'test.mp4', '-vf', `crop=${tempCropW}:${tempCropH}:${tempCropX}:${tempCropY}`, '-c:a', 'copy', 'testOut.mp4');
-                    const data = ffmpeg.FS('readFile', 'testOut.mp4');
-                    setUploadFile(new Blob([data.buffer], { type: 'video/mp4' }))
-
-                    // Create video URL react-player
-                    const editedVideoUrl = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-                    setFile(editedVideoUrl);
-                    setTempCropH(0);
-                    setTempCropW(0);
-                    setTempCropX(0);
-                    setTempCropY(0);
-                }
-                setUploadFile(file);
-                setRendering(false);
-            }
-        } catch (err) {
-            console.log(err)
-            setRendering(false)
         }
 
     }
@@ -970,6 +712,11 @@ export default function Dashboard() {
                                             <Col>
                                                 Original
                                             </Col>
+                                            <Col>
+                                                <Button disabled style={{ opacity: 0 }} variant='outline-light' onClick={() => { resetVideo() }}>
+                                                    <FontAwesomeIcon icon={faUndo} />
+                                                </Button>
+                                            </Col>
                                         </Row>
                                     </Card.Header>
                                     <Card.Body>
@@ -1095,7 +842,7 @@ export default function Dashboard() {
                                             <Card.Body className='card-custom'>
                                                 <Row className='large-slider-row'>
 
-                                                    <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
+                                                    <Col xs={{ span: 10 }} className='seeker-wrapper'>
                                                         <Row className='large-slider-label-row'>
                                                             Brightness
                                                         </Row>
@@ -1108,12 +855,9 @@ export default function Dashboard() {
                                                             onChange={changeEvent => setBrightness(changeEvent.target.value)}
                                                         />
                                                     </Col>
-                                                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
-                                                        <Button variant='secondary' className='apply-button' onClick={brightnessVideo}>Apply</Button>
-                                                    </Col>
                                                 </Row>
                                                 <Row className='large-slider-row'>
-                                                    <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
+                                                    <Col xs={{ span: 10 }} className='seeker-wrapper'>
                                                         <Row className='large-slider-label-row'>
                                                             Contrast
                                                         </Row>
@@ -1126,15 +870,12 @@ export default function Dashboard() {
                                                             onChange={changeEvent => setContrast(changeEvent.target.value)}
                                                         />
                                                     </Col>
-                                                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
-                                                        <Button variant='secondary' className='apply-button' onClick={contrastVideo}>Apply</Button>
-                                                    </Col>
                                                 </Row>
                                                 <Row className='large-slider-row'>
 
-                                                    <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
+                                                    <Col xs={{ span: 10 }} className='seeker-wrapper'>
                                                         <Row className='large-slider-label-row'>
-                                                            Colors
+                                                            Hue
                                                         </Row>
                                                         <RangeSlider
                                                             variant='light'
@@ -1145,12 +886,9 @@ export default function Dashboard() {
                                                             onChange={changeEvent => setHue(changeEvent.target.value)}
                                                         />
                                                     </Col>
-                                                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
-                                                        <Button variant='secondary' className='apply-button' onClick={hueVideo}>Apply</Button>
-                                                    </Col>
                                                 </Row>
                                                 <Row className='large-slider-row'>
-                                                    <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
+                                                    <Col xs={{ span: 10 }} className='seeker-wrapper'>
                                                         <Row className='large-slider-label-row'>
                                                             Saturation
                                                         </Row>
@@ -1163,12 +901,9 @@ export default function Dashboard() {
                                                             onChange={changeEvent => setSaturation(changeEvent.target.value)}
                                                         />
                                                     </Col>
-                                                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
-                                                        <Button variant='secondary' className='apply-button' onClick={saturationVideo}>Apply</Button>
-                                                    </Col>
                                                 </Row>
                                                 <Row className='large-slider-row'>
-                                                    <Col xs={{ span: 7, offset: 1 }} sm={{ span: 6, offset: 2 }} className='seeker-wrapper'>
+                                                    <Col xs={{ span: 10, offset: 1 }} className='seeker-wrapper'>
                                                         <Row className='large-slider-label-row'>
                                                             Gamma
                                                         </Row>
@@ -1181,14 +916,10 @@ export default function Dashboard() {
                                                             onChange={changeEvent => setGamma(changeEvent.target.value)}
                                                         />
                                                     </Col>
-                                                    <Col xs={{ span: 4 }} sm={{ span: 3 }}>
-                                                        <Button variant='secondary' className='apply-button' onClick={gammaVideo}>Apply</Button>
-                                                    </Col>
                                                 </Row>
-                                                <Row className='large-slider-row'></Row>
                                                 <Row className='large-slider-row'>
-                                                    <Col xs={{ span: 32 }} lg={{ span: 18, offset: 2 }}>
-                                                        <Button onClick={() => { renderVideoImage() }} variant="secondary">Apply all Image Adjustments</Button>
+                                                    <Col xs={{ span: 10 }}>
+                                                        <Button style={{ width: '100%' }} onClick={() => { renderVideoAdjustments() }} variant="secondary">Apply</Button>
                                                     </Col>
                                                 </Row>
                                             </Card.Body>
@@ -1404,11 +1135,7 @@ export default function Dashboard() {
                                                     </Dropdown>
                                                 </Col>
                                                 <Row className='large-slider-row'></Row>
-                                                <Row className='large-slider-row'>
-                                                <Col xs={{ span: 132 }} lg={{ span: 118, offset: 2 }}>
-                                                    <Button onClick={() => { renderVideoFX() }} variant="secondary">Apply all Video FX Adjustements</Button>
-                                                </Col>
-                                                </Row>
+
                                             </Card.Body>
                                         </Card>
 
@@ -1665,8 +1392,14 @@ export default function Dashboard() {
 
                                                             <Dropdown.Menu className='dropdown-menu-custom'>
                                                                 <Dropdown.Header>Echo Type</Dropdown.Header>
-                                                                <Dropdown.Item onClick={() => { setEchoType('indoor') }}>Indoors</Dropdown.Item>
-                                                                <Dropdown.Item onClick={() => { setEchoType('mountain') }}>Mountains</Dropdown.Item>
+                                                                <Dropdown.Item variant="secondary"
+                                                                //onClick={() => { setEchoType('indoor') }}
+                                                                >
+                                                                    <Button style={{ width: '100%' }} onClick={() => { setEchoType('indoor') }} variant="secondary">Indoors</Button></Dropdown.Item>
+                                                                <Dropdown.Item
+                                                                //onClick={() => { setEchoType('mountain') }}
+                                                                >
+                                                                    <Button style={{ width: '100%' }} onClick={() => { setEchoType('indoor') }} variant="secondary">Mountains</Button></Dropdown.Item>
                                                             </Dropdown.Menu>
                                                         </Dropdown>
 
